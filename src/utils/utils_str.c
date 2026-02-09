@@ -48,7 +48,7 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_strdup(t_game *game, const char *s)
+/*char	*ft_strdup(t_game *game, const char *s)
 {
 	char	*str;
 	int		i;
@@ -66,9 +66,9 @@ char	*ft_strdup(t_game *game, const char *s)
 	}
 	str[i] = '\0';
 	return (str);
-}
+}*/
 
-char	*ft_strjoin(t_game *game, char const *s1, char const *s2)
+/*char	*ft_strjoin(t_game *game, char const *s1, char const *s2)
 {
 	size_t	size_needed;
 	char	*s3;
@@ -84,4 +84,4 @@ char	*ft_strjoin(t_game *game, char const *s1, char const *s2)
 	*s3 = '\0';
 	s3 -= (size_needed - 1);
 	return (s3);
-}
+}*/
