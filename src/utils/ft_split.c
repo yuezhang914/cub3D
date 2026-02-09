@@ -12,7 +12,7 @@
 
 #include "cube3d.h"
 
-static const char	*index_substr(const char *str, int index, char dlm)
+/*static const char	*index_substr(const char *str, int index, char dlm)
 {
 	int	char_sctn;
 
@@ -32,9 +32,9 @@ static const char	*index_substr(const char *str, int index, char dlm)
 	if (!*str)
 		return (NULL);
 	return (str);
-}
+}*/
 
-static int	substr_len(char const *str, char dlm, int i)
+/*static int	substr_len(char const *str, char dlm, int i)
 {
 	int	cnt;
 
@@ -46,9 +46,9 @@ static int	substr_len(char const *str, char dlm, int i)
 		cnt++;
 	}
 	return (cnt);
-}
+}*/
 
-static void	substr_cpy(char const *str, char dlm, int i, char *sub)
+/*static void	substr_cpy(char const *str, char dlm, int i, char *sub)
 {
 	str = index_substr(str, i, dlm);
 	while (*str != dlm && *str)
@@ -56,9 +56,9 @@ static void	substr_cpy(char const *str, char dlm, int i, char *sub)
 		*sub++ = *str++;
 	}
 	*sub = '\0';
-}
+}*/
 
-char	**ft_split(t_game *game, char const *s, char c)
+/*char	**ft_split(t_game *game, char const *s, char c)
 {
 	int		sub_cnt;
 	char	**ptr;
@@ -81,4 +81,4 @@ char	**ft_split(t_game *game, char const *s, char c)
 	}
 	ptr[i] = NULL;
 	return (ptr);
-}
+}*/
