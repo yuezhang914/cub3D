@@ -39,6 +39,8 @@ void init_game(t_game *game)
     load_texture(game, &game->south, "src/texture/south.xpm");
     load_texture(game, &game->east, "src/texture/east.xpm");
     load_texture(game, &game->west, "src/texture/west.xpm");
+	game->ceiling_color = 0xC0C0C0;
+	game->floor_color = 0xDEB887;
 }
 
 

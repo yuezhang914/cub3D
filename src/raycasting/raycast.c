@@ -131,20 +131,43 @@ bool touch(float px, float py, t_game *game)
  */
 void render_column(int x, int start, int end, int tex_x, t_tex *tex, t_game *game)
 {
-    float step = 1.0 * tex->height / (end - start);
-    float tex_pos = (start - HEIGHT / 2 + (end - start) / 2) * step;
+	// 1. 计算纹理步进（每个像素对应多少纹理像素）
+	float step = 1.0 * tex->height / (end - start);
 
-    for (int y = start; y < end; y++)
-    {
-        int tex_y = (int)tex_pos % tex->height;
-        tex_pos += step;
+	// 2. 计算纹理初始位置 (tex_pos)
+	// 如果 start < 0，说明墙顶在屏幕上方，我们需要跳过那部分纹理
+	float tex_pos = 0;
+	if (start < 0)
+	{
+		tex_pos = -start * step; // 补偿：将纹理坐标向下挪
+	}
 
-        // 从选中的那张贴图中取色
-        int color = tex->addr[tex_y * tex->width + tex_x];
-        
-        // 渲染到屏幕
-        put_pixel(x, y, color, game);
-    }
+	// 3. 限制循环范围，防止越界写入
+	int draw_start = (start < 0) ? 0 : start;
+	int draw_end = (end > HEIGHT) ? HEIGHT : end;
+
+	for (int y = 0; y < HEIGHT; y++)
+	{
+		if (y < draw_start)
+		{
+			// 渲染天花板
+			put_pixel(x, y, game->ceiling_color, game);
+		}
+		else if (y >= draw_start && y < draw_end)
+		{
+			// 渲染墙壁
+			int tex_y = (int)tex_pos % tex->height;
+			tex_pos += step;
+
+			int color = tex->addr[tex_y * tex->width + tex_x];
+			put_pixel(x, y, color, game);
+		}
+		else
+		{
+			// 渲染地板
+			put_pixel(x, y, game->floor_color, game);
+		}
+	}
 }
 /**
  * 核心射线投射逻辑 (DDA 算法)
