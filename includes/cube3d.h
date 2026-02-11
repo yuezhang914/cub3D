@@ -6,19 +6,17 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/07 17:23:50 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 12:16:13 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUBE3D_H
 # define CUBE3D_H
 
-#include "./minilibx-linux/mlx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <unistd.h>
+#include "../minilibx-linux/mlx.h"
+#include "func.h"
+
+
 
 #define W 119 
 #define A 97 

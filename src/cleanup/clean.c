@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 22:00:44 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/07 17:54:48 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 12:25:17 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	track_clean(t_game *game)
 }
 
 
-/*void	graceful_exit(t_game *game, int exit_code, const char *func,
+void	graceful_exit(t_game *game, int exit_code, const char *func,
 		char *message)
 {
 	destroy_images(game);
@@ -53,4 +53,4 @@ void	track_clean(t_game *game)
 		print_error(func, message);
 	track_clean(game);
 	exit(exit_code);
-}*/
+}

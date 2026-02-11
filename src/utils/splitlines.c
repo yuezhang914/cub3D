@@ -28,7 +28,7 @@
 ** 用在哪里：
 **   只在本文件 splitlines 内部使用（static 表示外部看不到它）。
 */
-/*static int	sfill_array(t_game *game, char *pos, int line_count, char **result)
+static int	sfill_array(t_game *game, char *pos, int line_count, char **result)
 {
 	size_t	len;
 	int		i;
@@ -49,7 +49,7 @@
 	result[i][len] = '\0';
 	result[line_count] = NULL;
 	return (0);
-}*/
+}
 
 /*
 ** 函数名：splitlines
@@ -76,7 +76,7 @@
 ** 为什么要“保留空行”：
 **   subject 允许配置区出现空行，用 splitlines 能让 parser 更容易处理这些空行。
 */
-/*char	**splitlines(t_game *game, char *text)
+char	**splitlines(t_game *game, char *text)
 {
 	int		line_count;
 	char	**result;
@@ -91,4 +91,3 @@
 		return (NULL);
 	return (result);
 }
-*/
