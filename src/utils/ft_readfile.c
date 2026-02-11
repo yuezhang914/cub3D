@@ -48,7 +48,7 @@ void	ft_bzero(void *s, size_t n)
 ** 说明（初中生版）：
 **   read 每次只能读一小块，所以这里用循环一直读，读到 0 表示文件结束。
 */
-/*char	*ft_readfile(t_game *game, int fd)
+char	*ft_readfile(t_game *game, int fd)
 {
 	char	*str;
 	char	buf[BUFFER_SIZE];
@@ -71,4 +71,4 @@ void	ft_bzero(void *s, size_t n)
 			return (NULL);
 	}
 	return (str);
-}*/
+}
