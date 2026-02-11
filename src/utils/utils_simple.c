@@ -40,7 +40,7 @@ bool	is_dig(char c)
 
 // 把 str1 跟后面传入的 n 个字符串依次比较，
 // 如果相等就返回“匹配到的那个字符串指针”，否则返回 NULL
-char	*ft_n_strcmp(char *str1, int n, ...)
+/*char	*ft_n_strcmp(char *str1, int n, ...)
 {
 	va_list	strs;
 	char	*str;
@@ -58,7 +58,7 @@ char	*ft_n_strcmp(char *str1, int n, ...)
 	}
 	va_end(strs);
 	return (NULL);
-}
+}*/
 
 // 把 src 的前 n 个字节复制到 dest（内存拷贝）
 void	*ft_memcpy(void *dest, const void *src, size_t n)

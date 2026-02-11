@@ -13,6 +13,28 @@
 #ifndef CUBE3D_H
 # define CUBE3D_H
 
+#include "./minilibx-linux/mlx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <unistd.h>
+
+#define W 119 
+#define A 97 
+#define S 115  //south
+#define D 100  
+#define ESC 65307
+#define PI 3.14159265359
+
+#define WIDTH   1280
+#define HEIGHT	720
+#define BLOCK 64
+#define LEFT 65361
+#define RIGHT 65363
+#define DEBUG 0
+#define BUFFER_SIZE 1024
+
 /* ========================================================================== */
 /*  合作分工标记说明（非常重要，避免两个人同时改同一字段）：                    */
 /*  [YZ] 由你写（parse + clean + A），队友只读                                  */
@@ -80,6 +102,7 @@ typedef struct s_texture
 {
 	char				*path;      /* xpm 文件路径 [ONCE-YZ:parse 写][WY 不写] */
 	void				*img_ptr;   /* mlx 图像对象 [ONCE-YZ:setup 写] */
+	int					*addr;
 	int					width;     /* 贴图宽度 [ONCE-YZ:setup 写] */
 	int					height;    /* 贴图高度 [ONCE-YZ:setup 写] */
 	void				*data;      /* 像素数组首地址 [ONCE-YZ:setup 写][YZ:render 读] */
@@ -99,26 +122,22 @@ typedef struct s_gnode
 
 typedef struct s_player
 {
-	float pos_x; // 玩家坐标 x
-	float pos_y; // 玩家坐标 y
-	int map_x;   //玩家在map上的x坐标
-	int map_y;   //玩家在map上的y坐标
-	float		angle;
-	float		cam_x;
-	float		cam_y;
-	float move_speed; // 移动速度
-	float rot_speed;  // 旋转速度
-}				t_player;
+	float x;
+	float y;
+	int map_x;
+	int map_y;
+	float angle;
 
-typedef struct s_keys
-{
-	bool up;           /* W/↑ [WY 写][YZ 读] */
-	bool right;        /* D/→(平移) [WY 写][YZ 读] */
-	bool left;         /* A/←(平移) [WY 写][YZ 读] */
-	bool down;         /* S/↓ [WY 写][YZ 读] */
-	bool left_rotate;  /* 左转 [WY 写][YZ 读] */
-	bool right_rotate; /* 右转 [WY 写][YZ 读] */
-}				t_keys;
+	bool key_up;
+	bool key_down;
+	bool key_left;
+	bool key_right;
+
+	bool left_rotate;
+	bool right_rotate;
+	
+} t_player;
+
 /* -------------------------------------------------------------------------- */
 /* 主结构体：全局“数据总线”（所有模块都通过它传递信息）                            */
 /* 重要：字段写入者分工要固定，否则两人同时改会冲突。                               */
@@ -130,6 +149,8 @@ typedef struct s_game
 	t_tex east;  /* 同上 */
 	t_tex south; /* 同上 */
 	t_tex west;  /* 同上 */
+
+	t_img		*img_head;
 
 	/* ====== GC：统一释放 malloc ====== */
 	t_gnode *track_head; /* [YZ] 维护链表头，退出统一 free */
@@ -165,9 +186,17 @@ typedef struct s_game
 
 	/* ====== 输入状态：按键是否按下（hook 写，loop 读） ====== */
 
-	t_keys		move;
+
 	t_player	player;
 
 }				t_game;
+
+void init_player(t_player *player);
+int key_press(int keycode, void *param);
+int key_release(int keycode, void *param);
+void move_player(t_player *player, t_game *game);
+bool touch(float px, float py, t_game *game);
+int draw_loop(t_game *game);
+char **get_map(void);
 
 #endif

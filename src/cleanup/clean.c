@@ -40,7 +40,8 @@ void	track_clean(t_game *game)
 	game->track_head = NULL;
 }
 
-void	graceful_exit(t_game *game, int exit_code, const char *func,
+
+/*void	graceful_exit(t_game *game, int exit_code, const char *func,
 		char *message)
 {
 	destroy_images(game);
@@ -52,4 +53,4 @@ void	graceful_exit(t_game *game, int exit_code, const char *func,
 		print_error(func, message);
 	track_clean(game);
 	exit(exit_code);
-}
+}*/
