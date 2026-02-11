@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 21:16:53 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 21:45:54 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,10 +152,10 @@ static void	scan_map(t_game *game)
 		j = 0;
 		while (game->map[i][j])
 		{
-			if (ft_strchr("NESfirst_word", game->map[i][j]))
-				validate_open_walls(game, i, j);
 			if (ft_strchr("NESW", game->map[i][j]))
 				extract_player(game, i, j, &found);
+			if (game->map[i][j] == '0')
+				validate_open_walls(game, i, j);
 			j++;
 		}
 		i++;

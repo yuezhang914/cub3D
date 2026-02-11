@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 12:54:21 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 14:57:38 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 21:27:52 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,35 +14,35 @@
 #include "cube3d.h"
 
 
-// void load_texture(t_game *game, t_tex *tex, char *path)
-// {
-//     tex->img_ptr = mlx_xpm_file_to_image(game->mlx, path, &tex->width, &tex->height);
-//     if (!tex->img_ptr)
-//     {
-//         printf("Error: Failed to load texture at %s\n", path);
-//         exit(1);
-//     }
-//     tex->addr = (int *)mlx_get_data_addr(tex->img_ptr, &tex->bpp, 
-//                                          &tex->size_line, &tex->endian);
-// }
+void load_texture(t_game *game, t_tex *tex, char *path)
+{
+    tex->img_ptr = mlx_xpm_file_to_image(game->mlx, path, &tex->width, &tex->height);
+    if (!tex->img_ptr)
+    {
+        printf("Error: Failed to load texture at %s\n", path);
+        exit(1);
+    }
+    tex->addr = (int *)mlx_get_data_addr(tex->img_ptr, &tex->bpp, 
+                                         &tex->size_line, &tex->endian);
+}
 
-// void init_game(t_game *game)
-// {
-//     game->mlx = mlx_init();
-//     game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "Cub3D");
-//     game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-//     game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-//     game->map = get_map();
-//     init_player(&game->player);
+void init_game(t_game *game)
+{
+    game->mlx = mlx_init();
+    game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "Cub3D");
+    game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+    game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
+    game->map = get_map();
+    init_player(&game->player);
 
     
-//     load_texture(game, &game->north, "src/texture/north.xpm");
-//     load_texture(game, &game->south, "src/texture/south.xpm");
-//     load_texture(game, &game->east, "src/texture/east.xpm");
-//     load_texture(game, &game->west, "src/texture/west.xpm");
-// 	game->ceiling_color = 0xC0C0C0;
-// 	game->floor_color = 0xDEB887;
-// }
+    load_texture(game, &game->north, "src/texture/north.xpm");
+    load_texture(game, &game->south, "src/texture/south.xpm");
+    load_texture(game, &game->east, "src/texture/east.xpm");
+    load_texture(game, &game->west, "src/texture/west.xpm");
+	game->ceiling_color = 0xC0C0C0;
+	game->floor_color = 0xDEB887;
+}
 
 
 int main(void)
