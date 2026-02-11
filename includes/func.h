@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:59:13 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 12:18:11 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 12:38:05 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,15 +124,6 @@ t_line_type	set_input_line_type(t_game *game, char *line);
 // t_int_xy	adjacent_tile_ahead(t_game *game);
 // t_int_xy	find_tile(t_game *game, char c);
 
-// // game bonus
-// void	respawn_update(t_game *game);
-// void	respawn_add(t_game *game, t_int_xy coords, char type);
-// void	respawn_remove(t_game *game, t_obs_resp *obs);
-
-// void	anim_add(t_game *game, t_int_xy coords, t_anim *anim);
-// void	anim_remove(t_game *game, t_anim_queue *node);
-// void	try_try_remove_obstacle(t_game *game);
-// void	draw_win_logo_if_finished(t_game *game);
 
 
 #endif
