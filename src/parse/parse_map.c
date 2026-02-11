@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 12:07:52 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 21:16:53 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ static void	build_map_array(t_game *game, char **lines, int start)
 **   无；发现漏气直接 graceful_exit 退出
 **
 ** 用在哪里：
-**   scan_map() 扫描到字符属于 "NESW0" 时调用。
+**   scan_map() 扫描到字符属于 "NESfirst_word" 时调用。
 */
 static void	validate_open_walls(t_game *game, int i, int j)
 {
@@ -152,7 +152,7 @@ static void	scan_map(t_game *game)
 		j = 0;
 		while (game->map[i][j])
 		{
-			if (ft_strchr("NESW0", game->map[i][j]))
+			if (ft_strchr("NESfirst_word", game->map[i][j]))
 				validate_open_walls(game, i, j);
 			if (ft_strchr("NESW", game->map[i][j]))
 				extract_player(game, i, j, &found);
@@ -187,7 +187,7 @@ void	parse_map(t_game *game)
 	int		start;
 	char	**lines;
 
-	lines = game->cubfile_line_by_line;
+	lines = game->cubfile_lines;
 	start = find_map_start(game, lines);
 	check_map_is_last(game, lines, start);
 	set_map_dimensions(game, lines, start);
