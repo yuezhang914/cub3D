@@ -84,6 +84,25 @@ int key_release(int keycode, void *param)
 }
 
 /**
+ * 碰撞检测函数：判断坐标 (px, py) 是否位于墙壁内
+ */
+bool touch(float px, float py, t_game *game)
+{
+	if (px < 0 || py < 0 || px >= WIDTH || py >= HEIGHT)
+		return (true);
+
+	// 将像素坐标转换为地图数组索引
+	int x = (int)px / BLOCK;
+	int y = (int)py / BLOCK;
+
+	// 防止数组索引越界
+	if (y < 0 || y >= 10 || x < 0 || x >= 15)
+		return (true);
+
+	return (game->map[y][x] == '1');
+}
+
+/**
  * 玩家移动逻辑执行器 (Frame-based Movement)
  * 作用：由 mlx_loop_hook 每一帧调用。
  * 只要标志位为 true，玩家就会在这一帧移动 speed 个像素。

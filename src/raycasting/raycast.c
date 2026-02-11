@@ -107,24 +107,7 @@ void draw_map(t_game *game)
 	}
 }
 
-/**
- * 碰撞检测函数：判断坐标 (px, py) 是否位于墙壁内
- */
-bool touch(float px, float py, t_game *game)
-{
-	if (px < 0 || py < 0 || px >= WIDTH || py >= HEIGHT)
-		return (true);
 
-	// 将像素坐标转换为地图数组索引
-	int x = (int)px / BLOCK;
-	int y = (int)py / BLOCK;
-
-	// 防止数组索引越界
-	if (y < 0 || y >= 10 || x < 0 || x >= 15)
-		return (true);
-
-	return (game->map[y][x] == '1');
-}
 
 /**
  * 渲染屏幕的一列像素：天花板 -> 墙壁 -> 地板
