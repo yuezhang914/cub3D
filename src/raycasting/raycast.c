@@ -13,27 +13,6 @@
 #include "cube3d.h"
 
 /**
- * 获取地图数据
- * '1' 代表墙壁，'0' 代表走廊，NULL 结尾用于遍历
- */
-char **get_map(void)
-{
-	char **map = malloc(sizeof(char *) * 11);
-	map[0] = "111111111111111";
-	map[1] = "100000000000001";
-	map[2] = "100000000000001";
-	map[3] = "100000000000001";
-	map[4] = "100000000000001";
-	map[5] = "100000001000001"; // 地图中间的一个孤立柱子
-	map[6] = "100000000000001";
-	map[7] = "100000000000001";
-	map[8] = "100000000000001";
-	map[9] = "111111111111111";
-	map[10] = NULL;
-	return (map);
-}
-
-/**
  * 向图像缓冲区写入颜色
  * index 计算公式：(y * 宽度 + x) * 每个像素占用的字节数
  */
@@ -50,62 +29,6 @@ void put_pixel(int x, int y, int color, t_game *game)
 	game->data[index + 3] = 0xFF;				  // Alpha (不透明)
 }
 
-/**
- * 在 2D 小地图模式下绘制地图方块
- */
-int draw_square(int x, int y, int size, int color, t_game *game)
-{
-	int i, j;
-
-	for (i = 0; i < size; i++)
-		put_pixel(x + i, y, color, game); // 上边
-	for (j = 0; j < size; j++)
-		put_pixel(x + size - 1, y + j, color, game); // 右边
-	for (i = 0; i < size; i++)
-		put_pixel(x + i, y + size - 1, color, game); // 下边
-	for (j = 0; j < size; j++)
-		put_pixel(x, y + j, color, game); // 左边
-	return 0;
-}
-
-/**
- * 每一帧渲染前清空图像（将所有像素设为黑色 0）
- */
-void clear_img(t_game *game)
-{
-	int i = 0;
-	while (i < HEIGHT)
-	{
-		int j = 0;
-		while (j < WIDTH)
-		{
-			put_pixel(j, i, 0, game);
-			j++;
-		}
-		i++;
-	}
-}
-
-/**
- * 遍历地图数组并在 2D 小地图上绘制所有的墙 ('1')
- */
-void draw_map(t_game *game)
-{
-	char **map = game->map;
-	int i = 0;
-
-	while (map[i])
-	{
-		int j = 0;
-		while (map[i][j])
-		{
-			if (map[i][j] == '1')
-				draw_square(j * BLOCK, i * BLOCK, BLOCK, 0xFF, game);
-			j++;
-		}
-		i++;
-	}
-}
 
 /**
  * 渲染屏幕的一列像素：天花板 -> 墙壁 -> 地板
@@ -277,7 +200,6 @@ void draw_line(t_player *player, t_game *game, float ray_angle, int i)
 int draw_loop(t_game *game)
 {
 	t_player *player = &game->player;
-	clear_img(game);
 
 	// 1. 计算方向向量 (玩家正前方)
 	float dir_x = cos(player->angle);
@@ -304,12 +226,6 @@ int draw_loop(t_game *game)
 
 		draw_line(player, game, ray_angle, i);
 		i++;
-	}
-
-	if (DEBUG)
-	{
-		draw_square(player->x * 10, player->y * 10, 5, 0x00FF00, game); // 注意 2D 缩放
-		draw_map(game);
 	}
 
 	move_player(player, game);
