@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: weiyang <marvin@42.fr>                     +#+  +:+       +#+         #
+#    By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/09 20:02:16 by weiyang           #+#    #+#              #
-#    Updated: 2026/02/09 20:02:21 by weiyang          ###   ########.fr        #
+#    Updated: 2026/02/11 12:23:21 by yzhang2          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,11 +25,14 @@ SRC       = $(shell find $(SRC_DIR) -name "*.c")
 # 保持目录结构将 .c 映射到 .o
 OBJ       = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
-MLX_DIR   = includes/minilibx-linux
+MLX_DIR   = minilibx-linux
 MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz
 
-all: $(NAME)
+all: mlx $(NAME)
 
+mlx:
+	$(MAKE) -C $(MLX_DIR)
+	
 $(NAME): $(OBJ)
 	$(CC) $(OBJ) -o $(NAME) $(MLX_FLAGS)
 
