@@ -216,6 +216,19 @@ void draw_line(t_player *player, t_game *game, float ray_angle, int i)
 	else
 		perp_wall_dist = side_dist_y - delta_dist_y;
 
+	// --- 关键：修正鱼眼效应 ---
+	// 计算射线角度与玩家正前方角度的差值
+	float angle_diff = ray_angle - player->angle;
+
+	// 保证角度差在 [-PI, PI] 之间
+	if (angle_diff < -PI)
+		angle_diff += 2 * PI;
+	if (angle_diff > PI)
+		angle_diff -= 2 * PI;
+
+	// 使用余弦修正：垂直距离 = 实际距离 * cos(角度差)
+	perp_wall_dist = perp_wall_dist * cos(angle_diff);
+
 	if (perp_wall_dist < 0.0001f)
 		perp_wall_dist = 0.0001f;
 
