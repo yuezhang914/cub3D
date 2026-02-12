@@ -100,7 +100,7 @@ typedef struct s_texture
 {
 	char				*path;      /* xpm 文件路径 [ONCE-YZ:parse 写][WY 不写] */
 	void				*img_ptr;   /* mlx 图像对象 [ONCE-YZ:setup 写] */
-	int					*addr;
+	int					*addr;      /* 像素数据的整数型首地址 (可理解为 data 的 int 映射) [YZ:render 读] */
 	int					width;     /* 贴图宽度 [ONCE-YZ:setup 写] */
 	int					height;    /* 贴图高度 [ONCE-YZ:setup 写] */
 	void				*data;      /* 像素数组首地址 [ONCE-YZ:setup 写][YZ:render 读] */
@@ -133,6 +133,9 @@ typedef struct s_player
 
 	bool left_rotate;
 	bool right_rotate;
+
+	float move_speed;
+	float rotate_speed;
 	
 } t_player;
 
@@ -183,7 +186,6 @@ typedef struct s_game
 	float focal_length; /* 投影焦距（影响墙高）[YZ 写] */
 
 	/* ====== 输入状态：按键是否按下（hook 写，loop 读） ====== */
-
 
 	t_player	player;
 

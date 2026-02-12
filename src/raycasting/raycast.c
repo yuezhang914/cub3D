@@ -108,65 +108,41 @@ void draw_map(t_game *game)
 }
 
 /**
- * 碰撞检测函数：判断坐标 (px, py) 是否位于墙壁内
- */
-bool touch(float px, float py, t_game *game)
-{
-	if (px < 0 || py < 0 || px >= WIDTH || py >= HEIGHT)
-		return (true);
-
-	// 将像素坐标转换为地图数组索引
-	int x = (int)px / BLOCK;
-	int y = (int)py / BLOCK;
-
-	// 防止数组索引越界
-	if (y < 0 || y >= 10 || x < 0 || x >= 15)
-		return (true);
-
-	return (game->map[y][x] == '1');
-}
-
-/**
  * 渲染屏幕的一列像素：天花板 -> 墙壁 -> 地板
  */
 void render_column(int x, int start, int end, int tex_x, t_tex *tex, t_game *game)
 {
-	// 1. 计算纹理步进（每个像素对应多少纹理像素）
-	float step = 1.0 * tex->height / (end - start);
+	// 保存原始高度用于计算步进，避免受屏幕边界剪裁的影响
+	float raw_height = (float)(end - start);
+	if (raw_height <= 0)
+		raw_height = 1.0f;
 
-	// 2. 计算纹理初始位置 (tex_pos)
-	// 如果 start < 0，说明墙顶在屏幕上方，我们需要跳过那部分纹理
+	float step = (float)tex->height / raw_height;
+
+	// 计算纹理起始点：如果墙很高，我们需要跳过上面不在屏幕内的贴图部分
 	float tex_pos = 0;
 	if (start < 0)
-	{
-		tex_pos = -start * step; // 补偿：将纹理坐标向下挪
-	}
+		tex_pos = (0 - start) * step;
 
-	// 3. 限制循环范围，防止越界写入
-	int draw_start = (start < 0) ? 0 : start;
-	int draw_end = (end > HEIGHT) ? HEIGHT : end;
+	// 确定在屏幕上实际绘画的像素范围
+	int draw_y = (start < 0) ? 0 : start;
+	int draw_end = (end >= HEIGHT) ? HEIGHT - 1 : end;
 
 	for (int y = 0; y < HEIGHT; y++)
 	{
-		if (y < draw_start)
-		{
-			// 渲染天花板
+		if (y < draw_y)
 			put_pixel(x, y, game->ceiling_color, game);
-		}
-		else if (y >= draw_start && y < draw_end)
+		else if (y <= draw_end)
 		{
-			// 渲染墙壁
-			int tex_y = (int)tex_pos % tex->height;
-			tex_pos += step;
+			int tex_y = (int)tex_pos & (tex->height - 1); // 位运算防溢出（要求贴图高度是2的幂）
+			// 或者使用安全取模：int tex_y = (int)tex_pos % tex->height;
 
 			int color = tex->addr[tex_y * tex->width + tex_x];
 			put_pixel(x, y, color, game);
+			tex_pos += step;
 		}
 		else
-		{
-			// 渲染地板
 			put_pixel(x, y, game->floor_color, game);
-		}
 	}
 }
 /**
@@ -175,118 +151,110 @@ void render_column(int x, int start, int end, int tex_x, t_tex *tex, t_game *gam
  */
 void draw_line(t_player *player, t_game *game, float ray_angle, int i)
 {
-	// --- 1. 初始化 DDA 变量 ---
-	int map_x = (int)(player->x / BLOCK); // 射线当前所在的地图格子坐标
-	int map_y = (int)(player->y / BLOCK);
-
-	float ray_dir_x = cos(ray_angle); // 射线方向向量
+	// --- 1. 初始化 ---
+	int cur_map_x = (int)player->x;
+	int cur_map_y = (int)player->y;
+	float ray_dir_x = cos(ray_angle);
 	float ray_dir_y = sin(ray_angle);
 
-	// delta_dist: 射线跨越一个完整网格线所需的斜边长度
 	float delta_dist_x = (ray_dir_x == 0) ? 1e30 : fabsf(1 / ray_dir_x);
 	float delta_dist_y = (ray_dir_y == 0) ? 1e30 : fabsf(1 / ray_dir_y);
 
-	float side_dist_x; // 射线到下一条网格线的初始长度
+	float side_dist_x;
 	float side_dist_y;
-	int step_x; // 步进方向 (1 或 -1)
+	int step_x;
 	int step_y;
 
-	// --- 2. 计算步进方向和 side_dist 的“第一跳”起始距离 ---
+	// --- 2. 计算起始距离 ---
 	if (ray_dir_x < 0)
 	{
 		step_x = -1;
-		side_dist_x = (player->x / BLOCK - map_x) * delta_dist_x;
+		side_dist_x = (player->x - (float)cur_map_x) * delta_dist_x;
 	}
 	else
 	{
 		step_x = 1;
-		side_dist_x = (map_x + 1.0 - player->x / BLOCK) * delta_dist_x;
+		side_dist_x = ((float)cur_map_x + 1.0f - player->x) * delta_dist_x;
 	}
 	if (ray_dir_y < 0)
 	{
 		step_y = -1;
-		side_dist_y = (player->y / BLOCK - map_y) * delta_dist_y;
+		side_dist_y = (player->y - (float)cur_map_y) * delta_dist_y;
 	}
 	else
 	{
 		step_y = 1;
-		side_dist_y = (map_y + 1.0 - player->y / BLOCK) * delta_dist_y;
+		side_dist_y = ((float)cur_map_y + 1.0f - player->y) * delta_dist_y;
 	}
 
-	// --- 3. DDA 循环：跳格子直到撞墙 ---
-	int side = 0; // 记录撞击的是垂直墙(0)还是水平墙(1)
+	// --- 3. DDA 循环 ---
+	int side = 0;
 	while (1)
 	{
 		if (side_dist_x < side_dist_y)
 		{
 			side_dist_x += delta_dist_x;
-			map_x += step_x;
+			cur_map_x += step_x;
 			side = 0;
 		}
 		else
 		{
 			side_dist_y += delta_dist_y;
-			map_y += step_y;
+			cur_map_y += step_y;
 			side = 1;
 		}
-		if (map_y < 0 || map_y >= 10 || map_x < 0 || map_x >= 15)
+		if (cur_map_y < 0 || cur_map_y >= game->map_h || cur_map_x < 0 || cur_map_x >= game->map_w)
 			break;
-		if (game->map[map_y][map_x] == '1')
+		if (game->map[cur_map_y][cur_map_x] == '1')
 			break;
 	}
 
-	// --- 4. 距离修正 (核心：计算垂直投影距离以消除鱼眼效应) ---
+	// --- 4. 投影计算 ---
 	float perp_wall_dist;
 	if (side == 0)
 		perp_wall_dist = side_dist_x - delta_dist_x;
 	else
 		perp_wall_dist = side_dist_y - delta_dist_y;
 
-	// 进一步修正：将距离投影到玩家视角正前方
-	float angle_diff = ray_angle - player->angle;
-	float corrected_dist = perp_wall_dist * cos(angle_diff);
-	float dist_pixels = corrected_dist * BLOCK;
+	if (perp_wall_dist < 0.0001f)
+		perp_wall_dist = 0.0001f;
 
-	// --- 5. 计算墙壁高度并进行垂直居中 ---
-	if (dist_pixels < 0.1f)
-		dist_pixels = 0.1f;
-	float height = (BLOCK * HEIGHT) / dist_pixels;
+	float height = (float)HEIGHT / perp_wall_dist;
+	int wall_start = (HEIGHT / 2) - (int)(height / 2);
+	int wall_end = (HEIGHT / 2) + (int)(height / 2);
 
-	int wall_start = (HEIGHT / 2) - (height / 2); // 墙顶位置
-	int wall_end = (HEIGHT / 2) + (height / 2);	  // 墙底位置
+	// 边界保护（防止 render_column 像素溢出）
+	if (wall_start < 0)
+		wall_start = 0;
+	if (wall_end >= HEIGHT)
+		wall_end = HEIGHT - 1;
 
-	// 在 draw_line 函数中，计算完距离后加入：
+	// --- 5. 贴图选择逻辑 ---
 	t_tex *tex;
-
-	if (side == 0) // 撞击垂直墙（左右方向）
+	if (side == 0)
 	{
-		if (ray_dir_x > 0) // 射线向右，撞到的是墙的西面（显示东贴图）
-			tex = &game->east;
-		else // 射线向左，撞到的是墙的东面（显示西贴图）
-			tex = &game->west;
+		tex = (ray_dir_x > 0) ? &game->east : &game->west;
 	}
-	else // 撞击水平墙（上下方向）
+	else
 	{
-		if (ray_dir_y > 0) // 射线向下，撞到的是墙的北面（显示南贴图）
-			tex = &game->south;
-		else // 射线向上，撞到的是墙的南面（显示北贴图）
-			tex = &game->north;
+		tex = (ray_dir_y > 0) ? &game->south : &game->north;
 	}
 
+	// --- 6. 贴图坐标计算 ---
 	float wall_x;
 	if (side == 0)
-		wall_x = player->y / BLOCK + perp_wall_dist * ray_dir_y;
+		wall_x = player->y + perp_wall_dist * ray_dir_y;
 	else
-		wall_x = player->x / BLOCK + perp_wall_dist * ray_dir_x;
+		wall_x = player->x + perp_wall_dist * ray_dir_x;
 	wall_x -= floor(wall_x);
 
 	int tex_x = (int)(wall_x * (float)tex->width);
 
-	// 修正镜像，确保你绕着柱子走的时候贴图不会“倒着走”
+	// 镜像修正
 	if ((side == 0 && ray_dir_x < 0) || (side == 1 && ray_dir_y > 0))
 		tex_x = tex->width - tex_x - 1;
 
-	// 渲染天花板、墙壁、地板
+	// --- 7. 执行渲染 ---
 	render_column(i, wall_start, wall_end, tex_x, tex, game);
 }
 
@@ -298,25 +266,40 @@ int draw_loop(t_game *game)
 	t_player *player = &game->player;
 	clear_img(game);
 
-	if (DEBUG)
-	{
-		draw_square(player->x, player->y, 10, 0x00FF00, game); // 画玩家点
-		draw_map(game);										   // 画 2D 地图
-	}
+	// 1. 计算方向向量 (玩家正前方)
+	float dir_x = cos(player->angle);
+	float dir_y = sin(player->angle);
 
-	// 发射射线扫描全屏，FOV 设为 60 度 (PI / 3)
-	float fraction = (PI / 3) / WIDTH;
-	float start_angle = player->angle - (PI / 6);
+	// 2. 计算视平面向量 (垂直于方向向量)
+	// 0.66 决定了 FOV。0.66 对应约 66度，你可以根据需要调整。
+	// 如果 Y 轴向下，这里的正负号可能需要微调 (例如 -dir_y, dir_x)
+	float plane_x = -dir_y * 0.66f;
+	float plane_y = dir_x * 0.66f;
 
 	int i = 0;
 	while (i < WIDTH)
 	{
-		draw_line(player, game, start_angle, i);
-		start_angle += fraction;
+		// 3. 计算当前列在平面上的位置 (-1 到 1)
+		float camera_x = 2.0f * i / (float)WIDTH - 1.0f;
+
+		// 4. 合成射线的方向向量
+		float ray_dir_x = dir_x + plane_x * camera_x;
+		float ray_dir_y = dir_y + plane_y * camera_x;
+
+		// 5. 计算这一条射线的角度，传给你的 draw_line
+		float ray_angle = atan2(ray_dir_y, ray_dir_x);
+
+		draw_line(player, game, ray_angle, i);
 		i++;
 	}
 
-	move_player(player, game); // 根据按键更新玩家坐标
+	if (DEBUG)
+	{
+		draw_square(player->x * 10, player->y * 10, 5, 0x00FF00, game); // 注意 2D 缩放
+		draw_map(game);
+	}
+
+	move_player(player, game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return 0;
 }

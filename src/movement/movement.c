@@ -18,21 +18,18 @@
  */
 void init_player(t_player *player)
 {
-
-
-    player->x = WIDTH / 2;
-    player->y = HEIGHT / 2;
-	player->map_x = (player->x) / 64;
-	player->map_y = (player->y) / 64;
-	player->angle= PI / 2;
-    player->key_up = false;
-    player->key_down = false;
-    player->key_left = false;
-    player->key_right = false;
-
+	// 重置按键状态
+	player->key_up = false;
+	player->key_down = false;
+	player->key_left = false;
+	player->key_right = false;
 	player->left_rotate = false;
 	player->right_rotate = false;
-	
+
+	// 建议加上移动和旋转的速度配置
+	// 因为现在用的是地图单位（1.0 是一个格子），所以数值要小
+	player->move_speed = 0.05f;
+	player->rotate_speed = 0.04f;
 }
 
 /**
@@ -42,25 +39,25 @@ void init_player(t_player *player)
  */
 int key_press(int keycode, void *param)
 {
-    t_player *player = (t_player *)param;
+	t_player *player = (t_player *)param;
 
-    if (keycode == W)
-        player->key_up = true;
-    else if (keycode == S)
-        player->key_down = true;
-    else if (keycode == A)
-        player->key_left = true;
-    else if (keycode == D)
-        player->key_right = true;
-    // 如果需要按 ESC 退出，也可以加在这里
+	if (keycode == W)
+		player->key_up = true;
+	else if (keycode == S)
+		player->key_down = true;
+	else if (keycode == A)
+		player->key_left = true;
+	else if (keycode == D)
+		player->key_right = true;
+	// 如果需要按 ESC 退出，也可以加在这里
 	else if (keycode == LEFT)
 		player->left_rotate = true;
 	else if (keycode == RIGHT)
 		player->right_rotate = true;
-    else if (keycode == ESC)
-        exit(0);
+	else if (keycode == ESC)
+		exit(0);
 
-    return 0;
+	return 0;
 }
 
 /**
@@ -69,18 +66,51 @@ int key_press(int keycode, void *param)
  */
 int key_release(int keycode, void *param)
 {
-    t_player *player = (t_player *)param;
+	t_player *player = (t_player *)param;
 
-    if (keycode == W) player->key_up = false;
-    if (keycode == S) player->key_down = false;
-    if (keycode == A) player->key_left = false;
-    if (keycode == D) player->key_right = false;
-	
-    // 补上旋转键的释放
-    if (keycode == LEFT) player->left_rotate = false;
-    if (keycode == RIGHT) player->right_rotate = false;
+	if (keycode == W)
+		player->key_up = false;
+	if (keycode == S)
+		player->key_down = false;
+	if (keycode == A)
+		player->key_left = false;
+	if (keycode == D)
+		player->key_right = false;
 
-    return 0;
+	// 补上旋转键的释放
+	if (keycode == LEFT)
+		player->left_rotate = false;
+	if (keycode == RIGHT)
+		player->right_rotate = false;
+
+	return 0;
+}
+
+/**
+ * 碰撞检测函数：判断坐标 (px, py) 是否位于墙壁内
+ */
+bool touch(float px, float py, t_game *game)
+{
+	// 1. 基础边界检查：防止 px 或 py 变成负数
+	if (px < 0 || py < 0)
+		return (true);
+
+	// 2. 转换坐标：直接取整就是地图数组索引
+	// 不再需要除以 BLOCK，因为现在的单位就是 1.0
+	int x = (int)px;
+	int y = (int)py;
+
+	// 3. 数组越界检查：使用解析出来的 map_h 和 map_w
+	// 不要写死 10 或 15，因为地图大小是动态的
+	if (y >= game->map_h || x >= game->map_w)
+		return (true);
+
+	// 4. 碰撞判定：如果格子里是墙 ('1') 或者是空格 (' ')，都不能走
+	// (通常空格也被视为地图外部区域)
+	if (game->map[y][x] == '1' || game->map[y][x] == ' ')
+		return (true);
+
+	return (false);
 }
 
 /**
@@ -90,45 +120,56 @@ int key_release(int keycode, void *param)
  */
 void move_player(t_player *player, t_game *game)
 {
-    float speed = 3.0;
-    float angle_speed = 0.03;
     float next_x = 0;
     float next_y = 0;
 
-    // 1. 处理旋转
-    if (player->left_rotate)  player->angle -= angle_speed;
-    if (player->right_rotate) player->angle += angle_speed;
-    
-    // 角度标准化
-    if (player->angle > 2 * PI) player->angle -= 2 * PI;
-    if (player->angle < 0)      player->angle += 2 * PI;
+    // 1. 处理旋转 (使用结构体内的旋转速度)
+    if (player->left_rotate)
+        player->angle -= player->rotate_speed;
+    if (player->right_rotate)
+        player->angle += player->rotate_speed;
 
-    // 2. 计算这一帧“想去”的位置偏移量
+    // 角度标准化
+    if (player->angle > 2 * PI)
+        player->angle -= 2 * PI;
+    else if (player->angle < 0)
+        player->angle += 2 * PI;
+
+    // 2. 计算位置偏移量 (使用结构体内的移动速度)
     float cos_a = cos(player->angle);
     float sin_a = sin(player->angle);
 
-    if (player->key_up) {
-        next_x += cos_a * speed;
-        next_y += sin_a * speed;
+    // 前后移动
+    if (player->key_up)
+    {
+        next_x += cos_a * player->move_speed;
+        next_y += sin_a * player->move_speed;
     }
-    if (player->key_down) {
-        next_x -= cos_a * speed;
-        next_y -= sin_a * speed;
-    }
-    if (player->key_left) { // 垂直向左
-        next_x += sin_a * speed;
-        next_y -= cos_a * speed;
-    }
-    if (player->key_right) { // 垂直向右
-        next_x -= sin_a * speed;
-        next_y += cos_a * speed;
+    if (player->key_down)
+    {
+        next_x -= cos_a * player->move_speed;
+        next_y -= sin_a * player->move_speed;
     }
 
-    // 3. 预测性碰撞检测 (Predictive Collision)
-    // 分开检测 X 和 Y，实现沿墙滑动
+    // 左右平移 (Strafe)
+    if (player->key_left)
+    {
+        next_x += sin_a * player->move_speed;
+        next_y -= cos_a * player->move_speed;
+    }
+    if (player->key_right)
+    {
+        next_x -= sin_a * player->move_speed;
+        next_y += cos_a * player->move_speed;
+    }
+
+    // 3. 预测性碰撞检测：分开检测实现“沿墙滑动”
     if (!touch(player->x + next_x, player->y, game))
         player->x += next_x;
     if (!touch(player->x, player->y + next_y, game))
         player->y += next_y;
-}
 
+    // 4. 同步更新地图索引
+    player->map_x = (int)player->x;
+    player->map_y = (int)player->y;
+}
