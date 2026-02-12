@@ -233,7 +233,7 @@ void draw_line(t_player *player, t_game *game, float ray_angle, int i)
 	// --- 5. 计算墙壁高度并进行垂直居中 ---
 	if (dist_pixels < 0.1f)
 		dist_pixels = 0.1f;
-	float height = (BLOCK * HEIGHT) / dist_pixels;
+	float height = (BLOCK * HEIGHT) / dist_pixels;// 当玩家距离墙壁BLOCK 的距离时， 投影的高度占据整个屏幕的高度
 
 	int wall_start = (HEIGHT / 2) - (height / 2); // 墙顶位置
 	int wall_end = (HEIGHT / 2) + (height / 2);	  // 墙底位置
