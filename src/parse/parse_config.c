@@ -14,7 +14,7 @@
 #include "func.h"
 
 /*
-** 作用：检查配置是否齐全（4贴图+2颜色）
+**  检查game 的配置是否完备， 包括是否有四面墙的贴图路径，天花板和地板是否分配了颜色。 
 */
 static bool	is_config_complete(t_game *game)
 {
@@ -26,9 +26,10 @@ static bool	is_config_complete(t_game *game)
 }
 
 /*
-** 作用：解析贴图路径行（NO/SO/WE/EA）
+** 作用：从line的内容解析四面墙的贴图路径
 ** 规则：必须两段：标识 + 路径；路径必须以 .xpm 结尾
 */
+
 static void	set_texture_path(t_game *game, t_line_type type, char *line)
 {
 	char	**words;
@@ -55,7 +56,7 @@ static void	set_texture_path(t_game *game, t_line_type type, char *line)
 }
 
 /*
-** 作用：读取一个 0~255 的整数（给颜色解析用）
+** 作用：读取一个 0~255 的整数（给颜色解析用）， 相当于对于颜色的atoi
 ** 返回：true 表示失败，false 表示成功
 */
 static bool	read_rgb_value(char *s, int *i, int *out)
