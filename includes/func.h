@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:59:13 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 12:38:05 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/13 21:47:52 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,31 +81,17 @@ void		parse_config(t_game *game);
 void		parse_map(t_game *game);
 t_line_type	set_input_line_type(t_game *game, char *line);
 
-// // setup
-// void	init_game(t_game *game);
-// void	remember_image(t_game *game, void *ptr);
-// void	setup_hooks(t_game *game);
-// void	setup_mlx(t_game *game);
-// void	load_texture(t_game *game, t_tex *tex);
-// void	load_wall_textures(t_game *game);
-// void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
+// setup
+void	init_game(t_game *game);
+void	remember_image(t_game *game, void *ptr);
+void	setup_hooks(t_game *game);
+void	setup_mlx(t_game *game);
+void	load_texture(t_game *game, t_tex *tex);
+void	load_wall_textures(t_game *game);
+void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
 
-// render
-// void put_pixel(int x,int y,int color,t_game *game);
-// void clear_image(t_game *game);
-// int tex_sample(t_tex *tex, t_coords uv);
-// int wall_tex_color(t_game *game, t_coords wall_hit, float rel_y);
-// void draw_walls(t_game *game);
-// void draw_image(t_game *game, t_tex *tex, t_int_xy top_left);
-// void draw_from_tex_to_area(t_game *game, t_tex *tex, t_rect area);
-// void draw_line(t_game *game, t_line line);
-// void draw_square(t_game *game, t_square sq);
-// void draw_full_square(t_game *game, t_square sq);
-// void draw_circle_full(t_game *game, t_circle circle);
-// void superpose_anim(t_game *game, t_int_xy tile, t_coords relative, int *color);
 
 // // game
-
 // bool    is_wall(t_game *game, t_coords coords);
 
 // int		game_step(t_game *game);
@@ -124,6 +110,19 @@ t_line_type	set_input_line_type(t_game *game, char *line);
 // t_int_xy	adjacent_tile_ahead(t_game *game);
 // t_int_xy	find_tile(t_game *game, char c);
 
+// render
+// void put_pixel(int x,int y,int color,t_game *game);
+// void clear_image(t_game *game);
+// int tex_sample(t_tex *tex, t_coords uv);
+// int wall_tex_color(t_game *game, t_coords wall_hit, float rel_y);
+// void draw_walls(t_game *game);
+// void draw_image(t_game *game, t_tex *tex, t_int_xy top_left);
+// void draw_from_tex_to_area(t_game *game, t_tex *tex, t_rect area);
+// void draw_line(t_game *game, t_line line);
+// void draw_square(t_game *game, t_square sq);
+// void draw_full_square(t_game *game, t_square sq);
+// void draw_circle_full(t_game *game, t_circle circle);
+// void superpose_anim(t_game *game, t_int_xy tile, t_coords relative, int *color);
 
 
 #endif

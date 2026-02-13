@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:25:49 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 11:49:12 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 17:52:44 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,21 +52,21 @@ static bool	is_map_line(char *str)
 ** 作用：把第一个单词（NO/SO/WE/EA/F/C）翻译成对应的 t_line_type
 ** 返回：匹配则返回类型；不匹配返回 WRONG
 */
-static t_line_type	kind_from_word(char *w0)
+static t_line_type	kind_from_word(char *first_word)
 {
-	if (w0 == NULL)
+	if (first_word == NULL)
 		return (WRONG);
-	if (ft_strcmp(w0, "NO") == 0)
+	if (ft_strcmp(first_word, "NO") == 0)
 		return (NORTH);
-	if (ft_strcmp(w0, "SO") == 0)
+	if (ft_strcmp(first_word, "SO") == 0)
 		return (SOUTH);
-	if (ft_strcmp(w0, "WE") == 0)
+	if (ft_strcmp(first_word, "WE") == 0)
 		return (WEST);
-	if (ft_strcmp(w0, "EA") == 0)
+	if (ft_strcmp(first_word, "EA") == 0)
 		return (EAST);
-	if (ft_strcmp(w0, "F") == 0)
+	if (ft_strcmp(first_word, "F") == 0)
 		return (FLOOR);
-	if (ft_strcmp(w0, "C") == 0)
+	if (ft_strcmp(first_word, "C") == 0)
 		return (CEILING);
 	return (WRONG);
 }

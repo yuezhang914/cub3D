@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 12:16:13 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 17:49:15 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ typedef struct s_game
 
 	/* ====== 读入的 .cub 文件内容（parse 用） ====== */
 	char *entire_cubfile;        /* 整个文件字符串 [ONCE-YZ parse 写] */
-	char **cubfile_line_by_line; /* 按行切分数组 [ONCE-YZ parse 写] */
+	char **cubfile_lines; /* 按行切分数组 [ONCE-YZ parse 写] */
 	int cubfile_fd;              /* open 后的 fd [ONCE-YZ parse 写] */
 
 	/* ====== 地图信息（parse 生产，movement+raycast+render 消费） ====== */
