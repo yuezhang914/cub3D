@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:25:17 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 11:46:31 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 17:49:15 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ static void	check_args(t_game *game, int argc, char **argv)
 
 	/* 必须只有 1 个参数：地图文件路径 */
 	if (argc != 2)
-		graceful_exit(game, 1, __func__, "Wrong nbr of args.");
+		graceful_exit(game, 1, __func__, "Wrong argument number.");
 
 	/* 必须以 .cub 结尾 */
 	len = ft_strlen(argv[1]);
 	if (len < 5)
-		graceful_exit(game, 1, __func__, "Arg has to end with '.cub'.");
+		graceful_exit(game, 1, __func__, "Argument should end with '.cub'.");
 	if (ft_strcmp(".cub", argv[1] + len - 4) != 0)
-		graceful_exit(game, 1, __func__, "Arg has to end with '.cub'.");
+		graceful_exit(game, 1, __func__, "Argument should end with '.cub'.");
 }
 
 /*
@@ -52,8 +52,8 @@ static void	import_cub(t_game *game, char *path)
 	if (game->entire_cubfile == NULL || *game->entire_cubfile == '\0')
 		graceful_exit(game, 1, __func__, "Empty .cub-file.");
 
-	game->cubfile_line_by_line = splitlines(game, game->entire_cubfile);
-	if (game->cubfile_line_by_line == NULL)
+	game->cubfile_lines = splitlines(game, game->entire_cubfile);
+	if (game->cubfile_lines == NULL)
 		graceful_exit(game, 1, __func__, "ft_split lines failed.");
 }
 

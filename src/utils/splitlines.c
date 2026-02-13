@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:11:52 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/07 17:36:19 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/11 17:49:15 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static int	sfill_array(t_game *game, char *pos, int line_count, char **result)
 ** 用在哪里：
 **   解析 .cub 时：
 **     entire_cubfile = ft_readfile(...)
-**     cubfile_line_by_line = splitlines(game, entire_cubfile)
+**     cubfile_lines = splitlines(game, entire_cubfile)
 **
 ** 为什么要“保留空行”：
 **   subject 允许配置区出现空行，用 splitlines 能让 parser 更容易处理这些空行。
