@@ -34,6 +34,7 @@ typedef struct s_int_coordinates	t_int_xy;
 typedef struct s_img				t_img;
 typedef struct s_player				t_player;
 typedef struct s_render_vars		t_render_vars;
+typedef struct s_dda				t_dda;
 
 size_t		ft_strlen(const char *s);
 int			ft_strcmp(char *str1, char *str2);
@@ -77,6 +78,8 @@ void		init_player(t_player *player);
 int			key_press(int keycode, void *param);
 int			key_release(int keycode, void *param);
 void		move_player(t_player *player, t_game *game);
+void		init_dda(t_game *game, t_dda *d, float r_dir_x, float r_dir_y);
+int			perform_dda(t_game *game, t_dda *d);
 void		draw_line(t_game *game, float r_dir_x, float r_dir_y, int i);
 void		render_column(t_render_vars v, t_game *game);
 int			draw_loop(t_game *game);

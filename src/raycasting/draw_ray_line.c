@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_ray_line.c                                        :+:      :+:    :+:   */
+/*   draw_ray_line.c                                        :+:      :+:    :+*/
 /*                                                    +:+ +:+         +:+     */
 /*   By: weiyang <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,70 +12,6 @@
 
 #include "cube3d.h"
 
-/**
- * 初始化 DDA 算法所需的步进方向和初始边距
- */
-static void	init_dda(t_game *game, t_dda *d, float r_dir_x, float r_dir_y)
-{
-	d->map_x = (int)game->player.x;
-	d->map_y = (int)game->player.y;
-	d->delta_x = (r_dir_x == 0) ? 1e30 : fabsf(1.0f / r_dir_x);
-	d->delta_y = (r_dir_y == 0) ? 1e30 : fabsf(1.0f / r_dir_y);
-	if (r_dir_x < 0)
-	{
-		d->step_x = -1;
-		d->side_x = (game->player.x - d->map_x) * d->delta_x;
-	}
-	else
-	{
-		d->step_x = 1;
-		d->side_x = (d->map_x + 1.0f - game->player.x) * d->delta_x;
-	}
-	if (r_dir_y < 0)
-	{
-		d->step_y = -1;
-		d->side_y = (game->player.y - d->map_y) * d->delta_y;
-	}
-	else
-	{
-		d->step_y = 1;
-		d->side_y = (d->map_y + 1.0f - game->player.y) * d->delta_y;
-	}
-}
-
-/**
- * 执行 DDA 核心循环，直到碰撞墙壁或超出地图边界
- */
-static int	perform_dda(t_game *game, t_dda *d)
-{
-	while (1)
-	{
-		if (d->side_x < d->side_y)
-		{
-			d->side_x += d->delta_x;
-			d->map_x += d->step_x;
-			d->side = 0;
-		}
-		else
-		{
-			d->side_y += d->delta_y;
-			d->map_y += d->step_y;
-			d->side = 1;
-		}
-		if (d->map_x < 0 || d->map_x >= game->map_w \
-			|| d->map_y < 0 || d->map_y >= game->map_h)
-			return (0);
-		if (game->map[d->map_y][d->map_x] == '1')
-			break ;
-	}
-	return (1);
-}
-
-/**
- * 根据射线方向和碰撞平面选择对应的纹理
- * 作用：判断碰撞的是哪一面墙（东西或南北），并根据射线向量的正负
- * 确定具体的方位（东、西、南、北），返回对应的纹理指针。
- */
 static t_tex	*get_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
 {
 	if (d->side == 0)
@@ -84,17 +20,11 @@ static t_tex	*get_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
 			return (&game->east);
 		return (&game->west);
 	}
-	else
-	{
-		if (r_dy > 0)
-			return (&game->south);
-		return (&game->north);
-	}
+	if (r_dy > 0)
+		return (&game->south);
+	return (&game->north);
 }
 
-/**
- * 计算垂直距离、纹理坐标并填充渲染结构体
- */
 static void	calculate_render_vars(t_game *game, t_dda *d, int i, float r_dir[])
 {
 	t_render_vars	v;
@@ -122,9 +52,6 @@ static void	calculate_render_vars(t_game *game, t_dda *d, int i, float r_dir[])
 	render_column(v, game);
 }
 
-/**
- * 核心射线投射函数
- */
 void	draw_line(t_game *game, float r_dir_x, float r_dir_y, int i)
 {
 	t_dda	d;
