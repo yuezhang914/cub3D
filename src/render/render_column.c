@@ -18,17 +18,14 @@
  */
 void put_pixel(int x, int y, int color, t_game *game)
 {
-	// 边界安全检查，防止非法内存写入导致 Segfault
 	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
 		return;
 	int index = y * game->size_line + x * (game->bpp / 8);
-	// 按照小端序 (B-G-R) 写入颜色分量
-	game->data[index] = color & 0xFF;			  // Blue
-	game->data[index + 1] = (color >> 8) & 0xFF;  // Green
-	game->data[index + 2] = (color >> 16) & 0xFF; // Red
-	game->data[index + 3] = 0xFF;				  // Alpha (不透明)
+	game->data[index] = color & 0xFF;			  
+	game->data[index + 1] = (color >> 8) & 0xFF;  
+	game->data[index + 2] = (color >> 16) & 0xFF; 
+	game->data[index + 3] = 0xFF;		
 }
-
 
 /**
  * 渲染屏幕的一列像素：天花板 -> 墙壁 -> 地板
@@ -46,12 +43,9 @@ void render_column(t_render_vars v, t_game *game)
 	float tex_pos;
 	int color;
 
-	// 1. 绘制天花板
 	y = -1;
 	while (++y < (v.start < 0 ? 0 : v.start))
 		put_pixel(v.x, y, game->ceiling_color, game);
-
-	// 2. 绘制墙体
 	step = 1.0f * v.tex->height / v.line_h;
 	tex_pos = (v.start < 0 ? (0 - v.start) : 0) * step;
 	y = (v.start < 0) ? 0 : v.start;
@@ -64,8 +58,6 @@ void render_column(t_render_vars v, t_game *game)
 		tex_pos += step;
 		y++;
 	}
-
-	// 3. 绘制地板
 	y--;
 	while (++y < HEIGHT)
 		put_pixel(v.x, y, game->floor_color, game);

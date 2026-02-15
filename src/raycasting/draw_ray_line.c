@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_line.c                                        :+:      :+:    :+:   */
+/*   draw_ray_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: weiyang <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -123,7 +123,7 @@ static void	calculate_render_vars(t_game *game, t_dda *d, int i, float r_dir[])
 }
 
 /**
- * 核心射线投射函数 (符合 Norm 规范版本)
+ * 核心射线投射函数
  */
 void	draw_line(t_game *game, float r_dir_x, float r_dir_y, int i)
 {

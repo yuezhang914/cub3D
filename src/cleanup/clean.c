@@ -40,7 +40,6 @@ void	track_clean(t_game *game)
 	game->track_head = NULL;
 }
 
-
 void	graceful_exit(t_game *game, int exit_code, const char *func,
 		char *message)
 {
