@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "cube3d.h"
 #include "func.h"
 
 /*
@@ -21,15 +21,21 @@
 ** 用在哪：
 **   main 一开始最先调用（在 parse 之前），把结构体清零并设置默认参数。
 */
-void	init_game(t_game *game)
+void    init_game(t_game *game)
 {
-	ft_bzero(game, sizeof(t_game));
-	game->player.move_speed = 0.05f;
-	game->player.rot_speed = 0.03f;
-	game->ceiling_color = -1;
-	game->floor_color = -1;
-	game->pix_per_unit = MINI_HEIGHT / (DISTANCE_SEEN * 2);
-	game->focal_length = 2.0 * tan(FOV / 2.0);
+    ft_bzero(game, sizeof(t_game));
+    
+    game->ceiling_color = -1;
+    game->floor_color = -1;
+    
+    // 1. 将角度转换为弧度
+    float fov_rad = FOV * (PI / 180.0f);
+    
+    // 2. 正确计算 focal_length
+    game->focal_length = 2.0 * tan(fov_rad / 2.0);
+    
+    game->pix_per_unit = (float)MINI_HEIGHT / (DISTANCE_SEEN * 2.0f);
+    init_player(&game->player);
 }
 
 /*
@@ -61,9 +67,9 @@ void	remember_image(t_game *game, void *ptr)
 */
 void	setup_hooks(t_game *game)
 {
-	mlx_hook(game->win, 2, 1L << 0, on_key_down, game);
-	mlx_hook(game->win, 3, 1L << 1, on_key_up, game);
-	mlx_hook(game->win, 17, 0, on_window_close, game);
+	mlx_hook(game->win, 2, 1L << 0, key_press, &game->player);
+	mlx_hook(game->win, 3, 1L << 1, key_release, &game->player);
+	//mlx_hook(game->win, 17, 0, exit(0), game);
 }
 
 /*

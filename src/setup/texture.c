@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "cube3d.h"
 #include "func.h"
 
 /*
@@ -26,7 +26,7 @@
 ** 用在哪：
 **   load_anim() 内部，用它替代 sprintf（避免用不允许的函数）。
 */
-static char	*make_anim_path(t_game *game, char *base, int i)
+/*static char	*make_anim_path(t_game *game, char *base, int i)
 {
 	char	*res;
 	int		len;
@@ -41,7 +41,7 @@ static char	*make_anim_path(t_game *game, char *base, int i)
 	ft_memcpy(res + ft_strlen(base) + 4, ".xpm", 4);
 	res[len] = '\0';
 	return (res);
-}
+}*/
 
 /*
 ** 函数：load_texture
@@ -90,7 +90,7 @@ void	load_wall_textures(t_game *game)
 ** 用在哪：
 **   bonus：需要动画精灵/特效时调用（mandatory 可以不调用它）。
 */
-void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path)
+/*void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path)
 {
 	int		i;
 	char	*current_path;
@@ -106,4 +106,4 @@ void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path)
 		load_texture(game, &anim->frames[i]);
 		i++;
 	}
-}
+}*/

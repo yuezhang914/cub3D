@@ -18,9 +18,9 @@ int	main(int argc, char **argv)
 	t_game game;
 
 	init_game(&game);
-	module_parse(&game, argv);
+	module_parse(&game, argc, argv);
 	setup_mlx(&game);
-	mlx_loop_hook(game.mlx, game_step, &game);
+	mlx_loop_hook(game.mlx, draw_loop, &game);
 	mlx_loop(game.mlx);
 }
 
