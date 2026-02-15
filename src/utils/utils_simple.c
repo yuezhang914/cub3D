@@ -12,7 +12,6 @@
 
 #include "cube3d.h"
 
-// 统计字符串 str 中字符 c 出现的次数。
 int	char_count(char *str, char c)
 {
 	int	count;
@@ -29,17 +28,13 @@ int	char_count(char *str, char c)
 	return (count);
 }
 
-// 判断一个字符是不是数字 '0'~'9'
 bool	is_dig(char c)
 {
 	if ((c >= '0' && c <= '9'))
 		return (true);
-	else
-		return (false);
+	return (false);
 }
 
-// 把 str1 跟后面传入的 n 个字符串依次比较，
-// 如果相等就返回“匹配到的那个字符串指针”，否则返回 NULL
 char	*ft_n_strcmp(char *str1, int n, ...)
 {
 	va_list	strs;
@@ -60,7 +55,6 @@ char	*ft_n_strcmp(char *str1, int n, ...)
 	return (NULL);
 }
 
-// 把 src 的前 n 个字节复制到 dest（内存拷贝）
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
 	size_t			i;
@@ -69,7 +63,7 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 
 	dest2 = (unsigned char *)dest;
 	src2 = (unsigned char *)src;
-	if (!dest || !src)
+	if (!dest && !src)
 		return (NULL);
 	i = 0;
 	while (i < n)
@@ -79,4 +73,3 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	}
 	return (dest);
 }
-

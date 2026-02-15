@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "cube3d.h"
 
 size_t	ft_strlen(const char *s)
@@ -72,16 +71,17 @@ char	*ft_strjoin(t_game *game, char const *s1, char const *s2)
 {
 	size_t	size_needed;
 	char	*s3;
+	char	*tmp;
 
 	size_needed = ft_strlen(s1) + ft_strlen(s2) + 1;
 	s3 = track_malloc(game, size_needed * sizeof(char));
 	if (!s3)
 		return (NULL);
+	tmp = s3;
 	while (*s1)
-		*s3++ = *s1++;
+		*tmp++ = *s1++;
 	while (*s2)
-		*s3++ = *s2++;
-	*s3 = '\0';
-	s3 -= (size_needed - 1);
+		*tmp++ = *s2++;
+	*tmp = '\0';
 	return (s3);
 }
