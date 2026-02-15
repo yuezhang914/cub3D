@@ -46,6 +46,7 @@ typedef enum e_line_type	t_line_type;
 typedef struct s_coordinates	t_coords;
 typedef struct s_int_coordinates	t_int_xy;
 typedef struct s_img		t_img;
+typedef struct s_player  t_player;
 
 // utils
 size_t	ft_strlen(const char *s);
@@ -88,7 +89,9 @@ void	setup_hooks(t_game *game);
 void	setup_mlx(t_game *game);
 void	load_texture(t_game *game, t_tex *tex);
 void	load_wall_textures(t_game *game);
-void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
+
+void   init_player(t_player *player);
+//void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
 
 
 // // game

@@ -120,56 +120,41 @@ bool touch(float px, float py, t_game *game)
  */
 void move_player(t_player *player, t_game *game)
 {
-    float next_x = 0;
-    float next_y = 0;
+    float move_x = 0;
+    float move_y = 0;
 
-    // 1. 处理旋转 (使用结构体内的旋转速度)
-    if (player->left_rotate)
-        player->angle -= player->rotate_speed;
-    if (player->right_rotate)
-        player->angle += player->rotate_speed;
+    // 1. 处理旋转 (这部分你已经成功了)
+    if (player->left_rotate) player->angle -= player->rotate_speed;
+    if (player->right_rotate) player->angle += player->rotate_speed;
 
-    // 角度标准化
-    if (player->angle > 2 * PI)
-        player->angle -= 2 * PI;
-    else if (player->angle < 0)
-        player->angle += 2 * PI;
-
-    // 2. 计算位置偏移量 (使用结构体内的移动速度)
+    // 2. 核心移动计算
     float cos_a = cos(player->angle);
     float sin_a = sin(player->angle);
 
-    // 前后移动
-    if (player->key_up)
-    {
-        next_x += cos_a * player->move_speed;
-        next_y += sin_a * player->move_speed;
+    // 计算这一帧总的位移意图
+    if (player->key_up) {
+        move_x += cos_a * player->move_speed;
+        move_y += sin_a * player->move_speed;
     }
-    if (player->key_down)
-    {
-        next_x -= cos_a * player->move_speed;
-        next_y -= sin_a * player->move_speed;
+    if (player->key_down) {
+        move_x -= cos_a * player->move_speed;
+        move_y -= sin_a * player->move_speed;
     }
-
-    // 左右平移 (Strafe)
-    if (player->key_left)
-    {
-        next_x += sin_a * player->move_speed;
-        next_y -= cos_a * player->move_speed;
+    if (player->key_left) {
+        move_x += sin_a * player->move_speed;
+        move_y -= cos_a * player->move_speed;
     }
-    if (player->key_right)
-    {
-        next_x -= sin_a * player->move_speed;
-        next_y += cos_a * player->move_speed;
+    if (player->key_right) {
+        move_x -= sin_a * player->move_speed;
+        move_y += cos_a * player->move_speed;
     }
 
-    // 3. 预测性碰撞检测：分开检测实现“沿墙滑动”
-    if (!touch(player->x + next_x, player->y, game))
-        player->x += next_x;
-    if (!touch(player->x, player->y + next_y, game))
-        player->y += next_y;
+    // 3. 碰撞检测与应用 (加上小的 buffer 防止贴墙死机)
+    float buf_x = (move_x > 0) ? 0.1 : -0.1;
+    float buf_y = (move_y > 0) ? 0.1 : -0.1;
 
-    // 4. 同步更新地图索引
-    player->map_x = (int)player->x;
-    player->map_y = (int)player->y;
+    if (!touch(player->x + move_x + (move_x != 0 ? buf_x : 0), player->y, game))
+        player->x += move_x;
+    if (!touch(player->x, player->y + move_y + (move_y != 0 ? buf_y : 0), game))
+        player->y += move_y;
 }

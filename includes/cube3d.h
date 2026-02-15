@@ -32,6 +32,10 @@
 #define RIGHT 65363
 #define DEBUG 0
 #define BUFFER_SIZE 1024
+#define FOV  66.0
+#define MINI_HEIGHT 200
+#define MINI_WIDTH  200
+#define DISTANCE_SEEN 5
 
 /* ========================================================================== */
 /*  合作分工标记说明（非常重要，避免两个人同时改同一字段）：                    */
