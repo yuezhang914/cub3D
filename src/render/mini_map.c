@@ -12,35 +12,38 @@
 
 #include "cube3d.h"
 
-static void put_mini_pixel(t_game *game, int x, int y, int color)
+static void	put_mini_pixel(t_game *game, int x, int y, int color)
 {
 	if (x < 0 || x >= MINI_WIDTH || y < 0 || y >= MINI_HEIGHT)
-		return;
+		return ;
 	put_pixel(x + 20, y + 20, color, game);
 }
 
-static void draw_mini_player(t_game *game)
+static void	draw_mini_player(t_game *game)
 {
-	int center_x = MINI_WIDTH / 2;
-	int center_y = MINI_HEIGHT / 2;
-	int i;
+	int	center_x;
+	int	center_y;
+	int	i;
+	int	p[2];
 
-	for (int y = -2; y <= 2; y++)
+	center_x = MINI_WIDTH / 2;
+	center_y = MINI_HEIGHT / 2;
+	p[1] = -3;
+	while (++p[1] <= 2)
 	{
-		for (int x = -2; x <= 2; x++)
-			put_mini_pixel(game, center_x + x, center_y + y, 0xFF0000);
+		p[0] = -3;
+		while (++p[0] <= 2)
+			put_mini_pixel(game, center_x + p[0], center_y + p[1], 0xFF0000);
 	}
-	for (i = 0; i < 12; i++)
+	i = -1;
+	while (++i < 12)
 	{
-		int line_x = center_x + (int)(cos(game->player.angle) * i);
-		int line_y = center_y + (int)(sin(game->player.angle) * i);
-		put_mini_pixel(game, line_x, line_y, 0x00FF00);
+		p[0] = center_x + (int)(cos(game->player.angle) * i);
+		p[1] = center_y + (int)(sin(game->player.angle) * i);
+		put_mini_pixel(game, p[0], p[1], 0x00FF00);
 	}
 }
 
-/**
- * 根据小地图像素坐标计算其在地图中对应的颜色
- */
 static int	get_mini_color(t_game *game, int x, int y)
 {
 	float	map_x;
@@ -55,9 +58,6 @@ static int	get_mini_color(t_game *game, int x, int y)
 	return (0x333333);
 }
 
-/**
- * 核心渲染函数：以玩家为中心的动态滚动小地图 (符合 Norm 规范)
- */
 void	render_minimap(t_game *game)
 {
 	int	x;
