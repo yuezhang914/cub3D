@@ -23,6 +23,7 @@ void	destroy_images(t_game *game)
 		current = current->next;
 	}
 }
+
 void	track_clean(t_game *game)
 {
 	t_gnode	*tmp;

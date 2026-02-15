@@ -33,9 +33,7 @@ static void	s_write_str(int fd, const char *s)
 
 void	print_error(const char *func, char *message)
 {
-	/* subject 格式：第一行必须是 "Error" */
 	s_write_str(2, "Error\n");
-	/* 第二行：<func>: <message> */
 	if (func && *func)
 		s_write_str(2, func);
 	else
