@@ -12,10 +12,9 @@
 
 #include "cube3d.h"
 
-
 int	main(int argc, char **argv)
 {
-	t_game game;
+	t_game	game;
 
 	init_game(&game);
 	module_parse(&game, argc, argv);
