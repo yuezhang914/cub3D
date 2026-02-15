@@ -122,6 +122,16 @@ typedef struct s_gnode
 	struct s_gnode *next; /* next [YZ 维护] */
 }				t_gnode;
 
+typedef struct s_render_vars
+{
+    int     x;
+    int     start;
+    int     end;
+    int     line_h;
+    int     tex_x;
+    t_tex   *tex;
+}   t_render_vars;
+
 typedef struct s_player
 {
 	float x;
@@ -195,12 +205,7 @@ typedef struct s_game
 
 }				t_game;
 
-void init_player(t_player *player);
-int key_press(int keycode, void *param);
-int key_release(int keycode, void *param);
-void move_player(t_player *player, t_game *game);
-bool touch(float px, float py, t_game *game);
-int draw_loop(t_game *game);
-char **get_map(void);
+
+
 
 #endif

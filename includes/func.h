@@ -47,6 +47,7 @@ typedef struct s_coordinates	t_coords;
 typedef struct s_int_coordinates	t_int_xy;
 typedef struct s_img		t_img;
 typedef struct s_player  t_player;
+typedef struct s_render_vars	t_render_vars;
 
 // utils
 size_t	ft_strlen(const char *s);
@@ -90,10 +91,15 @@ void	setup_mlx(t_game *game);
 void	load_texture(t_game *game, t_tex *tex);
 void	load_wall_textures(t_game *game);
 
-void   init_player(t_player *player);
+// movement & raycasting
+void init_player(t_player *player);
+int key_press(int keycode, void *param);
+int key_release(int keycode, void *param);
+void move_player(t_player *player, t_game *game);
+bool touch(float px, float py, t_game *game);
+int draw_loop(t_game *game);
+
 //void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
-
-
 // // game
 // bool    is_wall(t_game *game, t_coords coords);
 

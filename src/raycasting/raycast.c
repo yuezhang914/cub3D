@@ -108,32 +108,42 @@ void render_minimap(t_game *game)
 /**
  * 渲染屏幕的一列像素：天花板 -> 墙壁 -> 地板
  */
-void render_column(int x, int start, int end, int tex_x, t_tex *tex, t_game *game, int line_h)
+/**
+ * 渲染屏幕的一列像素 (符合 Norm 规范)
+ * 作用：利用封装后的 v 结构体获取渲染区间和纹理信息，
+ * 依次在屏幕第 x 列绘制天花板、经过缩放处理的墙体纹理以及地板。
+ * 参数：v - 包含所有列渲染所需变量的结构体；game - 游戏主结构体。
+ */
+void render_column(t_render_vars v, t_game *game)
 {
+	int y;
+	float step;
+	float tex_pos;
+	int color;
+
 	// 1. 绘制天花板
-	for (int y = 0; y < (start < 0 ? 0 : start); y++)
-		put_pixel(x, y, game->ceiling_color, game);
+	y = -1;
+	while (++y < (v.start < 0 ? 0 : v.start))
+		put_pixel(v.x, y, game->ceiling_color, game);
 
 	// 2. 绘制墙体
-	float step = 1.0f * tex->height / line_h;
-	float tex_pos = (start < 0 ? (0 - start) : 0) * step;
-
-	int y = (start < 0) ? 0 : start;
-	int draw_end = (end >= HEIGHT) ? HEIGHT - 1 : end;
-
-	while (y <= draw_end)
+	step = 1.0f * v.tex->height / v.line_h;
+	tex_pos = (v.start < 0 ? (0 - v.start) : 0) * step;
+	y = (v.start < 0) ? 0 : v.start;
+	while (y <= (v.end >= HEIGHT ? HEIGHT - 1 : v.end))
 	{
-		int tex_y = (int)tex_pos % tex->height;
-		// 假设 tex->addr 是 int* 数组，直接读取颜色
-		int color = *(int *)(tex->data + (tex_y * tex->size_line + tex_x * (tex->bpp / 8)));
-		put_pixel(x, y, color, game);
+		color = *(int *)(v.tex->data + ((int)tex_pos % v.tex->height *
+											v.tex->size_line +
+										v.tex_x * (v.tex->bpp / 8)));
+		put_pixel(v.x, y, color, game);
 		tex_pos += step;
 		y++;
 	}
 
 	// 3. 绘制地板
-	for (y = draw_end + 1; y < HEIGHT; y++)
-		put_pixel(x, y, game->floor_color, game);
+	y--;
+	while (++y < HEIGHT)
+		put_pixel(v.x, y, game->floor_color, game);
 }
 /**
  * 核心射线投射逻辑 (DDA 算法)
@@ -244,7 +254,14 @@ void draw_line(t_game *game, float r_dir_x, float r_dir_y, int i)
 		tex_x = tex->width - tex_x - 1;
 
 	// --- 7. 调用渲染函数绘制这一列 ---
-	render_column(i, start, end, tex_x, tex, game, line_h);
+	t_render_vars v;
+	v.x = i;
+	v.start = start;
+	v.end = end;
+	v.line_h = line_h;
+	v.tex_x = tex_x;
+	v.tex = tex;
+	render_column(v, game);
 }
 
 /**
