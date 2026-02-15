@@ -12,12 +12,7 @@
 
 #include "cube3d.h"
 
-/**
- * 初始化玩家结构体
- * 作用：设置按键标志位为初始状态（未按下），并配置默认的移动与旋转速度。
- * 参数：player - 指向玩家数据结构 t_player 的指针。
- */
-void init_player(t_player *player)
+void	init_player(t_player *player)
 {
 	player->key_up = false;
 	player->key_down = false;

@@ -12,9 +12,6 @@
 
 #include "cube3d.h"
 
-/**
- * 处理玩家旋转逻辑并更新角度
- */
 static void	handle_rotation(t_player *player)
 {
 	if (player->left_rotate)
@@ -27,9 +24,6 @@ static void	handle_rotation(t_player *player)
 		player->angle += 2 * PI;
 }
 
-/**
- * 根据按键状态计算位移向量
- */
 static void	calculate_move(t_player *p, float *move_x, float *move_y)
 {
 	float	ca;
@@ -59,16 +53,10 @@ static void	calculate_move(t_player *p, float *move_x, float *move_y)
 	}
 }
 
-/**
- * 碰撞检测函数 (Collision Detection)
- * 作用：判断玩家预移动到的浮点坐标 (px, py) 是否有效。通过将坐标转换为地图索引，
- * 检查其是否超出地图边界、是否触碰墙壁 ('1') 或进入非游戏区域 (' ')。
- * 返回值：若坐标不可通行（碰撞或越界）返回 true，否则返回 false。
- */
-static bool touch(float px, float py, t_game *game)
+static bool	touch(float px, float py, t_game *game)
 {
-	int x;
-	int y;
+	int	x;
+	int	y;
 
 	if (px < 0 || py < 0)
 		return (true);
@@ -81,28 +69,25 @@ static bool touch(float px, float py, t_game *game)
 	return (false);
 }
 
-/**
- * 执行带有缓冲区的碰撞检测并应用最终坐标
- */
 static void	apply_movement(t_player *p, t_game *g, float mx, float my)
 {
 	float	bx;
 	float	by;
 
-	bx = (mx > 0) ? 0.1f : -0.1f;
-	by = (my > 0) ? 0.1f : -0.1f;
-	if (!touch(p->x + mx + (mx != 0 ? bx : 0), p->y, g))
+	bx = 0.1f;
+	if (mx < 0)
+		bx = -0.1f;
+	by = 0.1f;
+	if (my < 0)
+		by = -0.1f;
+	if (!touch(p->x + mx + bx, p->y, g))
 		p->x += mx;
-	if (!touch(p->x, p->y + my + (my != 0 ? by : 0), g))
+	if (!touch(p->x, p->y + my + by, g))
 		p->y += my;
 	p->map_x = (int)p->x;
 	p->map_y = (int)p->y;
 }
 
-/**
- * 玩家移动逻辑执行器
- * 作用：依次处理旋转、位移计算、以及最终的碰撞应用。
- */
 void	move_player(t_player *player, t_game *game)
 {
 	float	move_x;
