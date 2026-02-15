@@ -11,12 +11,7 @@
 /* ************************************************************************** */
 
 #include "cube3d.h"
-#include "func.h"
 
-/*
-** 函数：skip_spaces（static）
-** 作用：跳过行首空格/Tab，返回第一个非空白字符的位置
-*/
 char	*skip_spaces(char *s)
 {
 	while (*s == ' ' || *s == '\t')
@@ -24,11 +19,6 @@ char	*skip_spaces(char *s)
 	return (s);
 }
 
-/*
-** 函数：is_map_line（static）
-** 作用：判断一行是否是地图行
-** 规则：只允许包含 " 10NSWE"，且必须至少出现一个 "10NSWE"（不能全是空格）
-*/
 static bool	is_map_line(char *str)
 {
 	bool	has_tile;
@@ -47,11 +37,6 @@ static bool	is_map_line(char *str)
 	return (has_tile);
 }
 
-/*
-** 函数：kind_from_word（static）
-** 作用：把第一个单词（NO/SO/WE/EA/F/C）翻译成对应的 t_line_type
-** 返回：匹配则返回类型；不匹配返回 WRONG
-*/
 static t_line_type	kind_from_word(char *first_word)
 {
 	if (first_word == NULL)
@@ -71,28 +56,18 @@ static t_line_type	kind_from_word(char *first_word)
 	return (WRONG);
 }
 
-/*
-** 函数：config_kind（static）
-** 作用：尝试把一行当成配置行解析：切第一个单词并映射成类型
-** 返回：是配置项则返回对应类型；否则返回 WRONG
-*/
 static t_line_type	config_kind(t_game *game, char *s)
 {
 	char		**words;
 	t_line_type	type;
 
 	words = ft_split(game, s, ' ');
-	if (words == NULL)
+	if (words == NULL || words[0] == NULL)
 		return (WRONG);
 	type = kind_from_word(words[0]);
 	return (type);
 }
 
-/*
-** 函数：set_input_line_type
-** 作用：把一行分类成：EMPTY / 配置项 / MAP / WRONG
-** 注意：先跳过行首空白；全空白行算 EMPTY；全空格行不会被误判成 MAP
-*/
 t_line_type	set_input_line_type(t_game *game, char *line)
 {
 	char		*s;
