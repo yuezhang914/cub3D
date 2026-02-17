@@ -6,15 +6,11 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:05:48 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 19:05:37 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-<<<<<<< Updated upstream
-#include "func.h"
-=======
->>>>>>> Stashed changes
 
 /*
 ** 函数：init_game
@@ -26,15 +22,6 @@
 */
 void	init_game(t_game *game)
 {
-<<<<<<< Updated upstream
-	ft_bzero(game, sizeof(t_game));
-	game->player.move_speed = 0.05f;
-	game->player.rot_speed = 0.03f;
-	game->ceiling_color = -1;
-	game->floor_color = -1;
-	game->pix_per_unit = MINI_HEIGHT / (DISTANCE_SEEN * 2);
-	game->focal_length = 2.0 * tan(FOV / 2.0);
-=======
 	float	fov_rad;
 
 	ft_bzero(game, sizeof(t_game));
@@ -47,7 +34,6 @@ void	init_game(t_game *game)
 	/* 玩家默认移动参数（出生点由 parse_map 写入 x/y/angle） */
 	game->player.move_speed = 0.06f;
 	game->player.rotate_speed = 0.04f;
->>>>>>> Stashed changes
 }
 
 /*
@@ -97,17 +83,11 @@ void	setup_mlx(t_game *game)
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-<<<<<<< Updated upstream
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
-			&game->endian);
-	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-=======
 	if (!game->img)
 		graceful_exit(game, 1, "setup_mlx", "Image creation failed");
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
 			&game->endian);
 	// 加载纹理，内部也要有失败检查
->>>>>>> Stashed changes
 	load_wall_textures(game);
 	setup_hooks(game);
 }
