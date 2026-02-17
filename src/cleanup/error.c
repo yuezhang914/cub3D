@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 22:02:20 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 20:53:07 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	s_write_str(int fd, const char *s)
 	write(fd, s, s_ft_strlen_safe(s));
 }
 
-void	print_error(const char *func, char *message)
+void	print_error(const char *func, const char *message)
 {
 	/* subject 格式：第一行必须是 "Error" */
 	s_write_str(2, "Error\n");

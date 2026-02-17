@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:42:58 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 21:04:50 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@
 int	game_step(t_game *game)
 {
 	update_player(game);
-	respawn_update(game);
+	// respawn_update(game);
 	clear_image(game);
 	/* 3D 场景：你自己的墙渲染（保持不变） */
 	draw_walls(game);
 	/* 2D 叠加：队友的小地图（合并进你的主循环） */
-	render_minimap(game);
+	// render_minimap(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-	draw_win_logo_if_finished(game);
+	// draw_win_logo_if_finished(game);
 	return (0);
 }
 

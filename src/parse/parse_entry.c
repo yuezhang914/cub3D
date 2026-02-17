@@ -6,28 +6,30 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:25:17 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 19:49:40 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "cub3d.h"
-#include "func.h"
+
 /*
-** 作用：检查命令行参数是否正确
+** 函数：check_args（static）
+** 作用：检查命令行参数是否符合要求：
+**       1) 必须只有一个参数（地图路径）
+**       2) 必须以 ".cub" 结尾
 ** 参数：
-**   game：全局上下文，用于报错时统一退出
-**   argc/argv：main 传入
-** 返回：无（错误就退出）
+**   game：全局上下文，用于错误时 graceful_exit
+**   argc/argv：main 传入的参数
+** 返回：
+**   无（出错直接 graceful_exit 退出）
 */
 static void	check_args(t_game *game, int argc, char **argv)
 {
 	size_t	len;
 
-	/* 必须只有 1 个参数：地图文件路径 */
 	if (argc != 2)
 		graceful_exit(game, 1, __func__, "Wrong argument number.");
-
-	/* 必须以 .cub 结尾 */
 	len = ft_strlen(argv[1]);
 	if (len < 5)
 		graceful_exit(game, 1, __func__, "Argument should end with '.cub'.");
@@ -36,39 +38,54 @@ static void	check_args(t_game *game, int argc, char **argv)
 }
 
 /*
-** 作用：读入 .cub 文件，得到整文件字符串 + 按行切分后的 lines
+** 函数：import_cub（static）
+** 作用：读入 .cub 文件，并把内容保存到：
+**       - game->entire_cubfile：整文件字符串
+**       - game->cubfile_lines：按行切分后的字符串数组
 ** 参数：
-**   game：保存 fd / 整文件内容 / lines
-**   path：argv[1]
-** 返回：无（错误就退出）
+**   game：总结构体（存放读取结果）
+**   path：地图文件路径（argv[1]）
+** 返回：
+**   无（出错直接 graceful_exit 退出）
+** 说明：
+**   这里把 fd 作为局部变量使用，读完立即 close(fd)，避免在 t_game 里增加无用成员。
 */
 static void	import_cub(t_game *game, char *path)
 {
-	game->cubfile_fd = open(path, O_RDONLY);
-	if (game->cubfile_fd < 0)
+	int	fd;
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
 		graceful_exit(game, 1, __func__, "Open() failed.");
 
-	game->entire_cubfile = ft_readfile(game, game->cubfile_fd);
+	game->entire_cubfile = ft_readfile(game, fd);
+	close(fd);
+
 	if (game->entire_cubfile == NULL || *game->entire_cubfile == '\0')
 		graceful_exit(game, 1, __func__, "Empty .cub-file.");
 
 	game->cubfile_lines = splitlines(game, game->entire_cubfile);
 	if (game->cubfile_lines == NULL)
-		graceful_exit(game, 1, __func__, "ft_split lines failed.");
+		graceful_exit(game, 1, __func__, "splitlines() failed.");
 }
 
 /*
-** 作用：parse 总入口：参数检查 + 读文件 + 解析配置 + 解析地图
+** 函数：module_parse
+** 作用：解析模块总入口：
+**       1) 检查参数
+**       2) 读取 .cub 文件（整文本 + lines）
+**       3) 解析配置（NO/SO/WE/EA/F/C）
+**       4) 解析地图并提取玩家
 ** 参数：
-**   game：全局上下文
+**   game：总结构体
 **   argc/argv：main 传入
+** 返回：
+**   无（出错直接 graceful_exit 退出）
 */
 void	module_parse(t_game *game, int argc, char **argv)
 {
 	check_args(game, argc, argv);
 	import_cub(game, argv[1]);
-
-	/* 先配置，后地图（地图必须是最后一段） */
 	parse_config(game);
 	parse_map(game);
 }

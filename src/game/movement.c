@@ -6,111 +6,126 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:43:36 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 20:48:15 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
 /*
-** 函数：try_move_axis
-** 作用：只尝试移动一个轴（x 或 y），并做“墙缓冲碰撞”。
-** 参数：
-**   game：总结构体
-**   axis：'x' 或 'y'
-**   delta：这一轴要移动的距离
-** 用在哪：
-**   move_by() 内部调用两次：一次移动 x，一次移动 y。
-*/
-void	try_move_axis(t_game *game, char axis, float delta)
-{
-	float	nx;
-	float	ny;
-
-	nx = game->player.x;
-	ny = game->player.y;
-	if (axis == 'x')
-		nx += delta;
-	if (axis == 'y')
-		ny += delta;
-	if (axis != 'x' && axis != 'y')
-		graceful_exit(game, 1, __func__, "Wrong axis.");
-	if (blocked_with_buffer(game, nx, ny))
-		return ;
-	if (axis == 'x')
-		game->player.x += delta;
-	if (axis == 'y')
-		game->player.y += delta;
-}
-
-/*
-** 函数：move_by（static）
-** 作用：把一次“二维移动(dx,dy)”拆成两次“单轴移动”，更容易避免卡墙。
-** 参数：
-**   game：总结构体
-**   dx, dy：本帧想移动的 x/y 距离
-** 用在哪：
-**   update_player() 中用于 W/S/A/D 的移动。
-*/
-static void	move_by(t_game *game, float dx, float dy)
-{
-	try_move_axis(game, 'x', dx);
-	try_move_axis(game, 'y', dy);
-}
-
-/*
 ** 函数：blocked_with_buffer（static）
-** 作用：用 4 个角点做碰撞检测（给玩家留一个 WALL_BUFFER 缓冲，不会贴墙穿模）。
+** 作用：判断坐标 (nx, ny) 是否“碰墙”（考虑一个缓冲距离 WALL_BUFFER）
 ** 参数：
-**   game：总结构体
-**   nx, ny：假设移动到的新位置
+**   game：总结构体（用 game->map/map_w/map_h）
+**   nx, ny：玩家尝试移动到的新坐标（float）
 ** 返回：
-**   true：会撞墙/不能走
-**   false：可以走
-** 用在哪：
-**   try_move_axis() 内部。
+**   true  = 会撞墙/越界/走到空白区域
+**   false = 可以通过
 */
 static bool	blocked_with_buffer(t_game *game, float nx, float ny)
 {
-	if (game->map[(int)(ny + WALL_BUFFER)][(int)(nx + WALL_BUFFER)] != '0')
+	int	x0;
+	int	x1;
+	int	y0;
+	int	y1;
+
+	/* 越界直接视为不可走 */
+	if (nx < 0.0f || ny < 0.0f)
 		return (true);
-	if (game->map[(int)(ny - WALL_BUFFER)][(int)(nx - WALL_BUFFER)] != '0')
+	if (nx >= (float)game->map_w || ny >= (float)game->map_h)
 		return (true);
-	if (game->map[(int)(ny + WALL_BUFFER)][(int)(nx - WALL_BUFFER)] != '0')
+	/*
+	** 用一个“方形缓冲盒”近似玩家体积：
+	** 检查 (nx±buffer, ny±buffer) 所在地图格是否是墙 '1' 或空格 ' '
+	*/
+	x0 = (int)(nx - WALL_BUFFER);
+	x1 = (int)(nx + WALL_BUFFER);
+	y0 = (int)(ny - WALL_BUFFER);
+	y1 = (int)(ny + WALL_BUFFER);
+	if (x0 < 0 || y0 < 0 || x1 >= game->map_w || y1 >= game->map_h)
 		return (true);
-	if (game->map[(int)(ny - WALL_BUFFER)][(int)(nx + WALL_BUFFER)] != '0')
+	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' ')
+		return (true);
+	if (game->map[y0][x1] == '1' || game->map[y0][x1] == ' ')
+		return (true);
+	if (game->map[y1][x0] == '1' || game->map[y1][x0] == ' ')
+		return (true);
+	if (game->map[y1][x1] == '1' || game->map[y1][x1] == ' ')
 		return (true);
 	return (false);
 }
 
 /*
-** 函数：update_player
-** 作用：根据按键状态更新玩家角度和位置（真正的移动在这里做）。
+** 函数：try_move_axis（static）
+** 作用：把移动拆成“先走 x 再走 y”，减少卡墙/斜角抖动
 ** 参数：
-**   game：总结构体（读 player 的按键状态，写 player 的位置/角度）
-** 用在哪：
-**   game_step() 每帧调用一次。
+**   game：总结构体
+**   dx, dy：本帧期望移动的位移量
+*/
+static void	try_move_axis(t_game *game, float dx, float dy)
+{
+	float	nx;
+	float	ny;
+
+	nx = game->player.x + dx;
+	ny = game->player.y;
+	if (!blocked_with_buffer(game, nx, ny))
+		game->player.x = nx;
+	nx = game->player.x;
+	ny = game->player.y + dy;
+	if (!blocked_with_buffer(game, nx, ny))
+		game->player.y = ny;
+}
+
+/*
+** 函数：update_player
+** 作用：根据按键状态更新玩家角度与位置（必做版）
+** 参数：
+**   game：总结构体（读取 game->player.key_*，写回 player.x/y/angle）
 */
 void	update_player(t_game *game)
 {
-	if (game->player.left_rotate)
-		game->player.angle += game->player.rotate_speed;
-	if (game->player.right_rotate)
-		game->player.angle -= game->player.rotate_speed;
-	if (game->player.angle > 2.0f * PI)
+	float	dx;
+	float	dy;
+	float	ca;
+	float	sa;
+
+	/* ===== 1) 旋转（用你结构体里真实存在的 key_rot_l/key_rot_r + rot_speed） ===== */
+	if (game->player.key_rot_l)
+		game->player.angle += game->player.rot_speed;
+	if (game->player.key_rot_r)
+		game->player.angle -= game->player.rot_speed;
+	/* 角度归一化到 [0, 2PI) */
+	while (game->player.angle >= 2.0f * PI)
 		game->player.angle -= 2.0f * PI;
-	if (game->player.angle < 0.0f)
+	while (game->player.angle < 0.0f)
 		game->player.angle += 2.0f * PI;
+	/* ===== 2) 位移（前后 = 朝向方向；左右 = 朝向垂直方向） ===== */
+	dx = 0.0f;
+	dy = 0.0f;
+	ca = cosf(game->player.angle);
+	sa = sinf(game->player.angle);
 	if (game->player.key_up)
-		move_by(game, cos(game->player.angle) * game->player.move_speed,
-			-sin(game->player.angle) * game->player.move_speed);
+	{
+		dx += ca * game->player.move_speed;
+		dy += sa * game->player.move_speed;
+	}
 	if (game->player.key_down)
-		move_by(game, -cos(game->player.angle) * game->player.move_speed,
-			sin(game->player.angle) * game->player.move_speed);
-	if (game->player.key_right)
-		move_by(game, sin(game->player.angle) * game->player.move_speed,
-			cos(game->player.angle) * game->player.move_speed);
+	{
+		dx -= ca * game->player.move_speed;
+		dy -= sa * game->player.move_speed;
+	}
 	if (game->player.key_left)
-		move_by(game, -sin(game->player.angle) * game->player.move_speed,
-			-cos(game->player.angle) * game->player.move_speed);
+	{
+		dx += -sa * game->player.move_speed;
+		dy += ca * game->player.move_speed;
+	}
+	if (game->player.key_right)
+	{
+		dx += sa * game->player.move_speed;
+		dy += -ca * game->player.move_speed;
+	}
+	/* ===== 3) 碰撞处理（拆轴移动） ===== */
+	if (dx != 0.0f || dy != 0.0f)
+		try_move_axis(game, dx, dy);
 }
