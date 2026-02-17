@@ -6,11 +6,11 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 22:00:44 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 12:25:17 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
+#include "cub3d.h"
 
 void	destroy_images(t_game *game)
 {

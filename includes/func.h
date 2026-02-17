@@ -6,9 +6,10 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:59:13 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/13 21:47:52 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:34:33 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef FUNC_H
 # define FUNC_H
@@ -90,6 +91,7 @@ void	load_texture(t_game *game, t_tex *tex);
 void	load_wall_textures(t_game *game);
 void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
 
+<<<<<<< Updated upstream
 
 // // game
 // bool    is_wall(t_game *game, t_coords coords);
@@ -124,5 +126,27 @@ void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
 // void draw_circle_full(t_game *game, t_circle circle);
 // void superpose_anim(t_game *game, t_int_xy tile, t_coords relative, int *color);
 
+=======
+/* ============================= game input/loop ============================ */
+int	on_key_down(int keycode, t_game *game);
+int	on_key_up(int keycode, t_game *game);
+int	on_mouse_move(int x, int y, void *param);
+int	on_window_close(void *param);
+int	game_step(t_game *game);
+
+/* ============================== game movement ============================= */
+void	update_player(t_game *game);
+void	try_move_axis(t_game *game, char axis, float delta);
+
+/* ============================== raycasting (DDA) ========================== */
+t_render_vars	get_render_vars(t_game *game, float r_dir_x, float r_dir_y, int i);
+
+/* ================================= render ================================ */
+void	render_minimap(t_game *game);
+void	put_pixel(int x, int y, int color, t_game *game);
+void	clear_image(t_game *game);
+void	draw_walls(t_game *game);
+void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i);
+>>>>>>> Stashed changes
 
 #endif

@@ -6,22 +6,22 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/11 12:54:21 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/13 21:42:21 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
-
+#include "cub3d.h"
 
 int	main(int argc, char **argv)
 {
-	t_game game;
+	t_game	game;
 
 	init_game(&game);
 	module_parse(&game, argv);
 	setup_mlx(&game);
 	mlx_loop_hook(game.mlx, game_step, &game);
 	mlx_loop(game.mlx);
+	return (0);
 }
 
 // void init_game(t_game *game)

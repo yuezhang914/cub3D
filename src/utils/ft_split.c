@@ -6,11 +6,11 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:08:07 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/07 17:36:30 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
+#include "cub3d.h"
 
 static const char	*index_substr(const char *str, int index, char dlm)
 {
