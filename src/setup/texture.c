@@ -54,13 +54,18 @@
 */
 void	load_texture(t_game *game, t_tex *tex)
 {
-	tex->img_ptr = mlx_xpm_file_to_image(game->mlx, tex->path, &tex->width,
+	if (!tex->path)
+		graceful_exit(game, 1, __func__, "Texture path is missing.");
+	tex->img_ptr = mlx_xpm_file_to_image(game->mlx, tex->path, &tex->width, \
 			&tex->height);
 	if (tex->img_ptr == NULL)
-		graceful_exit(game, 1, __func__, "Error loading texture.");
+		graceful_exit(game, 1, __func__, "XPM file to image failed.");
+	/* 将图片记录到追踪系统，确保 graceful_exit 时能被销毁 */
 	remember_image(game, tex->img_ptr);
-	tex->data = mlx_get_data_addr(tex->img_ptr, &tex->bpp, &tex->size_line,
+	tex->data = mlx_get_data_addr(tex->img_ptr, &tex->bpp, &tex->size_line, \
 			&tex->endian);
+	if (tex->data == NULL)
+		graceful_exit(game, 1, __func__, "Failed to get image data address.");
 }
 
 /*
