@@ -6,7 +6,7 @@
 #    By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/09 20:02:16 by weiyang           #+#    #+#              #
-#    Updated: 2026/02/17 22:19:41 by yzhang2          ###   ########.fr        #
+#    Updated: 2026/02/17 23:55:38 by yzhang2          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,8 @@ clean:
 	rm -rf $(OBJ_DIR)
 
 fclean: clean
+	rm -f $(NAME)
+	rm -f $(MLX_LIB)
 
 re: fclean all
 
