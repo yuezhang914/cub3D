@@ -36,12 +36,15 @@ void put_pixel(int x, int y, int color, t_game *game)
  * 依次在屏幕第 x 列绘制天花板、经过缩放处理的墙体纹理以及地板。
  * 参数：v - 包含所有列渲染所需变量的结构体；game - 游戏主结构体。
  */
-void render_column(t_render_vars v, t_game *game)
+void render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 {
 	int y;
 	float step;
 	float tex_pos;
 	int color;
+	t_render_vars v;
+
+	v = get_render_vars(game, r_dir_x, r_dir_y, i);
 
 	y = -1;
 	while (++y < (v.start < 0 ? 0 : v.start))

@@ -96,14 +96,13 @@ void init_player(t_player *player);
 int key_press(int keycode, void *param);
 int key_release(int keycode, void *param);
 void move_player(t_player *player, t_game *game);
-void	draw_line(t_game *game, float r_dir_x, float r_dir_y, int i);
-void render_column(t_render_vars v, t_game *game);
-int draw_loop(t_game *game);
+t_render_vars	get_render_vars(t_game *game, float r_dir_x, float r_dir_y, int i);
 
+// render
 void render_minimap(t_game *game);
 void put_pixel(int x, int y, int color, t_game *game);
-
-
+void render_column(t_game *game, float r_dir_x, float r_dir_y, int i);
+int draw_loop(t_game *game);
 //void	load_anim(t_game *game, t_anim *anim, t_anim params, char *path);
 // // game
 // bool    is_wall(t_game *game, t_coords coords);
