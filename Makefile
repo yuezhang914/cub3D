@@ -6,39 +6,36 @@
 #    By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/09 20:02:16 by weiyang           #+#    #+#              #
-#    Updated: 2026/02/11 12:46:51 by yzhang2          ###   ########.fr        #
+#    Updated: 2026/02/17 23:55:38 by yzhang2          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME      = game
+NAME      = cub3d
 
 CC        = cc
-# -Iincludes 告诉编译器，如果找不到头文件，去 includes 目录下找
-# -Iincludes/minilibx-linux 同理
 CFLAGS    = -Wall -Wextra -Werror -Iincludes -Iincludes/minilibx-linux
 
 SRC_DIR   = src
 OBJ_DIR   = obj
 
-# 递归查找 src 目录下所有的 .c 文件
 SRC       = $(shell find $(SRC_DIR) -name "*.c")
-# 保持目录结构将 .c 映射到 .o
 OBJ       = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
 
 MLX_DIR   = minilibx-linux
-MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz
+MLX_LIB   = $(MLX_DIR)/libmlx.a
+MLX_FLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
 
-all: mlx $(NAME)
+all: $(NAME)
 
-mlx:
+# 只有当 libmlx.a 不存在/被清理时，才会触发编译 mlx
+$(MLX_LIB):
 	$(MAKE) -C $(MLX_DIR)
-	
-$(NAME): $(OBJ)
+
+$(NAME): $(MLX_LIB) $(OBJ)
 	$(CC) $(OBJ) -o $(NAME) $(MLX_FLAGS)
 
-# 核心编译规则
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@) # 自动创建子目录（如 obj/cleanup, obj/raycasting 等）
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
@@ -46,6 +43,7 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
+	rm -f $(MLX_LIB)
 
 re: fclean all
 

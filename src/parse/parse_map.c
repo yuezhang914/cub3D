@@ -6,11 +6,11 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/11 21:45:54 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 21:52:19 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
+#include "cub3d.h"
 #include "func.h"
 
 /*
@@ -106,7 +106,7 @@ static void	validate_open_walls(t_game *game, int i, int j)
 static void	extract_player(t_game *game, int i, int j, bool *found)
 {
 	if (*found)
-		graceful_exit(game, 1, __func__, "Multiple start pos.");
+		graceful_exit(game, 1, __func__, "Multiple start position.");
 	*found = true;
 	game->player.x = (float)j + 0.5f;
 	game->player.y = (float)i + 0.5f;
@@ -161,7 +161,7 @@ static void	scan_map(t_game *game)
 		i++;
 	}
 	if (!found)
-		graceful_exit(game, 1, __func__, "No start pos found.");
+		graceful_exit(game, 1, __func__, "No start position found.");
 }
 
 /*
