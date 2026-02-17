@@ -124,34 +124,30 @@ typedef struct s_gnode
 
 typedef struct s_render_vars
 {
-    int     x;
-    int     start;
-    int     end;
-    int     line_h;
-    int     tex_x;
-    t_tex   *tex;
-}   t_render_vars;
+	int		x;			/* 当前渲染的屏幕像素列索引 (0 到 WIDTH - 1) */
+	int		start;		/* 墙体在屏幕上绘制的起始 Y 坐标 */
+	int		end;		/* 墙体在屏幕上绘制的结束 Y 坐标 */
+	int		line_h;		/* 墙体在垂直方向上的原始像素高度 */
+	int		tex_x;		/* 对应纹理贴图的 X 坐标 (采样位置) */
+	t_tex	*tex;		/* 当前射线击中的墙面所对应的纹理指针 */
+}	t_render_vars;
 
 typedef struct s_player
 {
-	float x;
-	float y;
-	int map_x;
-	int map_y;
-	float angle;
-
-	bool key_up;
-	bool key_down;
-	bool key_left;
-	bool key_right;
-
-	bool left_rotate;
-	bool right_rotate;
-
-	float move_speed;
-	float rotate_speed;
-	
-} t_player;
+	float	x;				/* 玩家在地图上的精确 X 坐标 (浮点数，用于移动) */
+	float	y;				/* 玩家在地图上的精确 Y 坐标 (浮点数，用于移动) */
+	int		map_x;			/* 玩家当前所在的整数格子 X 坐标 (用于 DDA 初始检查) */
+	int		map_y;			/* 玩家当前所在的整数格子 Y 坐标 (用于 DDA 初始检查) */
+	float	angle;			/* 玩家当前的视线角度 (弧度制) */
+	bool	key_up;			/* W 键状态：是否正在向前移动 */
+	bool	key_down;		/* S 键状态：是否正在向后移动 */
+	bool	key_left;		/* A 键状态：是否正在向左平移 (Strafe) */
+	bool	key_right;		/* D 键状态：是否正在向右平移 (Strafe) */
+	bool	left_rotate;	/* 左方向键状态：是否正在向左旋转视角 */
+	bool	right_rotate;	/* 右方向键状态：是否正在向右旋转视角 */
+	float	move_speed;		/* 玩家移动步长 (帧间隔移动距离) */
+	float	rotate_speed;	/* 玩家旋转速度 (帧间隔旋转弧度) */
+}	t_player;
 
 /*
 ** DDA (Digital Differential Analyzer) 算法中间变量结构体
