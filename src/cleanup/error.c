@@ -6,44 +6,33 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 22:02:20 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/07 17:10:35 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 22:00:50 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
+#include "cub3d.h"
 
-static size_t	s_ft_strlen_safe(const char *s)
-{
-	size_t	i;
 
-	if (!s)
-		return (0);
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-static void	s_write_str(int fd, const char *s)
+static void	put_str(int fd, const char *s)
 {
 	if (!s)
 		return ;
-	write(fd, s, s_ft_strlen_safe(s));
+	write(fd, s, ft_strlen(s));
 }
 
-void	print_error(const char *func, char *message)
+void	print_error(const char *func, const char *message)
 {
 	/* subject 格式：第一行必须是 "Error" */
-	s_write_str(2, "Error\n");
+	put_str(2, "Error\n");
 	/* 第二行：<func>: <message> */
 	if (func && *func)
-		s_write_str(2, func);
+		put_str(2, func);
 	else
-		s_write_str(2, "unknown");
-	s_write_str(2, ": ");
+		put_str(2, "unknown");
+	put_str(2, ": ");
 	if (message && *message)
-		s_write_str(2, message);
+		put_str(2, message);
 	else
-		s_write_str(2, "unknown error");
-	s_write_str(2, "\n");
+		put_str(2, "unknown error");
+	put_str(2, "\n");
 }

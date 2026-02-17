@@ -6,11 +6,11 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:11:35 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/07 17:32:52 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
+#include "cub3d.h"
 
 // 统计字符串 str 中字符 c 出现的次数。
 int	char_count(char *str, char c)
