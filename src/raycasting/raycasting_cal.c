@@ -25,7 +25,8 @@ static t_tex	*get_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
 	return (&game->north);
 }
 
-static void	calculate_render_vars(t_game *game, t_dda *d, int i, float r_dir[])
+t_render_vars	calculate_render_vars(t_game *game, t_dda *d, int i,
+		float r_dir[])
 {
 	t_render_vars	v;
 	float			wall_hit;
@@ -49,18 +50,22 @@ static void	calculate_render_vars(t_game *game, t_dda *d, int i, float r_dir[])
 	v.tex_x = (int)(wall_hit * (float)v.tex->width);
 	if ((d->side == 0 && r_dir[0] < 0) || (d->side == 1 && r_dir[1] > 0))
 		v.tex_x = v.tex->width - v.tex_x - 1;
-	render_column(v, game);
+	return (v);
 }
 
-void	draw_line(t_game *game, float r_dir_x, float r_dir_y, int i)
+t_render_vars	get_render_vars(t_game *game, float r_dir_x,
+		float r_dir_y, int i)
 {
-	t_dda	d;
-	float	r_dir[2];
+	t_dda			d;
+	t_render_vars	v;
+	float			r_dir[2];
 
+	ft_bzero(&v, sizeof(t_render_vars));
 	r_dir[0] = r_dir_x;
 	r_dir[1] = r_dir_y;
 	init_dda(game, &d, r_dir_x, r_dir_y);
 	if (!perform_dda(game, &d))
-		return ;
-	calculate_render_vars(game, &d, i, r_dir);
+		return (v);
+	v = calculate_render_vars(game, &d, i, r_dir);
+	return (v);
 }

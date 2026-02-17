@@ -33,7 +33,7 @@ static void	render_rays(t_game *game, float dir[2], float plane[2])
 		cam_x = 2.0f * i / (float)WIDTH - 1.0f;
 		ray_dir_x = dir[0] + plane[0] * cam_x;
 		ray_dir_y = dir[1] + plane[1] * cam_x;
-		draw_line(game, ray_dir_x, ray_dir_y, i);
+		render_column(game, ray_dir_x, ray_dir_y, i);
 		i++;
 	}
 }

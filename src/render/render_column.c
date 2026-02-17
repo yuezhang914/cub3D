@@ -45,12 +45,14 @@ static void	draw_wall(t_render_vars v, t_game *game, float step, float tex_pos)
 	}
 }
 
-void	render_column(t_render_vars v, t_game *game)
+void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 {
-	int		y;
-	float	step;
-	float	tex_pos;
+	int				y;
+	float			step;
+	float			tex_pos;
+	t_render_vars	v;
 
+	v = get_render_vars(game, r_dir_x, r_dir_y, i);
 	y = -1;
 	while (++y < v.start && y < HEIGHT)
 		put_pixel(v.x, y, game->ceiling_color, game);
