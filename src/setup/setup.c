@@ -80,14 +80,21 @@ void	setup_hooks(t_game *game)
 ** 用在哪：
 **   parse 完成之后调用（因为要先知道贴图路径/颜色等），然后加载贴图并挂 hook。
 */
+
 void	setup_mlx(t_game *game)
 {
 	game->mlx = mlx_init();
+	if (!game->mlx)
+		graceful_exit(game, 1, "setup_mlx", "MLX init failed");
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
+	if (!game->win)
+		graceful_exit(game, 1, "setup_mlx", "Window creation failed");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
-			&game->endian);
-	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	if (!game->img)
+		graceful_exit(game, 1, "setup_mlx", "Image creation failed");
+	game->data = mlx_get_data_addr(game->img, &game->bpp, \
+			&game->size_line, &game->endian);
+	// 加载纹理，内部也要有失败检查
 	load_wall_textures(game);
 	setup_hooks(game);
 }
