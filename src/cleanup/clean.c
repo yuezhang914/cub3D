@@ -6,23 +6,35 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 22:00:44 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 20:57:49 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 21:46:28 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+/*
+** 函数：destroy_images
+** 作用：遍历 img_head 链表，逐个 mlx_destroy_image
+*/
 void	destroy_images(t_game *game)
 {
 	t_img	*current;
+	t_img	*next;
 
+	if (!game)
+		return ;
 	current = game->img_head;
 	while (current)
 	{
-		mlx_destroy_image(game->mlx, current->ptr);
-		current = current->next;
+		next = current->next;
+		if (game->mlx && current->ptr)
+			mlx_destroy_image(game->mlx, current->ptr);
+		current->ptr = NULL;
+		current = next;
 	}
+	game->img_head = NULL;
 }
+
 void	track_clean(t_game *game)
 {
 	t_gnode	*tmp;
@@ -57,6 +69,13 @@ void	graceful_exit(t_game *game, int exit_code, const char *func,
 		mlx_destroy_image(game->mlx, game->img);
 	if (game->win)
 		mlx_destroy_window(game->mlx, game->win);
+	/* ✅ 新增：释放 X11 display（Linux 版 minilibx 需要） */
+	if (game->mlx)
+	{
+		mlx_destroy_display(game->mlx);
+		free(game->mlx);
+		game->mlx = NULL;
+	}
 	if (exit_code)
 		print_error(func, msg);
 	track_clean(game);

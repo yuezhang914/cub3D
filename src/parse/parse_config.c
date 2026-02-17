@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:08 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 21:53:51 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	set_texture_path(t_game *game, t_line_type type, char *line)
 // 	它在检查：这一行的参数数量必须刚好是 2 段（标识符 + 路径）。
 // 情况 A：缺路径（只有 1 段）情况 B：多了多余参数（超过 2 段）
 	if (words[1] == NULL || words[2] != NULL)
-		graceful_exit(game, 1, __func__, "Texture line arg count error.");
+		graceful_exit(game, 1, __func__, "Texture line arg number error.");
 	len = ft_strlen(words[1]);
 	// .xpm 本身就 4 个字符，还得至少有 1 个字符在前面
 	// words[1] + len - 4 是取“最后 4 个字符”
