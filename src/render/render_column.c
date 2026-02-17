@@ -3,49 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:56 by weiyang           #+#    #+#             */
-/*   Updated: 2026/02/15 15:01:00 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
+#include "cub3d.h"
 
-/**
- * 向图像缓冲区写入颜色
- * index 计算公式：(y * 宽度 + x) * 每个像素占用的字节数
- */
-void put_pixel(int x, int y, int color, t_game *game)
+/*
+** 函数：render_column
+** 作用：渲染屏幕的第 i 列：先画天花板色，再画墙体贴图，最后画地板色。
+** 参数：
+**   game：总结构体（提供帧缓冲 data、贴图、颜色等）
+**   r_dir_x, r_dir_y：这一列射线的方向向量
+**   i：屏幕列号（0..WIDTH-1）
+** 说明：
+**   这里直接复用项目里统一的 put_pixel()（不要在本文件重复定义，避免链接冲突）。
+*/
+void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 {
-	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
-		return;
-	int index = y * game->size_line + x * (game->bpp / 8);
-	game->data[index] = color & 0xFF;			  
-	game->data[index + 1] = (color >> 8) & 0xFF;  
-	game->data[index + 2] = (color >> 16) & 0xFF; 
-	game->data[index + 3] = 0xFF;		
-}
-
-/**
- * 渲染屏幕的一列像素：天花板 -> 墙壁 -> 地板
- */
-/**
- * 渲染屏幕的一列像素 (符合 Norm 规范)
- * 作用：利用封装后的 v 结构体获取渲染区间和纹理信息，
- * 依次在屏幕第 x 列绘制天花板、经过缩放处理的墙体纹理以及地板。
- * 参数：v - 包含所有列渲染所需变量的结构体；game - 游戏主结构体。
- */
-void render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
-{
-	int y;
-	float step;
-	float tex_pos;
-	int color;
-	t_render_vars v;
+	int				y;
+	float			step;
+	float			tex_pos;
+	int				color;
+	t_render_vars	v;
 
 	v = get_render_vars(game, r_dir_x, r_dir_y, i);
-
 	y = -1;
 	while (++y < (v.start < 0 ? 0 : v.start))
 		put_pixel(v.x, y, game->ceiling_color, game);
@@ -54,9 +39,8 @@ void render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 	y = (v.start < 0) ? 0 : v.start;
 	while (y <= (v.end >= HEIGHT ? HEIGHT - 1 : v.end))
 	{
-		color = *(int *)(v.tex->data + ((int)tex_pos % v.tex->height *
-											v.tex->size_line +
-										v.tex_x * (v.tex->bpp / 8)));
+		color = *(int *)(v.tex->data + ((int)tex_pos % v.tex->height
+					* v.tex->size_line + v.tex_x * (v.tex->bpp / 8)));
 		put_pixel(v.x, y, color, game);
 		tex_pos += step;
 		y++;

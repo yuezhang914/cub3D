@@ -6,52 +6,56 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:05:48 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/08 14:49:13 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 19:57:21 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3d.h"
-#include "func.h"
+
+#include "cub3d.h"
 
 /*
 ** 函数：init_game
-** 作用：初始化 t_game 里的“默认值”，让后面 parse / mlx / 渲染能安全使用。
+** 作用：把 t_game 初始化到“安全默认状态”，保证：
+**   1) 指针默认为 NULL（方便 graceful_exit 判断是否需要 destroy）
+**   2) 必做所需的玩家速度、颜色默认值设置好
 ** 参数：
-**   game：主结构体指针
-** 用在哪：
-**   main 一开始最先调用（在 parse 之前），把结构体清零并设置默认参数。
+**   game：总结构体指针
 */
-void    init_game(t_game *game)
+void	init_game(t_game *game)
 {
-    ft_bzero(game, sizeof(t_game));
-    
-    game->ceiling_color = -1;
-    game->floor_color = -1;
-    
-    // 1. 将角度转换为弧度
-    float fov_rad = FOV * (PI / 180.0f);
-    
-    // 2. 正确计算 focal_length
-    game->focal_length = 2.0 * tan(fov_rad / 2.0);
-    
-    game->pix_per_unit = (float)MINI_HEIGHT / (DISTANCE_SEEN * 2.0f);
-    init_player(&game->player);
+	ft_bzero(game, sizeof(t_game));
+	game->ceiling_color = -1;
+	game->floor_color = -1;
+
+	/* 玩家移动参数：必做需要 */
+	game->player.move_speed = 0.05f;
+	game->player.rot_speed = 0.04f;
+
+	/*
+	** 小地图相关（必做不一定用到）
+	** 为了不依赖 DISTANCE_SEEN，这里给一个保底值：
+	** pix_per_unit 越大，小地图越“放大”
+	*/
+	game->pix_per_unit = 8.0f;
+
+	/* 如果你 DDA 相机模型用 focal_length，可保留默认值 */
+	game->focal_length = 2.0f * tan((FOV * (float)M_PI / 180.0f) / 2.0f);
 }
 
 /*
 ** 函数：remember_image
-** 作用：把一个 MLX image 指针登记到链表里，方便程序退出时统一销毁。
+** 作用：把一个 mlx image 指针记录进链表，方便退出时统一 mlx_destroy_image。
 ** 参数：
-**   game：主结构体（里面有 img_head）
-**   ptr ：mlx_xxx 返回的 image 指针
-** 用在哪：
-**   load_texture() 里，每加载一张 xpm 图，就把 img_ptr 记下来。
+**   game：总结构体（保存链表头 img_head）
+**   ptr ：要记录的 mlx image 指针
 */
 void	remember_image(t_game *game, void *ptr)
 {
 	t_img	*new;
 
-	new = track_malloc(game, sizeof(t_img));
+	if (ptr == NULL)
+		return ;
+	new = (t_img *)track_malloc(game, sizeof(t_img));
 	new->ptr = ptr;
 	new->next = game->img_head;
 	game->img_head = new;
@@ -59,42 +63,42 @@ void	remember_image(t_game *game, void *ptr)
 
 /*
 ** 函数：setup_hooks
-** 作用：给窗口绑定事件回调（键盘按下/松开、点击右上角关闭）。
+** 作用：绑定键盘按下/松开事件与窗口关闭事件
 ** 参数：
-**   game：主结构体（作为回调的上下文）
-** 用在哪：
-**   setup_mlx() 最后调用，保证窗口一出现就能响应按键和关闭事件。
+**   game：总结构体
 */
 void	setup_hooks(t_game *game)
 {
-	mlx_hook(game->win, 2, 1L << 0, key_press, &game->player);
-	mlx_hook(game->win, 3, 1L << 1, key_release, &game->player);
-	//mlx_hook(game->win, 17, 0, exit(0), game);
+	mlx_hook(game->win, 2, 1L << 0, on_key_down, game);
+	mlx_hook(game->win, 3, 1L << 1, on_key_up, game);
+	mlx_hook(game->win, 17, 0, on_window_close, game);
 }
 
 /*
 ** 函数：setup_mlx
-** 作用：初始化 MLX、创建窗口、创建主画布（img），拿到像素数组地址 data。
+** 作用：初始化 mlx、创建窗口与主画布，加载贴图并挂 hooks
 ** 参数：
-**   game：主结构体（写入 mlx/win/img/data 等字段）
-** 用在哪：
-**   parse 完成之后调用（因为要先知道贴图路径/颜色等），然后加载贴图并挂 hook。
+**   game：总结构体
 */
-
 void	setup_mlx(t_game *game)
 {
 	game->mlx = mlx_init();
-	if (!game->mlx)
-		graceful_exit(game, 1, "setup_mlx", "MLX init failed");
+	if (game->mlx == NULL)
+		graceful_exit(game, 1, __func__, "mlx_init failed.");
+
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-	if (!game->win)
-		graceful_exit(game, 1, "setup_mlx", "Window creation failed");
+	if (game->win == NULL)
+		graceful_exit(game, 1, __func__, "mlx_new_window failed.");
+
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (!game->img)
-		graceful_exit(game, 1, "setup_mlx", "Image creation failed");
-	game->data = mlx_get_data_addr(game->img, &game->bpp, \
+	if (game->img == NULL)
+		graceful_exit(game, 1, __func__, "mlx_new_image failed.");
+
+	game->data = mlx_get_data_addr(game->img, &game->bpp,
 			&game->size_line, &game->endian);
-	// 加载纹理，内部也要有失败检查
+	if (game->data == NULL)
+		graceful_exit(game, 1, __func__, "mlx_get_data_addr failed.");
+
 	load_wall_textures(game);
 	setup_hooks(game);
 }
