@@ -29,22 +29,23 @@ char	*skip_spaces(char *s)
 ** 作用：判断一行是否是地图行
 ** 规则：只允许包含 " 10NSWE"，且必须至少出现一个 "10NSWE"（不能全是空格）
 */
-static bool	is_map_line(char *str)
+// 假设这是 set_input_line_type 内部调用的判断逻辑
+bool	is_map_line(char *line)
 {
-	bool	has_tile;
+	int i = 0;
 
-	if (str == NULL)
+	if (!line || !line[0])
 		return (false);
-	has_tile = false;
-	while (*str)
-	{
-		if (ft_strchr(" 10NSWE", *str) == NULL)
-			return (false);
-		if (ft_strchr("10NSWE", *str) != NULL)
-			has_tile = true;
-		str++;
-	}
-	return (has_tile);
+	while (line[i] && (line[i] == ' ' || line[i] == '\t'))
+		i++;
+	if (line[i] == '\0')
+		return (false);
+	
+	// ✅ 关键：在这里加入你地图中出现的所有 Bonus 字符
+	// 包含 0, 1, 玩家方向, 以及 C(精灵), P(起始点), R(复活点)
+	if (ft_strchr("01NSEWCPRD", line[i]))
+		return (true);
+	return (false);
 }
 
 /*

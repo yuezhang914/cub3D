@@ -20,17 +20,21 @@
  * * 逻辑：计算一维数组索引 index = (y * 线宽) + (x * 像素字节数)。
  * 这里的写入顺序符合小端序 (BGRA)。
  */
-void	put_pixel(int x, int y, int color, t_game *game)
+void put_pixel(int x, int y, int color, t_game *game)
 {
-	int	index;
+	char *dst;
 
-	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
-		return ;
-	index = y * game->size_line + x * (game->bpp / 8);
-	game->data[index] = color & 0xFF;
-	game->data[index + 1] = (color >> 8) & 0xFF;
-	game->data[index + 2] = (color >> 16) & 0xFF;
-	game->data[index + 3] = 0;
+	// 1. 边界检查：防止越界访问导致的 Segment Fault
+	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
+		return;
+
+	// 2. 计算目标像素地址
+	// size_line 是图片一行的字节数
+	// bpp / 8 是每个像素占用的字节数（通常是 4）
+	dst = game->data + (y * game->size_line + x * (game->bpp / 8));
+
+	// 3. 写入颜色 (假设 32 bits 颜色)
+	*(unsigned int *)dst = color;
 }
 
 /**
@@ -40,11 +44,11 @@ void	put_pixel(int x, int y, int color, t_game *game)
  * @param step    纹理坐标的步长（纹理高度 / 屏幕墙高）。
  * @param tex_pos 纹理在 Y 轴上的初始读取位置。
  */
-static void	draw_wall(t_render_vars v, t_game *game, float step, float tex_pos)
+static void draw_wall(t_render_vars v, t_game *game, float step, float tex_pos)
 {
-	int	y;
-	int	color;
-	int	tex_y;
+	int y;
+	int color;
+	int tex_y;
 
 	y = v.start;
 	if (y < 0)
@@ -52,8 +56,7 @@ static void	draw_wall(t_render_vars v, t_game *game, float step, float tex_pos)
 	while (y <= v.end && y < HEIGHT)
 	{
 		tex_y = (int)tex_pos % v.tex->height;
-		color = *(int *)(v.tex->data + (tex_y * v.tex->size_line
-					+ v.tex_x * (v.tex->bpp / 8)));
+		color = *(int *)(v.tex->data + (tex_y * v.tex->size_line + v.tex_x * (v.tex->bpp / 8)));
 		put_pixel(v.x, y, color, game);
 		tex_pos += step;
 		y++;
@@ -67,12 +70,12 @@ static void	draw_wall(t_render_vars v, t_game *game, float step, float tex_pos)
  * @param r_dir_y  当前光线的 Y 方向向量。
  * @param i        当前处理的屏幕横坐标 (0 到 WIDTH-1)。
  */
-void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
+void render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 {
-	int				y;
-	float			step;
-	float			tex_pos;
-	t_render_vars	v;
+	int y;
+	float step;
+	float tex_pos;
+	t_render_vars v;
 
 	v = get_render_vars(game, r_dir_x, r_dir_y, i);
 	y = -1;

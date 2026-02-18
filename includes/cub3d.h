@@ -228,6 +228,26 @@ typedef struct s_render_vars
 	t_tex *tex; /* 当前使用的贴图（NO/SO/WE/EA） */
 } t_render_vars;
 
+/*
+** 结构体：t_sprite_render_vars
+** 作用：存储精灵投影到屏幕后的临时几何参数
+** 字段含义：
+** sprite_h / sprite_w : 精灵在屏幕上的像素高度和宽度
+** screen_x           : 精灵中心点在屏幕上的 X 坐标（像素位置）
+** draw_start_y/end_y : 垂直绘制的像素范围
+** draw_start_x/end_x : 水平绘制的像素范围
+*/
+typedef struct s_sprite_render_vars
+{
+    int		sprite_h;
+    int		sprite_w;
+    int		screen_x;
+    int		draw_start_y;
+    int		draw_end_y;
+    int		draw_start_x;
+    int		draw_end_x;
+}				t_sprite_render_vars;
+
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
 #include "func.h"
 

@@ -6,11 +6,20 @@
  * 2. 如果有精灵 'S'，提取它们并抹除地图字符
  * 3. 如果有门 'D'，可以初始化门的状态数组
  */
-void    handle_bonus_setup(t_game *game)
+void handle_bonus_setup(t_game *game)
 {
+    printf("handle_bonus_setup called\n"); fflush(stdout);
+
     if (check_bonus_elements(game))
     {
+        printf("bonus elements found\n"); fflush(stdout);
         collect_sprites(game);
-        // 如果需要门的状态追踪，可以在这里 init_doors(game);
+        printf("collected %d sprites\n", game->sprs.num); fflush(stdout);
+        init_sprite_texture(game);
+    }
+    else
+    {
+        printf("no bonus elements\n"); fflush(stdout);
     }
 }
+
