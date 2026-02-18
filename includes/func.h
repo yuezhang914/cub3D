@@ -35,6 +35,7 @@ typedef struct s_coordinates		t_coords;
 typedef struct s_int_coordinates	t_int_xy;
 typedef enum e_line_type			t_line_type;
 typedef struct s_render_vars		t_render_vars;
+typedef struct s_sprite_render_vars t_sprite_render_vars;
 
 /*
 ** 结构体：t_render_vars
@@ -167,5 +168,10 @@ void								render_minimap(t_game *game);
 bool    check_bonus_elements(t_game *game);
 void    collect_sprites(t_game *game);
 void    handle_bonus_setup(t_game *game);
+
+void    calculate_sprite_distance(t_game *game);
+void 	sort_sprites(t_game *game);
+void 	render_sprites(t_game *game);
+void 	init_sprite_texture(t_game *game);
 
 #endif

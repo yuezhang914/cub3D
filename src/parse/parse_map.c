@@ -141,36 +141,29 @@ static void extract_player(t_game *game, int i, int j, bool *found)
 */
 static void scan_map(t_game *game)
 {
-	int i;
-	int j;
-	bool found;
+    int i;
+    int j;
+    bool found;
 
-	found = false;
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			// 1. 玩家起始点抽取
-			if (ft_strchr("NESW", game->map[i][j]))
-				extract_player(game, i, j, &found);
-
-			// 2. 封闭性检查逻辑
-			// 必做部分：检查空地 '0'
-			if (game->map[i][j] == '0')
-				validate_open_walls(game, i, j);
-
-			/* --- [Bonus 逻辑] --- */
-			#ifdef BONUS
-			// 在 Bonus 模式下，精灵 'S' 和门 'D' 也必须被围墙封死
-			else if (game->map[i][j] == 'S' || game->map[i][j] == 'D')
-				validate_open_walls(game, i, j);
-			#endif
-		}
-	}
-	if (!found)
-		graceful_exit(game, 1, __func__, "No start position found.");
+    found = false;
+    i = -1;
+    while (game->map[++i])
+    {
+        j = -1;
+        while (game->map[i][++j])
+        {
+            // ✅ 只有这四个标准方向字符能决定玩家起始位置
+            if (ft_strchr("NESW", game->map[i][j]))
+                extract_player(game, i, j, &found);
+            
+            // ✅ 墙壁封闭性检查：所有通行区域都必须检查，防止射线穿出地图
+            // 包含 0, N, E, S, W 以及所有 Bonus 字符 S, C, R, D
+            else if (ft_strchr("0SCRD", game->map[i][j]))
+                validate_open_walls(game, i, j);
+        }
+    }
+    if (!found)
+        graceful_exit(game, 1, __func__, "No start position found.");
 }
 
 /*

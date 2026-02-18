@@ -15,7 +15,7 @@ bool    check_bonus_elements(t_game *game)
         j = 0;
         while (game->map[i][j])
         {
-            if (game->map[i][j] == 'S' || game->map[i][j] == 'D')
+            if (game->map[i][j] == 'C' || game->map[i][j] == 'D')
                 return (true);
             j++;
         }

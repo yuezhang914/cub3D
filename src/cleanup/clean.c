@@ -16,29 +16,35 @@
 ** 函数：destroy_images
 ** 作用：遍历 img_head 链表，逐个 mlx_destroy_image
 */
-void	destroy_images(t_game *game)
+void destroy_images(t_game *game)
 {
-	t_img	*current;
-	t_img	*next;
+	t_img *current;
+	t_img *next;
 
-	if (!game)
-		return ;
+	if (!game || !game->img_head)
+		return;
 	current = game->img_head;
 	while (current)
 	{
 		next = current->next;
 		if (game->mlx && current->ptr)
+		{
+			// 销毁 MLX 内部的图像资源
 			mlx_destroy_image(game->mlx, current->ptr);
-		current->ptr = NULL;
+			current->ptr = NULL;
+		}
+		// 注意：如果 current 本身是 track_malloc 分配的，
+		// 这里不需要 free(current)，交给 track_clean 处理。
+		// 如果不是，则需要在这里 free(current);
 		current = next;
 	}
 	game->img_head = NULL;
 }
 
-void	track_clean(t_game *game)
+void track_clean(t_game *game)
 {
-	t_gnode	*tmp;
-	t_gnode	*current;
+	t_gnode *tmp;
+	t_gnode *current;
 
 	current = game->track_head;
 	while (current)
@@ -61,8 +67,8 @@ void	track_clean(t_game *game)
 **   func：出错函数名（可为 NULL）
 **   msg ：错误信息（可为 NULL）
 */
-void	graceful_exit(t_game *game, int exit_code, const char *func,
-		const char *msg)
+void graceful_exit(t_game *game, int exit_code, const char *func,
+				   const char *msg)
 {
 	destroy_images(game);
 	if (game->img)

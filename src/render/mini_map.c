@@ -41,10 +41,10 @@ static void draw_mini_player(t_game *game)
 /**
  * 根据小地图像素坐标计算其在地图中对应的颜色
  */
-static int	get_mini_color(t_game *game, int x, int y)
+static int get_mini_color(t_game *game, int x, int y)
 {
-	float	map_x;
-	float	map_y;
+	float map_x;
+	float map_y;
 
 	map_x = game->player.x + (float)(x - MINI_WIDTH / 2) / game->pix_per_unit;
 	map_y = game->player.y + (float)(y - MINI_HEIGHT / 2) / game->pix_per_unit;
@@ -58,11 +58,11 @@ static int	get_mini_color(t_game *game, int x, int y)
 /**
  * 核心渲染函数：以玩家为中心的动态滚动小地图 (符合 Norm 规范)
  */
-void	render_minimap(t_game *game)
+void render_minimap(t_game *game)
 {
-	int	x;
-	int	y;
+	int x, y;
 
+	// 1. 背景 + 墙
 	y = 0;
 	while (y < MINI_HEIGHT)
 	{
@@ -74,5 +74,22 @@ void	render_minimap(t_game *game)
 		}
 		y++;
 	}
+
+	// 2. 玩家
 	draw_mini_player(game);
+
+	// 3. 绘制精灵（Bonus）
+	#ifdef BONUS
+	for (int i = 0; i < game->sprs.num; i++)
+	{
+		float dx = game->sprs.list[i].x - game->player.x;
+		float dy = game->sprs.list[i].y - game->player.y;
+		int sx = (int)(MINI_WIDTH / 2 + dx * game->pix_per_unit);
+		int sy = (int)(MINI_HEIGHT / 2 + dy * game->pix_per_unit);
+		// 小方块表示精灵
+		for (int dy2 = -1; dy2 <= 1; dy2++)
+			for (int dx2 = -1; dx2 <= 1; dx2++)
+				put_mini_pixel(game, sx + dx2, sy + dy2, 0x00FF00);
+	}
+	#endif
 }

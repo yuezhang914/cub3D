@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "cub3d.h"
 
 /*
@@ -21,7 +20,7 @@
 ** 参数：
 **   game：总结构体指针
 */
-void	init_game(t_game *game)
+void init_game(t_game *game)
 {
 	ft_bzero(game, sizeof(t_game));
 	game->ceiling_color = -1;
@@ -40,6 +39,12 @@ void	init_game(t_game *game)
 
 	/* 如果你 DDA 相机模型用 focal_length，可保留默认值 */
 	game->focal_length = 2.0f * tan((FOV * (float)PI / 180.0f) / 2.0f);
+
+	#ifdef BONUS
+	game->sprs.num = 0;
+	game->sprs.list = NULL;
+	ft_bzero(&game->sprs.tex, sizeof(t_tex));
+	#endif
 }
 
 /*
@@ -49,12 +54,12 @@ void	init_game(t_game *game)
 **   game：总结构体（保存链表头 img_head）
 **   ptr ：要记录的 mlx image 指针
 */
-void	remember_image(t_game *game, void *ptr)
+void remember_image(t_game *game, void *ptr)
 {
-	t_img	*new;
+	t_img *new;
 
 	if (ptr == NULL)
-		return ;
+		return;
 	new = (t_img *)track_malloc(game, sizeof(t_img));
 	new->ptr = ptr;
 	new->next = game->img_head;
@@ -67,7 +72,7 @@ void	remember_image(t_game *game, void *ptr)
 ** 参数：
 **   game：总结构体
 */
-void	setup_hooks(t_game *game)
+void setup_hooks(t_game *game)
 {
 	mlx_hook(game->win, 2, 1L << 0, on_key_down, game);
 	mlx_hook(game->win, 3, 1L << 1, on_key_up, game);
@@ -80,7 +85,7 @@ void	setup_hooks(t_game *game)
 ** 参数：
 **   game：总结构体
 */
-void	setup_mlx(t_game *game)
+void setup_mlx(t_game *game)
 {
 	game->mlx = mlx_init();
 	if (game->mlx == NULL)
@@ -95,7 +100,7 @@ void	setup_mlx(t_game *game)
 		graceful_exit(game, 1, __func__, "mlx_new_image failed.");
 
 	game->data = mlx_get_data_addr(game->img, &game->bpp,
-			&game->size_line, &game->endian);
+								   &game->size_line, &game->endian);
 	if (game->data == NULL)
 		graceful_exit(game, 1, __func__, "mlx_get_data_addr failed.");
 

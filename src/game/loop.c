@@ -22,17 +22,33 @@
 ** 用在哪：
 **   mlx_loop_hook(game->mlx, game_step, game) 绑定主循环。
 */
-int	game_step(t_game *game)
+int game_step(t_game *game)
 {
 	update_player(game);
-	// respawn_update(game);
 	clear_image(game);
-	/* 3D 场景：你自己的墙渲染（保持不变） */
+
+	/* 1. 渲染 3D 墙体（这里面会填充你的 z_buffer） */
 	draw_loop(game);
-	/* 2D 叠加：队友的小地图（合并进你的主循环） */
+
+	/* 2. 渲染 3D 精灵 (Bonus 逻辑) */
+	#ifdef BONUS
+	if (game->sprs.num > 0)
+	{
+		// A. 计算所有精灵到玩家的当前距离
+		calculate_sprite_distance(game);
+		// B. 按距离从远到近排序（防止透明度错位）
+		sort_sprites(game);
+		// C. 投影并绘制到画布上
+		render_sprites(game);
+	}
+	#endif
+
+	/* 3. 渲染 2D 叠加层（小地图永远在最上方） */
 	render_minimap(game);
+
+	/* 4. 将最终画布推送到窗口 */
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-	// draw_win_logo_if_finished(game);
+
 	return (0);
 }
 
@@ -46,9 +62,9 @@ int	game_step(t_game *game)
 ** 用在哪：
 **   mlx_hook(win, 17, 0, on_window_close, game)
 */
-int	on_window_close(void *param)
+int on_window_close(void *param)
 {
-	t_game	*game;
+	t_game *game;
 
 	game = (t_game *)param;
 	graceful_exit(game, 0, NULL, NULL);

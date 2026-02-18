@@ -62,7 +62,8 @@ $(OBJ_DIR)/mandatory/%.o: $(SRC_DIR)/%.c
 
 $(OBJ_DIR)/bonus/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -DBONUS=1 -c $< -o $@
+	@$(CC) $(CFLAGS) -D BONUS -c $< -o $@
+
 
 $(MLX_LIB):
 	@$(MAKE) -s -C $(MLX_DIR)
