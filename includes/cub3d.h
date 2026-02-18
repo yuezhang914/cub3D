@@ -146,6 +146,21 @@ typedef enum e_line_type
 	WRONG
 }					t_line_type;
 
+/* ===================== Sprite ===================== */
+typedef struct s_sprite
+{
+    float   x;      /* 地图 X 坐标 */
+    float   y;      /* 地图 Y 坐标 */
+    float   dist;   /* 到玩家的距离（用于排序） */
+}               t_sprite;
+
+typedef struct s_sprite_info
+{
+    t_sprite    *list;       /* 精灵数组 */
+    int         num;        /* 精灵总数 */
+    t_tex       tex;        /* 精灵的纹理 */
+}               t_spr_info;
+
 /* ===================== 总结构体：t_game ===================== */
 typedef struct s_game
 {
@@ -195,6 +210,9 @@ typedef struct s_game
 	/* 迷你地图比例（如果你用到） */
 	float			pix_per_unit;
 	float			focal_length;
+
+	/*存储每一列墙到玩家的距离*/
+	float 			z_buffer[WIDTH];
 
 }					t_game;
 

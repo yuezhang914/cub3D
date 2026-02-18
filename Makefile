@@ -15,6 +15,7 @@ NAME_BONUS    = cub3d_bonus
 
 CC            = cc
 CFLAGS        = -Wall -Wextra -Werror -Iincludes -Iminilibx-linux
+
 MLX_DIR       = minilibx-linux
 MLX_LIB       = $(MLX_DIR)/libmlx.a
 MLX_FLAGS     = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
@@ -22,63 +23,56 @@ MLX_FLAGS     = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
 SRC_DIR       = src
 OBJ_DIR       = obj
 
-# --- 1. 共有文件 (Mandatory 和 Bonus 都需要的) ---
-COMMON_FILES  = main.c \
-                cleanup/clean.c cleanup/error.c \
-                parse/parse_config.c parse/parse_entry.c parse/parse_line_kind.c \
-                parse/parse_map.c parse/parse_utils.c \
-                raycasting/raycasting_cal.c \
-                setup/setup.c setup/texture.c \
-                utils/ft_readfile.c utils/ft_split.c utils/splitlines.c \
-                utils/track_malloc.c utils/utils_simple.c utils/utils_str.c
+# --- 核心：自动搜集所有 .c 文件 ---
+# 使用 wildcard 递归获取子目录下的所有文件
+SRCS          = $(wildcard $(SRC_DIR)/*.c) \
+                $(wildcard $(SRC_DIR)/*/*.c) \
+                $(wildcard $(SRC_DIR)/*/*/*.c)
 
-# --- 2. 必做部分独有文件 ---
-MAND_FILES    = render/render_column.c \
-                render/draw_loop.c \
-                render/mini_map.c \
-                game/input.c game/loop.c game/movement.c
+# 过滤掉属于 bonus 文件夹的文件，作为 Mandatory 的源码
+MAND_SRCS     = $(filter-out $(SRC_DIR)/bonus/%, $(SRCS))
 
-# --- 3. Bonus 部分独有文件 (根据你的需求添加) ---
-# 注意：即使文件名相同，路径也应区分，或者在编译时通过宏区分
-BONUS_FILES   = bonus/render_column_bonus.c \
-                bonus/sprite_render_bonus.c \
-                bonus/door_bonus.c \
-                bonus/mouse_bonus.c \
-                render/mini_map.c # 假设小地图只在 bonus 有，或者逻辑通用
+# 所有文件都可以参与 Bonus 编译（或者根据需求筛选）
+BONUS_SRCS    = $(SRCS)
 
-# --- 对象文件转换 ---
-OBJ_COMMON    = $(addprefix $(OBJ_DIR)/, $(COMMON_FILES:.c=.o))
-OBJ_MAND      = $(addprefix $(OBJ_DIR)/, $(MAND_FILES:.c=.o))
-OBJ_BONUS     = $(addprefix $(OBJ_DIR)/, $(BONUS_FILES:.c=.o))
+# 生成对应的 .o 路径
+MAND_OBJS     = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/mandatory/%.o, $(MAND_SRCS))
+BONUS_OBJS    = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/bonus/%.o, $(BONUS_SRCS))
+
+# --- 规则 ---
 
 all: $(NAME)
 
-# 编译 Mandatory
-$(NAME): $(MLX_LIB) $(OBJ_COMMON) $(OBJ_MAND)
-	$(CC) $(OBJ_COMMON) $(OBJ_MAND) -o $(NAME) $(MLX_FLAGS)
+# 编译 Mandatory：将对象文件存放在 obj/mandatory
+$(NAME): $(MLX_LIB) $(MAND_OBJS)
+	@$(CC) $(MAND_OBJS) -o $(NAME) $(MLX_FLAGS)
+	@echo "✓ cub3d mandatory ready!"
 
-# 编译 Bonus
-bonus: .bonus_flag
+# 编译 Bonus：将对象文件存放在 obj/bonus
+bonus: $(NAME_BONUS)
 
-.bonus_flag: $(MLX_LIB) $(OBJ_COMMON) $(OBJ_BONUS)
-	$(CC) $(OBJ_COMMON) $(OBJ_BONUS) -o $(NAME_BONUS)
-	@touch .bonus_flag
-	@rm -f .mand_flag
+$(NAME_BONUS): $(MLX_LIB) $(BONUS_OBJS)
+	@$(CC) $(BONUS_OBJS) -o $(NAME_BONUS) $(MLX_FLAGS)
+	@echo "✓ cub3d bonus ready!"
+
+# 编译规则：Mandatory 和 Bonus 分开存放 .o 以免冲突
+$(OBJ_DIR)/mandatory/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/bonus/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -DBONUS=1 -c $< -o $@
 
 $(MLX_LIB):
-	@$(MAKE) -C $(MLX_DIR)
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(MAKE) -s -C $(MLX_DIR)
 
 clean:
-	rm -rf $(OBJ_DIR)
-	rm -f .bonus_flag .mand_flag
+	@rm -rf $(OBJ_DIR)
 
 fclean: clean
-	rm -f $(NAME) $(NAME_BONUS)
-	@$(MAKE) -C $(MLX_DIR) clean
+	@rm -f $(NAME) $(NAME_BONUS)
+	@$(MAKE) -s -C $(MLX_DIR) clean
 
 re: fclean all
 
