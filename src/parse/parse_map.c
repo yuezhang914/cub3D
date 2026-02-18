@@ -196,8 +196,4 @@ void parse_map(t_game *game)
 	build_map_array(game, lines, start);
 	scan_map(game); // 必做的合法性检查：玩家点、墙封闭
 
-/* --- [Bonus 逻辑插入点] --- */
-#ifdef BONUS
-	handle_bonus_setup(game);
-#endif
 }

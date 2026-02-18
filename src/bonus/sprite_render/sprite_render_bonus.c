@@ -32,7 +32,6 @@ void init_sprite_texture(t_game *game)
 {
 	t_tex *t = &game->sprs.tex;
 	printf("Loading sprite texture...\n");
-	game->mlx = mlx_init();
 	if (!game->mlx)
 		graceful_exit(game, 1, __func__, "Failed to initialize MLX");
 
@@ -63,7 +62,7 @@ void collect_sprites(t_game *game)
 	{
 		j = -1;
 		while (game->map[i][++j])
-			if (game->map[i][j] == 'C' || game->map[i][j] == 'D')
+			if (game->map[i][j] == 'C')
 				count++;
 	}
 	game->sprs.num = count;
@@ -77,7 +76,7 @@ void collect_sprites(t_game *game)
 		j = -1;
 		while (game->map[i][++j])
 		{
-			if (game->map[i][j] == 'C' || game->map[i][j] == 'D')
+			if (game->map[i][j] == 'C')
 			{
 				game->sprs.list[count].x = j + 0.5f;
 				game->sprs.list[count].y = i + 0.5f;
