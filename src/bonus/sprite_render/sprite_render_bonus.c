@@ -32,7 +32,6 @@ void init_sprite_texture(t_game *game)
 {
 	t_tex *t = &game->sprs.tex;
 	printf("Loading sprite texture...\n");
-	game->mlx = mlx_init();
 	if (!game->mlx)
 		graceful_exit(game, 1, __func__, "Failed to initialize MLX");
 
