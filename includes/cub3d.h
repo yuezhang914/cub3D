@@ -17,8 +17,8 @@
 # include <stdbool.h>
 
 /* ========== 常量（按你项目已有的即可） ========== */
-# define WIDTH 800
-# define HEIGHT 600
+# define WIDTH 1280
+# define HEIGHT 720
 # define MINI_WIDTH 200
 # define MINI_HEIGHT 200
 # define FOV 66.0
