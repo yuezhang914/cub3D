@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   walls.c                                            :+:      :+:    :+:   */
+/*   draw_loop.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
+/*   By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/08 01:06:22 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 01:45:30 by yzhang2          ###   ########.fr       */
+/*   Created: 2026/02/08 01:06:22 by weiyang           #+#    #+#             */
+/*   Updated: 2026/02/18 01:45:30 by weiyang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static void	setup_camera(t_game *game, float dir[2], float plane[2])
 **   - get_render_vars()：DDA 算法计算命中墙面、距离、纹理坐标等
 **   - render_column()：根据 render_vars 把这一列的天花板/墙贴图/地板画出来
 */
-void	draw_walls(t_game *game)
+void	draw_loop(t_game *game)
 {
 	float	dir[2];
 	float	plane[2];

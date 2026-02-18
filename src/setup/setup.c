@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:05:48 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 19:57:21 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/17 19:57:21 by weiyang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	init_game(t_game *game)
 	game->pix_per_unit = 8.0f;
 
 	/* 如果你 DDA 相机模型用 focal_length，可保留默认值 */
-	game->focal_length = 2.0f * tan((FOV * (float)M_PI / 180.0f) / 2.0f);
+	game->focal_length = 2.0f * tan((FOV * (float)PI / 180.0f) / 2.0f);
 }
 
 /*

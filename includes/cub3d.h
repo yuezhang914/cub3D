@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 20:42:52 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 10:42:52 by weiyang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,16 @@ typedef struct s_game
 	float			focal_length;
 
 }					t_game;
+
+typedef struct s_render_vars
+{
+	int x;      /* 当前屏幕列号 */
+	int start;  /* 墙柱绘制起始 y */
+	int end;    /* 墙柱绘制结束 y */
+	int line_h; /* 墙柱高度 */
+	int tex_x;  /* 贴图 x 坐标 */
+	t_tex *tex; /* 当前使用的贴图（NO/SO/WE/EA） */
+}									t_render_vars;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
 # include "func.h"

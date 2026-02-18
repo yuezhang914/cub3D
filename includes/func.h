@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:59:13 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 01:47:24 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 10:47:24 by weiyang        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_player				t_player;
 typedef struct s_coordinates		t_coords;
 typedef struct s_int_coordinates	t_int_xy;
 typedef enum e_line_type			t_line_type;
+typedef struct s_render_vars		t_render_vars;
 
 /*
 ** 结构体：t_render_vars
@@ -41,15 +42,7 @@ typedef enum e_line_type			t_line_type;
 ** 说明：这个类型会被 get_render_vars() “按值返回”，所以必须在 func.h 里完整定义
 **      （只写 typedef 不够，会导致 unknown type / incomplete type）
 */
-typedef struct s_render_vars
-{
-	int x;      /* 当前屏幕列号 */
-	int start;  /* 墙柱绘制起始 y */
-	int end;    /* 墙柱绘制结束 y */
-	int line_h; /* 墙柱高度 */
-	int tex_x;  /* 贴图 x 坐标 */
-	t_tex *tex; /* 当前使用的贴图（NO/SO/WE/EA） */
-}									t_render_vars;
+
 
 /* ===================== utils（你项目里的） ===================== */
 size_t								ft_strlen(const char *s);
@@ -164,7 +157,7 @@ void								render_column(t_game *game, float r_dir_x,
 ** 函数：draw_walls
 ** 作用：遍历所有列，调用 render_column 画出 3D 墙
 */
-void								draw_walls(t_game *game);
+void								draw_loop(t_game *game);
 
 /* 小地图 */
 void								render_minimap(t_game *game);
