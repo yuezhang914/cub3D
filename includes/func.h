@@ -162,4 +162,10 @@ void								draw_loop(t_game *game);
 /* 小地图 */
 void								render_minimap(t_game *game);
 
+/* Bonus*/
+
+bool    check_bonus_elements(t_game *game);
+void    collect_sprites(t_game *game);
+void    handle_bonus_setup(t_game *game);
+
 #endif
