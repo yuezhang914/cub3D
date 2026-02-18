@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:59:13 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 19:42:20 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 01:47:24 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ void								render_column(t_game *game, float r_dir_x,
 */
 void								draw_walls(t_game *game);
 
-/* （如果你必做不需要小地图，这个也可以不声明/不编译） */
+/* 小地图 */
 void								render_minimap(t_game *game);
 
 #endif
