@@ -167,6 +167,8 @@ void								render_minimap(t_game *game);
 int									on_mouse_move(int x, int y, t_game *game);
 void								enable_mouse(t_game *game);
 
+void								door_try_toggle(t_game *game);
+
 bool								check_bonus_elements(t_game *game);
 void								collect_sprites(t_game *game);
 void								handle_bonus_setup(t_game *game);

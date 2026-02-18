@@ -36,7 +36,7 @@ static bool	blocked_with_buffer(t_game *game, float nx, float ny)
 		return (true);
 	/*
 	** 用一个“方形缓冲盒”近似玩家体积：
-	** 检查 (nx±buffer, ny±buffer) 所在地图格是否是墙 '1' 或空格 ' '
+	** 检查 (nx±buffer, ny±buffer) 所在地图格是否是墙 '1' 或空格 ' ' D
 	*/
 	x0 = (int)(nx - WALL_BUFFER);
 	x1 = (int)(nx + WALL_BUFFER);
@@ -44,13 +44,17 @@ static bool	blocked_with_buffer(t_game *game, float nx, float ny)
 	y1 = (int)(ny + WALL_BUFFER);
 	if (x0 < 0 || y0 < 0 || x1 >= game->map_w || y1 >= game->map_h)
 		return (true);
-	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' ')
+	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' '
+		|| game->map[y0][x0] == 'D')
 		return (true);
-	if (game->map[y0][x1] == '1' || game->map[y0][x1] == ' ')
+	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' '
+		|| game->map[y0][x0] == 'D')
 		return (true);
-	if (game->map[y1][x0] == '1' || game->map[y1][x0] == ' ')
+	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' '
+		|| game->map[y0][x0] == 'D')
 		return (true);
-	if (game->map[y1][x1] == '1' || game->map[y1][x1] == ' ')
+	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' '
+		|| game->map[y0][x0] == 'D')
 		return (true);
 	return (false);
 }

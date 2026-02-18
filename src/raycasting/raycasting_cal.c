@@ -15,7 +15,7 @@
 /**
  * 初始化 DDA 算法所需的步进方向和初始边距
  */
-static void init_dda(t_game *game, t_dda *d, float r_dir_x, float r_dir_y)
+static void	init_dda(t_game *game, t_dda *d, float r_dir_x, float r_dir_y)
 {
 	d->map_x = (int)game->player.x;
 	d->map_y = (int)game->player.y;
@@ -46,7 +46,7 @@ static void init_dda(t_game *game, t_dda *d, float r_dir_x, float r_dir_y)
 /**
  * 执行 DDA 核心循环，直到碰撞墙壁或超出地图边界
  */
-static int perform_dda(t_game *game, t_dda *d)
+static int	perform_dda(t_game *game, t_dda *d)
 {
 	while (1)
 	{
@@ -62,10 +62,12 @@ static int perform_dda(t_game *game, t_dda *d)
 			d->map_y += d->step_y;
 			d->side = 1;
 		}
-		if (d->map_x < 0 || d->map_x >= game->map_w || d->map_y < 0 || d->map_y >= game->map_h)
+		if (d->map_x < 0 || d->map_x >= game->map_w || d->map_y < 0
+			|| d->map_y >= game->map_h)
 			return (0);
-		if (game->map[d->map_y][d->map_x] == '1')
-			break;
+		if (game->map[d->map_y][d->map_x] == '1'
+			|| game->map[d->map_y][d->map_x] == 'D')
+			break ;
 	}
 	return (1);
 }
@@ -75,7 +77,7 @@ static int perform_dda(t_game *game, t_dda *d)
  * 作用：判断碰撞的是哪一面墙（东西或南北），并根据射线向量的正负
  * 确定具体的方位（东、西、南、北），返回对应的纹理指针。
  */
-static t_tex *get_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
+static t_tex	*get_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
 {
 	if (d->side == 0)
 	{
@@ -94,8 +96,8 @@ static t_tex *get_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
 /**
  * 计算垂直距离、纹理坐标并填充渲染结构体
  */
-static t_render_vars	calculate_render_vars(t_game *game, t_dda *d, \
-						int i, float r_dir[2])
+static t_render_vars	calculate_render_vars(t_game *game, t_dda *d, int i,
+		float r_dir[2])
 {
 	t_render_vars	v;
 	float			wall_hit;
@@ -134,11 +136,12 @@ static t_render_vars	calculate_render_vars(t_game *game, t_dda *d, \
 /**
  * 核心射线投射函数
  */
-t_render_vars get_render_vars(t_game *game, float r_dir_x, float r_dir_y, int i)
+t_render_vars	get_render_vars(t_game *game, float r_dir_x, float r_dir_y,
+		int i)
 {
-	t_dda d;
-	t_render_vars v;
-	float r_dir[2];
+	t_dda			d;
+	t_render_vars	v;
+	float			r_dir[2];
 
 	ft_bzero(&v, sizeof(t_render_vars));
 	r_dir[0] = r_dir_x;
