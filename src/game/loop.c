@@ -41,10 +41,11 @@ int game_step(t_game *game)
 		// C. 投影并绘制到画布上
 		render_sprites(game);
 	}
-	#endif
-
 	/* 3. 渲染 2D 叠加层（小地图永远在最上方） */
 	render_minimap(game);
+	#endif
+
+	
 
 	/* 4. 将最终画布推送到窗口 */
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
