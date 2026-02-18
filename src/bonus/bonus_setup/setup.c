@@ -8,9 +8,9 @@
  */
 void    handle_bonus_setup(t_game *game)
 {
-    if (check_bonus_elements(game)) // 这个函数你已经写在 bonus/utils 里的
+    if (check_bonus_elements(game))
     {
         collect_sprites(game);
-        // 如果你需要门的状态追踪，可以在这里 init_doors(game);
+        // 如果需要门的状态追踪，可以在这里 init_doors(game);
     }
 }
