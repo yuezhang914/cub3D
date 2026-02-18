@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 20:42:52 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 04:37:15 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # define MINI_HEIGHT 200
 # define FOV 66.0
 # define WALL_BUFFER 0.20f
+# define MOUSE_SENS 0.0025f
 
 # ifndef PI
 #  define PI 3.14159265358979323846
@@ -191,6 +192,8 @@ typedef struct s_game
 
 	t_img	*img_head;
 
+	int		mouse_enabled;
+	float	mouse_sens;
 
 	/* 迷你地图比例（如果你用到） */
 	float			pix_per_unit;
