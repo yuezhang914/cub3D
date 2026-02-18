@@ -110,6 +110,7 @@ static t_render_vars	calculate_render_vars(t_game *game, t_dda *d, \
 		d->perp_dist = d->side_y - d->delta_y;
 	if (d->perp_dist < 0.1f)
 		d->perp_dist = 0.1f;
+	game->z_buffer[i] = d->perp_dist;
 	v.line_h = (int)(HEIGHT / d->perp_dist);
 	v.start = (HEIGHT / 2) - (v.line_h / 2);
 	v.end = (HEIGHT / 2) + (v.line_h / 2);
