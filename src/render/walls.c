@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:06:22 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 01:45:30 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@
 **   game：提供 player.angle 与 focal_length
 **   dir：输出二维向量，dir[0]=x，dir[1]=y
 **   plane：输出二维向量（与 dir 垂直），用于生成不同列的射线方向
-** 说明：
-**   这里采用和队友 DDA 渲染一致的相机模型：
-**   ray_dir = dir + plane * camera_x，其中 camera_x ∈ [-1, 1]
 */
 static void	setup_camera(t_game *game, float dir[2], float plane[2])
 {
@@ -61,5 +58,31 @@ void	draw_walls(t_game *game)
 		ray_dir_y = dir[1] + plane[1] * cam_x;
 		render_column(game, ray_dir_x, ray_dir_y, x);
 		x++;
+	}
+}
+
+/*
+** 函数：clear_image
+** 作用：清空整个屏幕（把所有像素写成 0）。
+** 参数：
+**   game：提供宽高与 put_pixel
+** 用在哪：
+**   每一帧开始时清屏，防止上一帧残影。
+*/
+void	clear_image(t_game *game)
+{
+	int	y;
+	int	x;
+
+	y = 0;
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			put_pixel(x, y, 0, game);
+			x++;
+		}
+		y++;
 	}
 }

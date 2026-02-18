@@ -6,11 +6,35 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:56 by weiyang           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 01:44:23 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+/*
+** 函数：put_pixel
+** 作用：把一个像素写进屏幕帧缓冲（game->data）。
+** 参数：
+**   x,y   ：屏幕坐标
+**   color ：颜色（0 也允许写入，用于清屏/透明）
+**   game  ：提供 data / bpp / size_line
+** 用在哪：
+**   clear_image、画墙、画线、画方块等所有绘图函数都会用它。
+*/
+void	put_pixel(int x, int y, int color, t_game *game)
+{
+	int	index;
+
+	if (x < 0 || y < 0 || x >= WIDTH || y >= HEIGHT)
+		return ;
+	index = y * game->size_line + x * (game->bpp / 8);
+	game->data[index] = color & 0xFF;
+	game->data[index + 1] = (color >> 8) & 0xFF;
+	game->data[index + 2] = (color >> 16) & 0xFF;
+	if (game->bpp == 32)
+		game->data[index + 3] = 0;
+}
 
 /*
 ** 函数：render_column
