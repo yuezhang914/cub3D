@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/08 01:59:13 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 04:33:41 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 01:47:24 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,6 @@ void								render_column(t_game *game, float r_dir_x,
 ** 作用：遍历所有列，调用 render_column 画出 3D 墙
 */
 void								draw_walls(t_game *game);
-
-int									on_mouse_move(int x, int y, t_game *game);
-void								enable_mouse(t_game *game);
 
 /* 小地图 */
 void								render_minimap(t_game *game);
