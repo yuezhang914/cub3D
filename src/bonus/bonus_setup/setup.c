@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   setup.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: weiyang <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/18 18:13:21 by weiyang           #+#    #+#             */
+/*   Updated: 2026/02/18 18:13:23 by weiyang          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
 
 /**
@@ -12,14 +24,16 @@ void handle_bonus_setup(t_game *game)
 
     if (check_bonus_elements(game))
     {
-        printf("bonus elements found\n"); fflush(stdout);
+        //printf("bonus elements found\n"); fflush(stdout);
         collect_sprites(game);
-        printf("collected %d sprites\n", game->sprs.num); fflush(stdout);
+        //printf("collected %d sprites\n", game->sprs.num); fflush(stdout);
         init_sprite_texture(game);
+		//如果是门， 则初始化门
+		//。。。
     }
     else
     {
-        printf("no bonus elements\n"); fflush(stdout);
+        printf("no bonus elements\n");
     }
 }
 
