@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 21:52:19 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 11:52:19 by weiyang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,15 +182,20 @@ static void	scan_map(t_game *game)
 ** 用在哪里：
 **   parse 入口 module_parse() 中，在 parse_config() 之后调用。
 */
-void	parse_map(t_game *game)
+void    parse_map(t_game *game)
 {
-	int		start;
-	char	**lines;
+    int     start;
+    char    **lines;
 
-	lines = game->cubfile_lines;
-	start = find_map_start(game, lines);
-	check_map_is_last(game, lines, start);
-	set_map_dimensions(game, lines, start);
-	build_map_array(game, lines, start);
-	scan_map(game);
+    lines = game->cubfile_lines;
+    start = find_map_start(game, lines);
+    check_map_is_last(game, lines, start);
+    set_map_dimensions(game, lines, start);
+    build_map_array(game, lines, start);
+    scan_map(game); // 必做的合法性检查：玩家点、墙封闭
+
+    /* --- [Bonus 逻辑插入点] --- */
+    #ifdef BONUS
+    handle_bonus_setup(game); 
+    #endif
 }
