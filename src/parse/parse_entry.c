@@ -6,10 +6,9 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:25:17 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 19:49:40 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 17:40:34 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "cub3d.h"
 
@@ -57,13 +56,10 @@ static void	import_cub(t_game *game, char *path)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		graceful_exit(game, 1, __func__, "Open() failed.");
-
 	game->entire_cubfile = ft_readfile(game, fd);
 	close(fd);
-
 	if (game->entire_cubfile == NULL || *game->entire_cubfile == '\0')
 		graceful_exit(game, 1, __func__, "Empty .cub-file.");
-
 	game->cubfile_lines = splitlines(game, game->entire_cubfile);
 	if (game->cubfile_lines == NULL)
 		graceful_exit(game, 1, __func__, "splitlines() failed.");
