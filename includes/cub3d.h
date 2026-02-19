@@ -250,8 +250,8 @@ typedef struct s_game
 	float time;
 	/* ===== 门（BONUS）===== */
 
-	t_tex door;					/* 关闭门贴图 */
-	t_tex door_open;			/* 打开门贴图（新增） */
+	t_tex door;                 /* 关闭门贴图 */
+	t_tex door_open;            /* 打开门贴图（新增） */
 	unsigned char **door_state; /* 0=关 1=开 */
 
 	/*存储每一列墙到玩家的距离*/
@@ -261,14 +261,14 @@ typedef struct s_game
 
 typedef struct s_render_vars
 {
-	int x;			 /* 当前屏幕列号 */
-	int start;		 /* 墙柱绘制起始 y */
-	int end;		 /* 墙柱绘制结束 y */
-	int line_h;		 /* 墙柱高度 */
-	int tex_x;		 /* 贴图 x 坐标 */
-	t_tex *tex;		 /* 当前使用的贴图（NO/SO/WE/EA） */
-	float perp_dist; // 新增：这列命中物体的距离
-} t_render_vars;
+	int x;      /* 当前屏幕列号 */
+	int start;  /* 墙柱绘制起始 y */
+	int end;    /* 墙柱绘制结束 y */
+	int line_h; /* 墙柱高度 */
+	int tex_x;  /* 贴图 x 坐标 */
+	t_tex *tex; /* 当前使用的贴图（NO/SO/WE/EA） */
+	 float   perp_dist;   // 新增：这列命中物体的距离
+}					t_render_vars;
 
 /*
 ** 结构体：t_sprite_render_vars

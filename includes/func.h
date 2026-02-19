@@ -85,6 +85,7 @@ void								destroy_images(t_game *game);
 void								module_parse(t_game *game, int argc,
 										char **argv);
 void								parse_config(t_game *game);
+void								scan_map(t_game *game);
 void								parse_map(t_game *game);
 t_line_type							set_input_line_type(t_game *game,
 										char *line);

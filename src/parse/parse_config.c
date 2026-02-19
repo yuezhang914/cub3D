@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:08 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 21:53:51 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 17:40:28 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "func.h"
 
 /*
-**  检查game 的配置是否完备， 包括是否有四面墙的贴图路径，天花板和地板是否分配了颜色。 
+**  检查game 的配置是否完备， 包括是否有四面墙的贴图路径，天花板和地板是否分配了颜色。
 */
 static bool	is_config_complete(t_game *game)
 {
@@ -47,8 +47,8 @@ static void	set_texture_path(t_game *game, t_line_type type, char *line)
 	if (*target != NULL)
 		graceful_exit(game, 1, __func__, "Redefinition of texture path.");
 	words = ft_split(game, line, ' ');
-// 	它在检查：这一行的参数数量必须刚好是 2 段（标识符 + 路径）。
-// 情况 A：缺路径（只有 1 段）情况 B：多了多余参数（超过 2 段）
+	// 	它在检查：这一行的参数数量必须刚好是 2 段（标识符 + 路径）。
+	// 情况 A：缺路径（只有 1 段）情况 B：多了多余参数（超过 2 段）
 	if (words[1] == NULL || words[2] != NULL)
 		graceful_exit(game, 1, __func__, "Texture line arg number error.");
 	len = ft_strlen(words[1]);
@@ -107,9 +107,8 @@ static void	set_color_config(t_game *game, t_line_type type, char *line)
 	while (line[i] == ' ' || line[i] == '\t')
 		i++;
 	i++;
-	if (read_rgb_value(line, &i, &r) || line[i++] != ','
-		|| read_rgb_value(line, &i, &g) || line[i++] != ','
-		|| read_rgb_value(line, &i, &b))
+	if (read_rgb_value(line, &i, &r) || line[i++] != ',' || read_rgb_value(line,
+			&i, &g) || line[i++] != ',' || read_rgb_value(line, &i, &b))
 		graceful_exit(game, 1, __func__, "Bad color format.");
 	while (line[i] == ' ' || line[i] == '\t')
 		i++;

@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 03:12:51 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 17:50:46 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@
 ** 用在哪里：
 **   parse_map()：在 set_map_dimensions 之后调用，构建 game->map。
 */
-static void build_map_array(t_game *game, char **lines, int start)
+static void	build_map_array(t_game *game, char **lines, int start)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	game->map = track_malloc(game, (game->map_h + 1) * sizeof(char *));
 	i = 0;
@@ -57,71 +57,6 @@ static void build_map_array(t_game *game, char **lines, int start)
 	game->map[i] = NULL;
 }
 
-/*
-** 函数名：validate_open_walls（static）
-** 作用：检查一个“可走格/出生点格”（0 或 N/E/S/W）是否被墙正确包围，防止“漏气”：
-**      - 不能在边界（第一行/最后一行/第一列/最后一列）
-**      - 上下左右不能是空格 ' '（空格代表地图外部或无效区域）
-**
-** 参数：
-**   game：全局上下文（读取 game->map、game->map_h、game->map_w）
-**   i   ：当前格子的行号
-**   j   ：当前格子的列号
-**
-** 返回：
-**   无；发现漏气直接 graceful_exit 退出
-**
-** 用在哪里：
-**   scan_map() 扫描到字符属于 "NESfirst_word" 时调用。
-*/
-static void validate_open_walls(t_game *game, int i, int j)
-{
-	if (i == 0 || j == 0 || i == game->map_h - 1 || j == game->map_w - 1)
-		graceful_exit(game, 1, __func__, "Open wall found.");
-	if (game->map[i - 1][j] == ' ' || game->map[i + 1][j] == ' ')
-		graceful_exit(game, 1, __func__, "Open wall found.");
-	if (game->map[i][j - 1] == ' ' || game->map[i][j + 1] == ' ')
-		graceful_exit(game, 1, __func__, "Open wall found.");
-}
-
-/*
-** 函数名：extract_player（static）
-** 作用：处理出生点（N/E/S/W）：
-**      1) 保证只有一个出生点（found 已经为 true 则报错）
-**      2) 写入玩家初始坐标（放在格子中心：+0.5）
-**      3) 根据 N/E/S/W 设置初始朝向角度（弧度）
-**      4) 把地图里的 N/E/S/W 替换成 '0'，后续移动/碰撞只看 0/1/空格
-**
-** 参数：
-**   game  ：全局上下文（写入 game->player.x/pos_y/angle，并修改 game->map[i][j]）
-**   i, j  ：出生点所在的地图格子坐标
-**   found ：外部传进来的标志（指针），表示是否已经找到过出生点
-**
-** 返回：
-**   无；违规直接 graceful_exit 退出
-**
-** 用在哪里：
-**   scan_map() 扫描到字符属于 "NESW" 时调用。
-*/
-static void extract_player(t_game *game, int i, int j, bool *found)
-{
-	if (*found)
-		graceful_exit(game, 1, __func__, "Multiple start position.");
-	*found = true;
-	game->player.x = (float)j + 0.5f;
-	game->player.y = (float)i + 0.5f;
-	game->player.map_x = j;
-	game->player.map_y = i;
-	if (game->map[i][j] == 'E')
-		game->player.angle = PI * 0.0f;
-	if (game->map[i][j] == 'N')
-		game->player.angle = PI * 0.5f;
-	if (game->map[i][j] == 'W')
-		game->player.angle = PI * 1.0f;
-	if (game->map[i][j] == 'S')
-		game->player.angle = PI * 1.5f;
-	game->map[i][j] = '0';
-}
 
 /*
 ** 函数名：scan_map（static）
@@ -191,10 +126,10 @@ static void scan_map(t_game *game)
 ** 用在哪里：
 **   parse 入口 module_parse() 中，在 parse_config() 之后调用。
 */
-void parse_map(t_game *game)
+void	parse_map(t_game *game)
 {
-	int start;
-	char **lines;
+	int		start;
+	char	**lines;
 
 	lines = game->cubfile_lines;
 	start = find_map_start(game, lines);
