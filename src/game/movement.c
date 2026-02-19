@@ -13,14 +13,48 @@
 #include "cub3d.h"
 
 /*
-** 函数：blocked_with_buffer（static）
-** 作用：判断坐标 (nx, ny) 是否“碰墙”（考虑一个缓冲距离 WALL_BUFFER）
+** 函数：tile_blocks（static）
+** 作用：判断某一个地图格字符是否阻挡玩家（墙/空格/关门）
 ** 参数：
-**   game：总结构体（用 game->map/map_w/map_h）
-**   nx, ny：玩家尝试移动到的新坐标（float）
+**   game：总结构体
+**   x, y：地图格坐标
 ** 返回：
-**   true  = 会撞墙/越界/走到空白区域
+**   true  = 阻挡
+**   false = 不阻挡
+** 调用：
+**   blocked_with_buffer()
+*/
+static bool	tile_blocks(t_game *game, int x, int y)
+{
+	char	c;
+
+	if (x < 0 || y < 0 || x >= game->map_w || y >= game->map_h)
+		return (true);
+	c = game->map[y][x];
+	if (c == '1' || c == ' ')
+		return (true);
+#ifdef BONUS
+	if (c == 'D')
+	{
+		/* door_state = 0 关门挡路；=1 开门不挡 */
+		if (game->door_state && game->door_state[y][x] == 0)
+			return (true);
+	}
+#endif
+	return (false);
+}
+
+/*
+** 函数：blocked_with_buffer（static）
+** 作用：判断坐标 (nx, ny) 是否“碰墙”（考虑缓冲距离 WALL_BUFFER）
+** 参数：
+**   game：总结构体
+**   nx, ny：玩家尝试移动到的新坐标
+** 返回：
+**   true  = 会撞墙/越界/走到空白/撞到关门
 **   false = 可以通过
+** 调用：
+**   try_move_axis()
 */
 static bool	blocked_with_buffer(t_game *game, float nx, float ny)
 {
@@ -29,28 +63,21 @@ static bool	blocked_with_buffer(t_game *game, float nx, float ny)
 	int	y0;
 	int	y1;
 
-	/* 越界直接视为不可走 */
 	if (nx < 0.0f || ny < 0.0f)
 		return (true);
 	if (nx >= (float)game->map_w || ny >= (float)game->map_h)
 		return (true);
-	/*
-	** 用一个“方形缓冲盒”近似玩家体积：
-	** 检查 (nx±buffer, ny±buffer) 所在地图格是否是墙 '1' 或空格 ' '
-	*/
 	x0 = (int)(nx - WALL_BUFFER);
 	x1 = (int)(nx + WALL_BUFFER);
 	y0 = (int)(ny - WALL_BUFFER);
 	y1 = (int)(ny + WALL_BUFFER);
-	if (x0 < 0 || y0 < 0 || x1 >= game->map_w || y1 >= game->map_h)
+	if (tile_blocks(game, x0, y0))
 		return (true);
-	if (game->map[y0][x0] == '1' || game->map[y0][x0] == ' ')
+	if (tile_blocks(game, x1, y0))
 		return (true);
-	if (game->map[y0][x1] == '1' || game->map[y0][x1] == ' ')
+	if (tile_blocks(game, x0, y1))
 		return (true);
-	if (game->map[y1][x0] == '1' || game->map[y1][x0] == ' ')
-		return (true);
-	if (game->map[y1][x1] == '1' || game->map[y1][x1] == ' ')
+	if (tile_blocks(game, x1, y1))
 		return (true);
 	return (false);
 }

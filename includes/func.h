@@ -167,6 +167,13 @@ void								render_minimap(t_game *game);
 int									on_mouse_move(int x, int y, t_game *game);
 void								enable_mouse(t_game *game);
 
+void								init_doors(t_game *game);
+void								load_door_texture(t_game *game);
+void								try_toggle_door(t_game *game);
+int									door_ray_blocks(t_game *game, t_dda *d,
+										float rdx, float rdy);
+int									door_is_closed(t_game *game, int x, int y);
+
 bool								check_bonus_elements(t_game *game);
 void								collect_sprites(t_game *game);
 void								handle_bonus_setup(t_game *game);

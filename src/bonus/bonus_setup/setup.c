@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   setup.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:13:21 by weiyang           #+#    #+#             */
-/*   Updated: 2026/02/18 18:13:23 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/19 03:18:57 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,16 @@
  */
 void handle_bonus_setup(t_game *game)
 {
-    printf("handle_bonus_setup called\n"); fflush(stdout);
+    if (!game || !game->map)
+        return;
 
     if (check_bonus_elements(game))
     {
-        //printf("bonus elements found\n"); fflush(stdout);
-        collect_sprites(game);
-        //printf("collected %d sprites\n", game->sprs.num); fflush(stdout);
-        init_sprite_texture(game);
-		//如果是门， 则初始化门
-		//。。。
-    }
-    else
-    {
-        printf("no bonus elements\n");
+        init_doors(game);
+        collect_sprites(game);   // ✅ 只收集坐标 + 抹除 'C'
+        // init_sprite_texture(game);  // ❌ 这里不能加载（还没 mlx_init）
     }
 }
+
+
 

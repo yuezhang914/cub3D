@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 11:52:19 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/19 03:12:51 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@
 ** 用在哪里：
 **   parse_map()：在 set_map_dimensions 之后调用，构建 game->map。
 */
-static void build_map_array(t_game *game, char **lines, int start)
+static void	build_map_array(t_game *game, char **lines, int start)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	game->map = track_malloc(game, (game->map_h + 1) * sizeof(char *));
 	i = 0;
@@ -74,7 +74,7 @@ static void build_map_array(t_game *game, char **lines, int start)
 ** 用在哪里：
 **   scan_map() 扫描到字符属于 "NESfirst_word" 时调用。
 */
-static void validate_open_walls(t_game *game, int i, int j)
+static void	validate_open_walls(t_game *game, int i, int j)
 {
 	if (i == 0 || j == 0 || i == game->map_h - 1 || j == game->map_w - 1)
 		graceful_exit(game, 1, __func__, "Open wall found.");
@@ -103,7 +103,7 @@ static void validate_open_walls(t_game *game, int i, int j)
 ** 用在哪里：
 **   scan_map() 扫描到字符属于 "NESW" 时调用。
 */
-static void extract_player(t_game *game, int i, int j, bool *found)
+static void	extract_player(t_game *game, int i, int j, bool *found)
 {
 	if (*found)
 		graceful_exit(game, 1, __func__, "Multiple start position.");
@@ -139,31 +139,35 @@ static void extract_player(t_game *game, int i, int j, bool *found)
 ** 用在哪里：
 **   parse_map()：在 build_map_array 之后调用。
 */
-static void scan_map(t_game *game)
+static void	scan_map(t_game *game)
 {
-    int i;
-    int j;
-    bool found;
+	int		i;
+	int		j;
+	bool	found;
 
-    found = false;
-    i = -1;
-    while (game->map[++i])
-    {
-        j = -1;
-        while (game->map[i][++j])
-        {
-            // ✅ 只有这四个标准方向字符能决定玩家起始位置
-            if (ft_strchr("NESW", game->map[i][j]))
-                extract_player(game, i, j, &found);
-            
-            // ✅ 墙壁封闭性检查：所有通行区域都必须检查，防止射线穿出地图
-            // 包含 0, N, E, S, W 以及所有 Bonus 字符 S, C, R, D
-            else if (ft_strchr("0SCRD", game->map[i][j]))
-                validate_open_walls(game, i, j);
-        }
-    }
-    if (!found)
-        graceful_exit(game, 1, __func__, "No start position found.");
+	found = false;
+	i = -1;
+	while (game->map[++i])
+	{
+		j = -1;
+		while (game->map[i][++j])
+		{
+			// ✅ 只有这四个标准方向字符能决定玩家起始位置
+			if (ft_strchr("NESW", game->map[i][j]))
+				extract_player(game, i, j, &found);
+// ✅ 墙壁封闭性检查：所有通行区域都必须检查，防止射线穿出地图
+// 包含 0, N, E, S, W 以及所有 Bonus 字符 S, C, R, D
+#ifdef BONUS
+			if (ft_strchr("0NESWCRDd", game->map[i][j]))
+				validate_open_walls(game, i, j);
+#else
+			if (ft_strchr("0NESW", game->map[i][j]))
+				validate_open_walls(game, i, j);
+#endif
+		}
+	}
+	if (!found)
+		graceful_exit(game, 1, __func__, "No start position found.");
 }
 
 /*
@@ -184,10 +188,10 @@ static void scan_map(t_game *game)
 ** 用在哪里：
 **   parse 入口 module_parse() 中，在 parse_config() 之后调用。
 */
-void parse_map(t_game *game)
+void	parse_map(t_game *game)
 {
-	int start;
-	char **lines;
+	int		start;
+	char	**lines;
 
 	lines = game->cubfile_lines;
 	start = find_map_start(game, lines);
@@ -195,5 +199,8 @@ void parse_map(t_game *game)
 	set_map_dimensions(game, lines, start);
 	build_map_array(game, lines, start);
 	scan_map(game); // 必做的合法性检查：玩家点、墙封闭
-
+/* --- [Bonus 逻辑插入点] --- */
+#ifdef BONUS
+	handle_bonus_setup(game);
+#endif
 }

@@ -3,28 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   mini_map.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:37 by weiyang           #+#    #+#             */
-/*   Updated: 2026/02/18 01:25:47 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/19 03:01:16 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void put_mini_pixel(t_game *game, int x, int y, int color)
+static void	put_mini_pixel(t_game *game, int x, int y, int color)
 {
 	if (x < 0 || x >= MINI_WIDTH || y < 0 || y >= MINI_HEIGHT)
-		return;
+		return ;
 	put_pixel(x + 20, y + 20, color, game);
 }
 
-static void draw_mini_player(t_game *game)
+static void	draw_mini_player(t_game *game)
 {
-	int center_x = MINI_WIDTH / 2;
-	int center_y = MINI_HEIGHT / 2;
-	int i;
+	int	center_x;
+	int	center_y;
+	int	i;
+	int	line_x;
+	int	line_y;
 
+	center_x = MINI_WIDTH / 2;
+	center_y = MINI_HEIGHT / 2;
 	for (int y = -2; y <= 2; y++)
 	{
 		for (int x = -2; x <= 2; x++)
@@ -32,8 +36,8 @@ static void draw_mini_player(t_game *game)
 	}
 	for (i = 0; i < 12; i++)
 	{
-		int line_x = center_x + (int)(cos(game->player.angle) * i);
-		int line_y = center_y + (int)(sin(game->player.angle) * i);
+		line_x = center_x + (int)(cos(game->player.angle) * i);
+		line_y = center_y + (int)(sin(game->player.angle) * i);
 		put_mini_pixel(game, line_x, line_y, 0x00FF00);
 	}
 }
@@ -41,27 +45,42 @@ static void draw_mini_player(t_game *game)
 /**
  * 根据小地图像素坐标计算其在地图中对应的颜色
  */
-static int get_mini_color(t_game *game, int x, int y)
+static int	get_mini_color(t_game *game, int x, int y)
 {
-	float map_x;
-	float map_y;
+	float	map_x;
+	float	map_y;
+	char	c;
 
 	map_x = game->player.x + (float)(x - MINI_WIDTH / 2) / game->pix_per_unit;
 	map_y = game->player.y + (float)(y - MINI_HEIGHT / 2) / game->pix_per_unit;
 	if (map_x < 0 || map_y < 0 || map_x >= game->map_w || map_y >= game->map_h)
 		return (0x1A1A1A);
-	if (game->map[(int)map_y][(int)map_x] == '1')
+	c = game->map[(int)map_y][(int)map_x];
+	if (c == '1')
 		return (0xFFFFFF);
+#ifdef BONUS
+	if (c == 'D')
+	{
+		/* door_state==0: 关门，像墙；door_state==1: 开门，像地板 */
+		if (game->door_state && game->door_state[(int)map_y][(int)map_x] == 0)
+			return (0xAAAAAA); /* 给门一个明显颜色（浅灰） */
+		return (0x333333);
+	}
+#endif
 	return (0x333333);
 }
 
 /**
  * 核心渲染函数：以玩家为中心的动态滚动小地图 (符合 Norm 规范)
  */
-void render_minimap(t_game *game)
+void	render_minimap(t_game *game)
 {
-	int x, y;
+	float	dx;
+	float	dy;
+	int		sx;
+	int		sy;
 
+	int x, y;
 	// 1. 背景 + 墙
 	y = 0;
 	while (y < MINI_HEIGHT)
@@ -74,22 +93,20 @@ void render_minimap(t_game *game)
 		}
 		y++;
 	}
-
 	// 2. 玩家
 	draw_mini_player(game);
-
-	// 3. 绘制精灵（Bonus）
-	#ifdef BONUS
+// 3. 绘制精灵（Bonus）
+#ifdef BONUS
 	for (int i = 0; i < game->sprs.num; i++)
 	{
-		float dx = game->sprs.list[i].x - game->player.x;
-		float dy = game->sprs.list[i].y - game->player.y;
-		int sx = (int)(MINI_WIDTH / 2 + dx * game->pix_per_unit);
-		int sy = (int)(MINI_HEIGHT / 2 + dy * game->pix_per_unit);
+		dx = game->sprs.list[i].x - game->player.x;
+		dy = game->sprs.list[i].y - game->player.y;
+		sx = (int)(MINI_WIDTH / 2 + dx * game->pix_per_unit);
+		sy = (int)(MINI_HEIGHT / 2 + dy * game->pix_per_unit);
 		// 小方块表示精灵
 		for (int dy2 = -1; dy2 <= 1; dy2++)
 			for (int dx2 = -1; dx2 <= 1; dx2++)
 				put_mini_pixel(game, sx + dx2, sy + dy2, 0x00FF00);
 	}
-	#endif
+#endif
 }
