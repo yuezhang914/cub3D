@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:05:48 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 19:00:06 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 02:38:04 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,12 @@ void	setup_mlx(t_game *game)
 	if (game->data == NULL)
 		graceful_exit(game, 1, __func__, "mlx_get_data_addr failed.");
 	load_wall_textures(game);
-	setup_hooks(game);
+	load_wall_textures(game);
 #ifdef BONUS
-	enable_mouse(game);
+	load_door_texture(game);
+	/* ✅ 如果地图里有精灵，再加载精灵贴图（现在 mlx 已经 ready） */
+	if (game->sprs.num > 0)
+		init_sprite_texture(game);
 #endif
+	setup_hooks(game);
 }

@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 23:10:47 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 23:51:40 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 02:02:59 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	load_door_texture(t_game *game)
 {
 	if (!game)
 		return ;
-	game->door.path = "textures/door.xpm";
+	game->door.path = "assets/door/door_close.xpm";
 	load_texture(game, &game->door);
 }
 /*

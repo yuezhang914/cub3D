@@ -8,18 +8,16 @@
  */
 void handle_bonus_setup(t_game *game)
 {
-    printf("handle_bonus_setup called\n"); fflush(stdout);
+    if (!game || !game->map)
+        return;
 
     if (check_bonus_elements(game))
     {
-        printf("bonus elements found\n"); fflush(stdout);
-        collect_sprites(game);
-        printf("collected %d sprites\n", game->sprs.num); fflush(stdout);
-        init_sprite_texture(game);
-    }
-    else
-    {
-        printf("no bonus elements\n"); fflush(stdout);
+        init_doors(game);
+        collect_sprites(game);   // ✅ 只收集坐标 + 抹除 'C'
+        // init_sprite_texture(game);  // ❌ 这里不能加载（还没 mlx_init）
     }
 }
+
+
 
