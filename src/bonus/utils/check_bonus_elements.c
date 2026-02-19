@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   check_bonus_elements.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: weiyang <weiyang@student.42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 10:31:39 by weiyang           #+#    #+#             */
 /*   Updated: 2026/02/19 10:31:42 by weiyang          ###   ########.fr       */
