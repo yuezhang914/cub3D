@@ -12,36 +12,32 @@
 
 #include "cub3d.h"
 
-static void	draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
-		float trans_y)
+static void draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
+							   float trans_y)
 {
-	int	stripe;
-	int	y;
-	int	tex_x;
-	int	tex_y;
-	int	color;
-	int	d;
+	int stripe;
+	int y;
+	int tex_x;
+	int tex_y;
+	int color;
+	int d;
 
 	stripe = v.draw_start_x;
 	while (stripe < v.draw_end_x)
 	{
 		// 1. 计算当前列对应的纹理 X
-		tex_x = (int)(256 * (stripe - (-v.sprite_w / 2 + v.screen_x))
-				* game->sprs.tex.width / v.sprite_w) / 256;
+		tex_x = (int)(256 * (stripe - (-v.sprite_w / 2 + v.screen_x)) * game->sprs.tex.width / v.sprite_w) / 256;
 		// 2. 检查：在屏幕内 && 在玩家前方 && 没被墙遮挡
-		if (trans_y > 0 && stripe >= 0 && stripe < WIDTH
-			&& trans_y < game->z_buffer[stripe])
+		if (trans_y > 0 && stripe >= 0 && stripe < WIDTH && trans_y < game->z_buffer[stripe])
 		{
 			y = v.draw_start_y;
 			while (y < v.draw_end_y)
 			{
 				// 3. 计算纹理 Y (通过当前 y 距离屏幕中心的偏差计算)
-				d = (y)*256 - HEIGHT * 128 + v.sprite_h * 128;
+				d = (y) * 256 - HEIGHT * 128 + v.sprite_h * 128;
 				tex_y = ((d * game->sprs.tex.height) / v.sprite_h) / 256;
 				// 4. 从数据中提取颜色 (注意：这里直接使用你结构体里的 sprs.tex)
-				color = *(int *)(game->sprs.tex.data + (tex_y
-							* game->sprs.tex.size_line + tex_x
-							* (game->sprs.tex.bpp / 8)));
+				color = *(int *)(game->sprs.tex.data + (tex_y * game->sprs.tex.size_line + tex_x * (game->sprs.tex.bpp / 8)));
 				// 5. 透明色过滤 (0x0 为 XPM 默认透明背景)
 				if ((color & 0x00FFFFFF) != 0)
 					put_pixel(stripe, y, color, game);
@@ -52,9 +48,9 @@ static void	draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
 	}
 }
 
-static void	draw_single_sprite(t_game *game, float t_x, float t_y)
+static void draw_single_sprite(t_game *game, float t_x, float t_y)
 {
-	t_sprite_render_vars	v;
+	t_sprite_render_vars v;
 
 	// 1. 计算高度和垂直范围
 	v.sprite_h = abs((int)(HEIGHT / t_y));
@@ -77,15 +73,16 @@ static void	draw_single_sprite(t_game *game, float t_x, float t_y)
 	draw_sprite_pixels(game, v, t_y);
 }
 
-void	render_sprites(t_game *game)
+void render_sprites(t_game *game)
 {
 	int i;
 	t_sprite *s;
-	t_coords dir;   /* 局部变量：方向向量 */
+	t_coords dir;	/* 局部变量：方向向量 */
 	t_coords plane; /* 局部变量：相机平面向量 */
 	float inv_det;
 	float trans_x;
 	float trans_y;
+	printf("render_sprites called\n");
 
 	// 1. 根据玩家当前的 angle 计算方向向量 (dir)
 	// 注意：这里的 angle 应该是弧度制。如果是角度，请用 (angle * PI / 180)
@@ -115,7 +112,7 @@ void	render_sprites(t_game *game)
 
 		// 如果精灵在玩家身后，跳过不画
 		if (trans_y <= 0.1f)
-			continue ;
+			continue;
 		draw_single_sprite(game, trans_x, trans_y);
 	}
 }
