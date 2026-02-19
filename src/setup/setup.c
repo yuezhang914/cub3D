@@ -20,14 +20,21 @@
 ** 参数：
 **   game：总结构体指针
 */
-void	init_game(t_game *game)
+void init_game(t_game *game)
 {
-	ft_bzero(game, sizeof(t_game));
-	game->ceiling_color = -1;
-	game->floor_color = -1;
-	/* 玩家移动参数：必做需要 */
-	game->player.move_speed = 0.05f;
-	game->player.rot_speed = 0.04f;
+	// 1. 修正 sizeof，确保清空整个结构体
+    ft_bzero(game, sizeof(t_game)); 
+    
+    game->ceiling_color = -1;
+    game->floor_color = -1;
+
+    /* 玩家参数 */
+    game->player.move_speed = 0.05f;
+    game->player.rot_speed = 0.04f;
+    
+    // 2. 建议显式初始化角度，双重保险
+    game->player.angle = 0.0f;
+
 #ifdef BONUS
 	game->player.mouse_enabled = 1;
 	game->player.mouse_sens = MOUSE_SENS;
@@ -35,18 +42,32 @@ void	init_game(t_game *game)
 	game->player.mouse_enabled = 0;
 	game->player.mouse_sens = 0.0f;
 #endif
-	/*
-	** 小地图相关（必做不一定用到）
-	** 为了不依赖 DISTANCE_SEEN，这里给一个保底值：
-	** pix_per_unit 越大，小地图越“放大”
-	*/
+
 	game->pix_per_unit = 8.0f;
-	/* 如果你 DDA 相机模型用 focal_length，可保留默认值 */
 	game->focal_length = 2.0f * tan((FOV * (float)PI / 180.0f) / 2.0f);
+
 #ifdef BONUS
 	game->sprs.num = 0;
 	game->sprs.list = NULL;
-	ft_bzero(&game->sprs.tex, sizeof(t_tex));
+
+	/* 1. 清空所有精灵配置 */
+	ft_bzero(game->config, sizeof(t_sprite_config) * SPR_COUNT);
+
+	/* 2. 为所有精灵类型设置安全的默认物理值 */
+	int i = -1;
+	while (++i < SPR_COUNT)
+	{
+		game->config[i].h_div = 1.0f;  // 宽度缩放（1.0是不缩放）
+		game->config[i].v_div = 1.0f;  // 高度缩放
+		game->config[i].v_move = 0.0f; // 垂直位移（默认踩在地平线上）
+	}
+
+	/* 3. 特殊处理特定精灵（如果你希望它们看起来更自然） */
+	// 桶：矮胖一点，且下沉到地面
+	game->config[SPR_BARREL].v_move = 200.0f;
+
+	// 火炬：通常挂在高处，向上偏移
+	game->config[SPR_TORCH].v_move = -400.0f;
 #endif
 }
 
@@ -57,12 +78,12 @@ void	init_game(t_game *game)
 **   game：总结构体（保存链表头 img_head）
 **   ptr ：要记录的 mlx image 指针
 */
-void	remember_image(t_game *game, void *ptr)
+void remember_image(t_game *game, void *ptr)
 {
-	t_img	*new;
+	t_img *new;
 
 	if (ptr == NULL)
-		return ;
+		return;
 	new = (t_img *)track_malloc(game, sizeof(t_img));
 	new->ptr = ptr;
 	new->next = game->img_head;
@@ -75,7 +96,7 @@ void	remember_image(t_game *game, void *ptr)
 ** 参数：
 **   game：总结构体
 */
-void	setup_hooks(t_game *game)
+void setup_hooks(t_game *game)
 {
 	mlx_hook(game->win, 2, 1L << 0, on_key_down, game);
 	mlx_hook(game->win, 3, 1L << 1, on_key_up, game);
@@ -91,28 +112,33 @@ void	setup_hooks(t_game *game)
 ** 参数：
 **   game：总结构体
 */
-void	setup_mlx(t_game *game)
+void setup_mlx(t_game *game)
 {
-	game->mlx = mlx_init();
-	if (game->mlx == NULL)
-		graceful_exit(game, 1, __func__, "mlx_init failed.");
-	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-	if (game->win == NULL)
-		graceful_exit(game, 1, __func__, "mlx_new_window failed.");
-	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (game->img == NULL)
-		graceful_exit(game, 1, __func__, "mlx_new_image failed.");
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
-			&game->endian);
-	if (game->data == NULL)
-		graceful_exit(game, 1, __func__, "mlx_get_data_addr failed.");
-	load_wall_textures(game);
-	load_wall_textures(game);
+    // 1. 初始化 MLX
+    game->mlx = mlx_init();
+    if (game->mlx == NULL)
+        graceful_exit(game, 1, __func__, "mlx_init failed.");
+
+    // 2. 加载资源 (在窗口和图像创建前加载是安全的)
+    load_wall_textures(game); // 👈 删掉重复的一行
 #ifdef BONUS
-	load_door_texture(game);
-	/* ✅ 如果地图里有精灵，再加载精灵贴图（现在 mlx 已经 ready） */
-	if (game->sprs.num > 0)
-		init_sprite_texture(game);
+    load_door_texture(game);
+    // 无论地图现在有没有精灵，都初始化配置和贴图是更健壮的做法
+    init_sprite_texture(game); 
 #endif
-	setup_hooks(game);
+
+    // 3. 创建窗口
+    game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
+    if (game->win == NULL)
+        graceful_exit(game, 1, __func__, "mlx_new_window failed.");
+
+    // 4. 创建主渲染图像
+    game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+    if (game->img == NULL)
+        graceful_exit(game, 1, __func__, "mlx_new_image failed.");
+    game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
+                                   &game->endian);
+    
+    // 5. 设置钩子
+    setup_hooks(game);
 }

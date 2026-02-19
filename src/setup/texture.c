@@ -52,17 +52,32 @@
 ** 用在哪：
 **   load_wall_textures() 与 load_anim() 中都会调用它。
 */
-void	load_texture(t_game *game, t_tex *tex)
+void load_texture(t_game *game, t_tex *tex)
 {
+	char cwd[1024];
+	getcwd(cwd, sizeof(cwd));
+	printf("Current working dir: %s\n", cwd);
+
 	if (!tex->path)
 		graceful_exit(game, 1, __func__, "Texture path is missing.");
+
+	// 1. 加载图片
 	tex->img_ptr = mlx_xpm_file_to_image(game->mlx, tex->path, &tex->width,
-			&tex->height);
+										 &tex->height);
+
+	// 2. 增强报错信息，方便调试是哪张图没找到
 	if (tex->img_ptr == NULL)
-		graceful_exit(game, 1, __func__, "Error loading texture.");
+	{
+		printf("Error: Could not find or open [%s]\n", tex->path); // 调试利器
+		graceful_exit(game, 1, __func__, "XPM loading failed.");
+	}
+
+	// 3. 内存管理
 	remember_image(game, tex->img_ptr);
+
+	// 4. 获取像素地址
 	tex->data = mlx_get_data_addr(tex->img_ptr, &tex->bpp, &tex->size_line,
-			&tex->endian);
+								  &tex->endian);
 }
 
 /*
@@ -73,7 +88,7 @@ void	load_texture(t_game *game, t_tex *tex)
 ** 用在哪：
 **   setup_mlx() 里调用，窗口创建后立刻加载贴图。
 */
-void	load_wall_textures(t_game *game)
+void load_wall_textures(t_game *game)
 {
 	load_texture(game, &game->north);
 	load_texture(game, &game->east);

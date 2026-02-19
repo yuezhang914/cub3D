@@ -27,7 +27,7 @@ bool    check_bonus_elements(t_game *game)
         j = 0;
         while (game->map[i][j])
         {
-            if (game->map[i][j] == 'C' || game->map[i][j] == 'D')
+            if (ft_strchr("CDTMB", game->map[i][j]))
                 return (true);
             j++;
         }

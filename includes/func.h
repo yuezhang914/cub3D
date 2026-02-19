@@ -187,7 +187,6 @@ void								draw_loop(t_game *game);
 void								render_minimap(t_game *game);
 
 /* Bonus*/
-# ifdef BONUS
 int									on_mouse_move(int x, int y, t_game *game);
 void								enable_mouse(t_game *game);
 
@@ -207,10 +206,12 @@ bool								check_bonus_elements(t_game *game);
 void								collect_sprites(t_game *game);
 void								handle_bonus_setup(t_game *game);
 
-void								calculate_sprite_distance(t_game *game);
+void 								calculate_sprite_distance(t_game *game);
+void 								update_sprite_distances(t_game *game);
 void								sort_sprites(t_game *game);
 void								render_sprites(t_game *game);
 void								init_sprite_texture(t_game *game);
-# endif
+
+void 								load_all_sprite_resources(t_game *game);
 
 #endif
