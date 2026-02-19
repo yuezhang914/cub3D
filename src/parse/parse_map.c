@@ -74,7 +74,7 @@ static void	build_map_array(t_game *game, char **lines, int start)
 ** 用在哪里：
 **   parse_map()：在 build_map_array 之后调用。
 */
-static void scan_map(t_game *game)
+void scan_map(t_game *game)
 {
 	int i;
 	int j;
