@@ -87,8 +87,6 @@ void	render_sprites(t_game *game)
 	float trans_x;
 	float trans_y;
 
-	//printf("Rendering %d sprites\n", game->sprs.num);
-
 	// 1. 根据玩家当前的 angle 计算方向向量 (dir)
 	// 注意：这里的 angle 应该是弧度制。如果是角度，请用 (angle * PI / 180)
 	dir.x = cos(game->player.angle);
@@ -118,7 +116,6 @@ void	render_sprites(t_game *game)
 		// 如果精灵在玩家身后，跳过不画
 		if (trans_y <= 0.1f)
 			continue ;
-
 		draw_single_sprite(game, trans_x, trans_y);
 	}
 }
