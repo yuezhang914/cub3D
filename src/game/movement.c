@@ -119,9 +119,9 @@ void	update_player(t_game *game)
 
 	/* ===== 1) 旋转（用你结构体里真实存在的 key_rot_l/key_rot_r + rot_speed） ===== */
 	if (game->player.key_rot_l)
-		game->player.angle += game->player.rot_speed;
-	if (game->player.key_rot_r)
 		game->player.angle -= game->player.rot_speed;
+	if (game->player.key_rot_r)
+		game->player.angle += game->player.rot_speed;
 	/* 角度归一化到 [0, 2PI) */
 	while (game->player.angle >= 2.0f * PI)
 		game->player.angle -= 2.0f * PI;
