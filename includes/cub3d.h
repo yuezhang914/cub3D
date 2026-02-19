@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 00:16:02 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 10:16:02 by weiyang          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,14 +247,14 @@ typedef struct s_render_vars
 */
 typedef struct s_sprite_render_vars
 {
-	int				sprite_h;
-	int				sprite_w;
-	int				screen_x;
-	int				draw_start_y;
-	int				draw_end_y;
-	int				draw_start_x;
-	int				draw_end_x;
-}					t_sprite_render_vars;
+    int             sprite_h;      // 精灵在屏幕上显示的高度（由 transformY 决定，越远越小）
+    int             sprite_w;      // 精灵在屏幕上显示的宽度（通常等于高度，保持正方形贴图比例）
+    int             screen_x;      // 精灵中心点在屏幕上的水平像素位置（由 transformX 投影计算得出）
+    int             draw_start_y;  // 精灵在屏幕上绘制的顶部 Y 坐标（如果超出屏幕顶部，则设为 0）
+    int             draw_end_y;    // 精灵在屏幕上绘制的底部 Y 坐标（如果超出屏幕底部，则设为 WINDOW_HEIGHT - 1）
+    int             draw_start_x;  // 精灵在屏幕上绘制的左侧 X 坐标（起始列）
+    int             draw_end_x;    // 精灵在屏幕上绘制的右侧 X 坐标（结束列）
+}                   t_sprite_render_vars;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
 # include "func.h"
