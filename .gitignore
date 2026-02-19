@@ -1,6 +1,5 @@
-
-.DS_Store
-game
-
+*.o
+cub3d
+cub3d_bonus
 .DS_Store
 game
