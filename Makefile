@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+         #
+#    By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/09 20:02:16 by weiyang           #+#    #+#              #
-#    Updated: 2026/02/19 10:29:11 by weiyang          ###   ########.fr        #
+#    Updated: 2026/02/19 13:17:25 by yzhang2          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,6 +55,11 @@ $(NAME_BONUS): $(MLX_LIB) $(BONUS_OBJS)
 	@$(CC) $(BONUS_OBJS) -o $(NAME_BONUS) $(MLX_FLAGS)
 	@echo "✓ cub3d bonus ready!"
 
+# # 防止误把 src/xxx 当目标触发内建“编译+链接可执行文件”的规则
+# $(SRC_DIR)/%:
+# 	@echo "Error: do not build src files as targets. Use 'make' or 'make bonus'."
+# 	@false
+
 # 编译规则：Mandatory 和 Bonus 分开存放 .o 以免冲突
 $(OBJ_DIR)/mandatory/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
@@ -76,5 +81,6 @@ fclean: clean
 	@$(MAKE) -s -C $(MLX_DIR) clean
 
 re: fclean all
+
 
 .PHONY: all clean fclean re bonus

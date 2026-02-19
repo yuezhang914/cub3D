@@ -157,8 +157,11 @@ static void scan_map(t_game *game)
 				extract_player(game, i, j, &found);
 // ✅ 墙壁封闭性检查：所有通行区域都必须检查，防止射线穿出地图
 // 包含 0, N, E, S, W 以及所有 Bonus 字符 S, C, R, D
+// 包含 0, N, E, S, W
+// Bonus 字符: T (Tree), B (Barrel), C (Torch), M (Monster), D (Door)
 #ifdef BONUS
-			if (ft_strchr("0NESWCRDd", game->map[i][j]))
+			// 注意：我们将 C 改为代表火炬，T 代表树，B 代表桶，M 代表怪物
+			if (ft_strchr("0NESWTBCMD", game->map[i][j]))
 				validate_open_walls(game, i, j);
 #else
 			if (ft_strchr("0NESW", game->map[i][j]))

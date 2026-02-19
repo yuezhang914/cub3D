@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 23:10:47 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 02:02:59 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 12:26:05 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,11 @@ void	load_door_texture(t_game *game)
 		return ;
 	game->door.path = "assets/door/door_close.xpm";
 	load_texture(game, &game->door);
+
+	game->door_open.path = "assets/door/door_open.xpm";
+	load_texture(game, &game->door_open);
 }
+
 /*
 ** 函数：door_ray_blocks
 ** 作用：
@@ -56,11 +60,11 @@ int	door_ray_blocks(t_game *game, t_dda *d, float rdx, float rdy)
 
 	open = (float)game->door_state[d->map_y][d->map_x]; /* 0 或 1 */
 
-	/* 关门：必挡；开门：必不挡（先满足作业“能开门+可见”） */
-	if (open <= 0.0f)
-		return (1);
-	if (open >= 1.0f)
-		return (0);
+if (open <= 0.0f)   // 关门
+    return (1);
+if (open >= 1.0f)   // 开门
+    return (0);
+
 
 	/* 如果你未来做 0~1 动画，这段才会用到 */
 	if (d->side == 0)

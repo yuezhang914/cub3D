@@ -20,7 +20,7 @@
 ** 参数：
 **   game：总结构体指针
 */
-void	init_game(t_game *game)
+void init_game(t_game *game)
 {
 	ft_bzero(game, sizeof(t_game));
 	game->ceiling_color = -1;
@@ -46,7 +46,8 @@ void	init_game(t_game *game)
 #ifdef BONUS
 	game->sprs.num = 0;
 	game->sprs.list = NULL;
-	ft_bzero(&game->sprs.tex, sizeof(t_tex));
+	// 假设你的结构体里有 t_sprite_manager sprs;
+	ft_bzero(game->sprs.config, sizeof(t_sprite_config) * SPR_COUNT);
 #endif
 }
 
@@ -57,12 +58,12 @@ void	init_game(t_game *game)
 **   game：总结构体（保存链表头 img_head）
 **   ptr ：要记录的 mlx image 指针
 */
-void	remember_image(t_game *game, void *ptr)
+void remember_image(t_game *game, void *ptr)
 {
-	t_img	*new;
+	t_img *new;
 
 	if (ptr == NULL)
-		return ;
+		return;
 	new = (t_img *)track_malloc(game, sizeof(t_img));
 	new->ptr = ptr;
 	new->next = game->img_head;
@@ -75,7 +76,7 @@ void	remember_image(t_game *game, void *ptr)
 ** 参数：
 **   game：总结构体
 */
-void	setup_hooks(t_game *game)
+void setup_hooks(t_game *game)
 {
 	mlx_hook(game->win, 2, 1L << 0, on_key_down, game);
 	mlx_hook(game->win, 3, 1L << 1, on_key_up, game);
@@ -91,7 +92,7 @@ void	setup_hooks(t_game *game)
 ** 参数：
 **   game：总结构体
 */
-void	setup_mlx(t_game *game)
+void setup_mlx(t_game *game)
 {
 	game->mlx = mlx_init();
 	if (game->mlx == NULL)
@@ -103,7 +104,7 @@ void	setup_mlx(t_game *game)
 	if (game->img == NULL)
 		graceful_exit(game, 1, __func__, "mlx_new_image failed.");
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
-			&game->endian);
+								   &game->endian);
 	if (game->data == NULL)
 		graceful_exit(game, 1, __func__, "mlx_get_data_addr failed.");
 	load_wall_textures(game);

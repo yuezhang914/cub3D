@@ -146,10 +146,33 @@ void								clear_image(t_game *game);
 t_render_vars						get_render_vars(t_game *game, float r_dir_x,
 										float r_dir_y, int i);
 
+void								ray_init_dda(t_game *game, t_dda *d,
+										float r_dir_x, float r_dir_y);
+void								ray_set_step_x(t_game *game, t_dda *d,
+										float r_dir_x);
+void								ray_set_step_y(t_game *game, t_dda *d,
+										float r_dir_y);
+int									ray_run_dda_until_hit(t_game *game,
+										t_dda *d, float r_dir_x, float r_dir_y);
+t_render_vars						ray_make_render_vars(t_game *game, t_dda *d,
+										float r_dir_x, float r_dir_y);
+
+void								ray_step_once(t_dda *d);
+int									ray_outside_map(t_game *game, t_dda *d);
+t_tex								*ray_pick_texture(t_game *game, t_dda *d,
+										float r_dx, float r_dy);
+float								ray_get_perp_dist(t_dda *d);
+int									ray_calc_tex_x(t_game *game, t_dda *d,
+										t_tex *tex, float perp, float r_dx,
+										float r_dy);
+
+void								draw_wall(t_render_vars v, t_game *game,
+										float step, float tex_pos);
+
 /*
-** 函数：render_column
-** 作用：渲染屏幕第 i 列（天花→墙贴图→地板）
-*/
+ ** 函数：render_column
+ ** 作用：渲染屏幕第 i 列（天花→墙贴图→地板）
+ */
 void								render_column(t_game *game, float r_dir_x,
 										float r_dir_y, int i);
 
@@ -173,6 +196,11 @@ void								try_toggle_door(t_game *game);
 int									door_ray_blocks(t_game *game, t_dda *d,
 										float rdx, float rdy);
 int									door_is_closed(t_game *game, int x, int y);
+
+t_render_vars						get_open_door_overlay_vars(t_game *game,
+										float r_dir_x, float r_dir_y, int i);
+void								draw_door_overlay_column_bonus(t_game *game,
+										float r_dir_x, float r_dir_y, int i);
 
 bool								check_bonus_elements(t_game *game);
 void								collect_sprites(t_game *game);
