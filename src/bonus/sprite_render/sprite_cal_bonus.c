@@ -12,39 +12,6 @@
 
 #include "cub3d.h"
 
-void init_sprite_texture(t_game *game)
-{
-	if (!game || !game->mlx)
-		return;
-
-	// --- [1] 树：静态单帧 ---
-	game->config[SPR_TREE].frame_count = 1;
-	game->config[SPR_TREE].is_animated = false;
-	game->config[SPR_TREE].is_directional = false;
-	game->config[SPR_TREE].v_move = 0.0f; // 树长在地上
-
-	// --- [2] 动画火炬：4 帧循环 ---
-	game->config[SPR_TORCH].frame_count = 4;
-	game->config[SPR_TORCH].is_animated = true;
-	game->config[SPR_TORCH].is_directional = false;
-	game->config[SPR_TORCH].v_move = -200.0f; // 火炬通常挂在墙上，向上偏移一点
-
-	// --- [3] 桶：静态单帧 (矮胖型) ---
-	game->config[SPR_BARREL].frame_count = 1;
-	game->config[SPR_BARREL].is_animated = false;
-	game->config[SPR_BARREL].is_directional = false;
-	game->config[SPR_BARREL].v_move = 0.0f; // 桶踩在地上
-
-	// --- [4] 怪物：8 方向立体 ---
-	game->config[SPR_MONSTER].frame_count = 8;
-	game->config[SPR_MONSTER].is_animated = false;
-	game->config[SPR_MONSTER].is_directional = true;
-	game->config[SPR_MONSTER].v_move = 0.0f;
-
-	// 执行所有资源的分配与加载
-	load_all_sprite_resources(game);
-}
-
 static void set_sprite_resource_path(t_game *game, int type, int frame)
 {
     t_tex *tex = &game->config[type].frames[frame];
@@ -79,8 +46,6 @@ static void set_sprite_resource_path(t_game *game, int type, int frame)
     }
 }
 
-
-
 void load_all_sprite_resources(t_game *game)
 {
 	int i;
@@ -105,10 +70,49 @@ void load_all_sprite_resources(t_game *game)
 			load_texture(game, &game->config[i].frames[f]);
 
 			/* 调试打印：确认资源是否到位 */
-			// printf("Loaded: Type %d Frame %d -> %s\n", i, f, game->config[i].frames[f].path);
+			 printf("Loaded: Type %d Frame %d -> %s\n", i, f, game->config[i].frames[f].path);
 		}
 	}
 }
+
+void init_sprite_texture(t_game *game)
+{
+	if (!game || !game->mlx)
+		return;
+
+	// --- [1] 树：静态单帧 ---
+	game->config[SPR_TREE].frame_count = 1;
+	game->config[SPR_TREE].is_animated = false;
+	game->config[SPR_TREE].is_directional = false;
+	game->config[SPR_TREE].v_move = 0.0f; // 树长在地上
+
+	// --- [2] 动画火炬：4 帧循环 ---
+	game->config[SPR_TORCH].frame_count = 4;
+	game->config[SPR_TORCH].is_animated = true;
+	game->config[SPR_TORCH].is_directional = false;
+	game->config[SPR_TORCH].v_move = -200.0f; // 火炬通常挂在墙上，向上偏移一点
+
+	// --- [3] 桶：静态单帧 (矮胖型) ---
+	game->config[SPR_BARREL].frame_count = 1;
+	game->config[SPR_BARREL].is_animated = false;
+	game->config[SPR_BARREL].is_directional = false;
+	game->config[SPR_BARREL].v_move = 0.0f; // 桶踩在地上
+
+	// --- [4] 怪物：8 方向立体 ---
+	game->config[SPR_MONSTER].frame_count = 8;
+	game->config[SPR_MONSTER].is_animated = false;
+	game->config[SPR_MONSTER].is_directional = true;
+	game->config[SPR_MONSTER].v_move = 0.0f;
+
+	// 执行所有资源的分配与加载
+	load_all_sprite_resources(game);
+}
+
+
+
+
+
+
 
 void collect_sprites(t_game *game)
 {
