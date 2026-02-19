@@ -14,36 +14,40 @@
 
 static void set_sprite_resource_path(t_game *game, int type, int frame)
 {
-    t_tex *tex = &game->config[type].frames[frame];
+	t_tex *tex = &game->config[type].frames[frame];
 
-    // 注意：路径字符串必须与你 ls 出来的结果完全一致
-    if (type == SPR_TREE)
-        tex->path = "assets/sprites/tree.xpm";
-    else if (type == SPR_BARREL)
-        tex->path = "assets/sprites/barrel.xpm";
-    else if (type == SPR_TORCH)
-    {
-        // 你的目录里有 torch_0 到 torch_3
-        if (frame == 0) tex->path = "assets/sprites/torch_0.xpm";
-        else if (frame == 1) tex->path = "assets/sprites/torch_1.xpm";
-        else if (frame == 2) tex->path = "assets/sprites/torch_2.xpm";
-        else tex->path = "assets/sprites/torch_3.xpm";
-    }
-    else if (type == SPR_MONSTER)
-    {
-        // 这里的顺序必须对应你的 get_sprite_dir_index 逻辑
-        char *m_paths[] = {
-            "assets/sprites/m_front.xpm",       // 0
-            "assets/sprites/m_front_right.xpm", // 1
-            "assets/sprites/m_right.xpm",       // 2
-            "assets/sprites/m_back_right.xpm",  // 3
-            "assets/sprites/m_back.xpm",        // 4
-            "assets/sprites/m_back_left.xpm",   // 5
-            "assets/sprites/m_left.xpm",        // 6
-            "assets/sprites/m_front_left.xpm"   // 7
-        };
-        tex->path = m_paths[frame];
-    }
+	// 注意：路径字符串必须与你 ls 出来的结果完全一致
+	if (type == SPR_TREE)
+		tex->path = "assets/sprites/tree.xpm";
+	else if (type == SPR_BARREL)
+		tex->path = "assets/sprites/barrel.xpm";
+	else if (type == SPR_TORCH)
+	{
+		// 你的目录里有 torch_0 到 torch_3
+		if (frame == 0)
+			tex->path = "assets/sprites/torch_0.xpm";
+		else if (frame == 1)
+			tex->path = "assets/sprites/torch_1.xpm";
+		else if (frame == 2)
+			tex->path = "assets/sprites/torch_2.xpm";
+		else
+			tex->path = "assets/sprites/torch_3.xpm";
+	}
+	else if (type == SPR_MONSTER)
+	{
+		// 这里的顺序必须对应你的 get_sprite_dir_index 逻辑
+		char *m_paths[] = {
+			"assets/sprites/m_front.xpm",		// 0
+			"assets/sprites/m_front_right.xpm", // 1
+			"assets/sprites/m_right.xpm",		// 2
+			"assets/sprites/m_back_right.xpm",	// 3
+			"assets/sprites/m_back.xpm",		// 4
+			"assets/sprites/m_back_left.xpm",	// 5
+			"assets/sprites/m_left.xpm",		// 6
+			"assets/sprites/m_front_left.xpm"	// 7
+		};
+		tex->path = m_paths[frame];
+	}
 }
 
 void load_all_sprite_resources(t_game *game)
@@ -70,7 +74,7 @@ void load_all_sprite_resources(t_game *game)
 			load_texture(game, &game->config[i].frames[f]);
 
 			/* 调试打印：确认资源是否到位 */
-			 printf("Loaded: Type %d Frame %d -> %s\n", i, f, game->config[i].frames[f].path);
+			printf("Loaded: Type %d Frame %d -> %s\n", i, f, game->config[i].frames[f].path);
 		}
 	}
 }
@@ -96,7 +100,14 @@ void init_sprite_texture(t_game *game)
 	game->config[SPR_BARREL].frame_count = 1;
 	game->config[SPR_BARREL].is_animated = false;
 	game->config[SPR_BARREL].is_directional = false;
-	game->config[SPR_BARREL].v_move = 0.0f; // 桶踩在地上
+
+	// 缩放系数：值越大，精灵越小
+	game->config[SPR_BARREL].v_div = 2.0f; // 高度缩小一倍
+	game->config[SPR_BARREL].h_div = 2.0f; // 宽度缩小一倍
+
+	// 垂直位移：因为高度变小了，中心点上移，所以需要增加 v_move 将其推回地面
+	// 公式参考：v_move = vertical_offset / transform_y
+	game->config[SPR_BARREL].v_move = 300.0f;
 
 	// --- [4] 怪物：8 方向立体 ---
 	game->config[SPR_MONSTER].frame_count = 8;
@@ -108,68 +119,61 @@ void init_sprite_texture(t_game *game)
 	load_all_sprite_resources(game);
 }
 
-
-
-
-
-
-
 void collect_sprites(t_game *game)
 {
-    int i;
-    int j;
-    int count;
+	int i;
+	int j;
+	int count;
 
-    count = 0;
+	count = 0;
 
-    /* 第一遍：数数 */
-    i = -1;
-    while (game->map[++i])
-    {
-        j = -1;
-        while (game->map[i][++j])
-        {
-            if (ft_strchr("TBCM", game->map[i][j]))
-                count++;
-        }
-    }
+	/* 第一遍：数数 */
+	i = -1;
+	while (game->map[++i])
+	{
+		j = -1;
+		while (game->map[i][++j])
+		{
+			if (ft_strchr("TBCM", game->map[i][j]))
+				count++;
+		}
+	}
 
-    game->sprs.num = count;
+	game->sprs.num = count;
 
-    if (count == 0)
-        return;
+	if (count == 0)
+		return;
 
-    game->sprs.list = track_malloc(game, sizeof(t_sprite) * count);
+	game->sprs.list = track_malloc(game, sizeof(t_sprite) * count);
 
-    /* 第二遍：填充数据 */
-    count = 0;
-    i = -1;
-    while (game->map[++i])
-    {
-        j = -1;
-        while (game->map[i][++j])
-        {
-            if (ft_strchr("TBCM", game->map[i][j]))
-            {
-                game->sprs.list[count].x = j + 0.5f;
-                game->sprs.list[count].y = i + 0.5f;
+	/* 第二遍：填充数据 */
+	count = 0;
+	i = -1;
+	while (game->map[++i])
+	{
+		j = -1;
+		while (game->map[i][++j])
+		{
+			if (ft_strchr("TBCM", game->map[i][j]))
+			{
+				game->sprs.list[count].x = j + 0.5f;
+				game->sprs.list[count].y = i + 0.5f;
 
-                if (game->map[i][j] == 'T')
-                    game->sprs.list[count].type = SPR_TREE;
-                else if (game->map[i][j] == 'B')
-                    game->sprs.list[count].type = SPR_BARREL;
-                else if (game->map[i][j] == 'C')
-                    game->sprs.list[count].type = SPR_TORCH;
-                else if (game->map[i][j] == 'M')
-                    game->sprs.list[count].type = SPR_MONSTER;
+				if (game->map[i][j] == 'T')
+					game->sprs.list[count].type = SPR_TREE;
+				else if (game->map[i][j] == 'B')
+					game->sprs.list[count].type = SPR_BARREL;
+				else if (game->map[i][j] == 'C')
+					game->sprs.list[count].type = SPR_TORCH;
+				else if (game->map[i][j] == 'M')
+					game->sprs.list[count].type = SPR_MONSTER;
 
-                game->map[i][j] = '0';
-                count++;
-            }
-        }
-    }
+				game->map[i][j] = '0';
+				count++;
+			}
+		}
+	}
 }
-
 
 /**
  * @brief 计算每个精灵到玩家当前位置的距离平方
@@ -197,19 +201,19 @@ void calculate_sprite_distance(t_game *game)
 */
 void update_sprite_distances(t_game *game)
 {
-    int i;
+	int i;
 
-    i = 0;
-    while (i < game->sprs.num)
-    {
-        // 计算坐标差
-        float dx = game->player.x - game->sprs.list[i].x;
-        float dy = game->player.y - game->sprs.list[i].y;
-        
-        // 存储距离平方 (dx^2 + dy^2)
-        game->sprs.list[i].dist = (dx * dx) + (dy * dy);
-        i++;
-    }
+	i = 0;
+	while (i < game->sprs.num)
+	{
+		// 计算坐标差
+		float dx = game->player.x - game->sprs.list[i].x;
+		float dy = game->player.y - game->sprs.list[i].y;
+
+		// 存储距离平方 (dx^2 + dy^2)
+		game->sprs.list[i].dist = (dx * dx) + (dy * dy);
+		i++;
+	}
 }
 
 /*
@@ -217,32 +221,32 @@ void update_sprite_distances(t_game *game)
 */
 void sort_sprites(t_game *game)
 {
-    int i;
-    int j;
-    t_sprite temp;
+	int i;
+	int j;
+	t_sprite temp;
 
-    if (game->sprs.num < 2)
-        return;
+	if (game->sprs.num < 2)
+		return;
 
-    // 1. 先更新最新距离
-    update_sprite_distances(game);
+	// 1. 先更新最新距离
+	update_sprite_distances(game);
 
-    // 2. 冒泡排序：将距离远的排在数组前面
-    i = 0;
-    while (i < game->sprs.num - 1)
-    {
-        j = 0;
-        while (j < game->sprs.num - i - 1)
-        {
-            // 如果后一个比前一个更远，则交换（保证数组是从远到近）
-            if (game->sprs.list[j].dist < game->sprs.list[j + 1].dist)
-            {
-                temp = game->sprs.list[j];
-                game->sprs.list[j] = game->sprs.list[j + 1];
-                game->sprs.list[j + 1] = temp;
-            }
-            j++;
-        }
-        i++;
-    }
+	// 2. 冒泡排序：将距离远的排在数组前面
+	i = 0;
+	while (i < game->sprs.num - 1)
+	{
+		j = 0;
+		while (j < game->sprs.num - i - 1)
+		{
+			// 如果后一个比前一个更远，则交换（保证数组是从远到近）
+			if (game->sprs.list[j].dist < game->sprs.list[j + 1].dist)
+			{
+				temp = game->sprs.list[j];
+				game->sprs.list[j] = game->sprs.list[j + 1];
+				game->sprs.list[j + 1] = temp;
+			}
+			j++;
+		}
+		i++;
+	}
 }
