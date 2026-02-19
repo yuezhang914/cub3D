@@ -24,33 +24,34 @@
 */
 int game_step(t_game *game)
 {
-	update_player(game);
-	clear_image(game);
+    // --- 关键：在这里更新全局时间 ---
+    game->time += 0.016f; 
 
-	/* 1. 渲染 3D 墙体（这里面会填充你的 z_buffer） */
-	draw_loop(game);
+    update_player(game);
+    clear_image(game);
 
-	/* 2. 渲染 3D 精灵 (Bonus 逻辑) */
-	#ifdef BONUS
-	if (game->sprs.num > 0)
-	{
-		// A. 计算所有精灵到玩家的当前距离
-		calculate_sprite_distance(game);
-		// B. 按距离从远到近排序（防止透明度错位）
-		sort_sprites(game);
-		// C. 投影并绘制到画布上
-		render_sprites(game);
-	}
-	/* 3. 渲染 2D 叠加层（小地图永远在最上方） */
-	render_minimap(game);
-	#endif
+    /* 1. 渲染 3D 墙体（这里面会填充你的 z_buffer） */
+    draw_loop(game);
 
-	
+    /* 2. 渲染 3D 精灵 (Bonus 逻辑) */
+    #ifdef BONUS
+    if (game->sprs.num > 0)
+    {
+        // A. 计算所有精灵到玩家的当前距离
+        calculate_sprite_distance(game);
+        // B. 按距离从远到近排序
+        sort_sprites(game);
+        // C. 投影并绘制到画布上
+        render_sprites(game);
+    }
+    /* 3. 渲染 2D 叠加层 */
+    render_minimap(game);
+    #endif
 
-	/* 4. 将最终画布推送到窗口 */
-	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+    /* 4. 将最终画布推送到窗口 */
+    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 
-	return (0);
+    return (0);
 }
 
 /*

@@ -26,48 +26,44 @@ static void draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
     int     tex_x;
     int     tex_y;
     int     color;
-    float   shading;
+    int     animated_y;
+    float   wave;
 
-    // 1. 计算亮度强度 (基于距离的平方反比)
-    // 0.05 是衰减系数，你可以根据迷宫的黑暗程度微调
-    shading = 1.0f / (1.0f + trans_y * trans_y * 0.05f);
-    if (shading > 1.0f) shading = 1.0f;
-    if (shading < 0.15f) shading = 0.15f; // 哪怕再远，也保留一点可见轮廓
+    // wave 控制火焰上下跳动的偏移像素量
+    wave = sin(game->time * 12.0f) * 2.0f; 
 
     stripe = v.draw_start_x;
     while (stripe < v.draw_end_x)
     {
-        // 计算贴图 X 坐标：(当前像素 - 绘制起点) * 贴图宽度 / 绘制总宽度
         tex_x = (int)((stripe - v.draw_start_x) * tex->width / v.sprite_w);
-
-        // Z-Buffer 检查：确保精灵不会穿过墙壁
         if (stripe >= 0 && stripe < WIDTH && trans_y > 0 && trans_y < game->z_buffer[stripe])
         {
             y = v.draw_start_y;
             while (y < v.draw_end_y)
             {
-                // 计算贴图 Y 坐标：(当前像素 - 绘制起点) * 贴图高度 / 绘制总高度
+                // 计算标准的贴图 Y 坐标
                 tex_y = (int)((y - v.draw_start_y) * tex->height / v.sprite_h);
 
-                // 安全检查，防止浮点误差导致越界
-                if (tex_x >= 0 && tex_x < tex->width && tex_y >= 0 && tex_y < tex->height)
+                // --- 方案1：基于坐标的局部动效 ---
+                // 如果是火炬，并且当前像素属于贴图的上半部分（火焰区域，0-7行）
+                if (v.type == SPR_TORCH && tex_y < 8)
                 {
-                    // 获取像素颜色
-                    color = *(int *)(tex->data + (tex_y * tex->size_line + tex_x * (tex->bpp / 8)));
-
-                    // 0x00FFFFFF 过滤透明色 (XPM 的 None)
-                    if ((color & 0x00FFFFFF) != 0)
-                    {
-                        // 2. 应用阴影 (Shading)
-                        // 分别提取 R, G, B 通道并乘以亮度系数
-                        int r = ((color >> 16) & 0xFF) * shading;
-                        int g = ((color >> 8) & 0xFF) * shading;
-                        int b = (color & 0xFF) * shading;
-                        color = (r << 16) | (g << 8) | b;
-
-                        put_pixel(stripe, y, color, game);
-                    }
+                    // 只对火焰部分应用偏移
+                    animated_y = tex_y + (int)wave;
+                    // 安全检查：防止偏移后超出火焰区域或变为负数
+                    if (animated_y < 0) animated_y = 0;
+                    if (animated_y > 8) animated_y = 8;
+                    color = *(int *)(tex->data + (animated_y * tex->size_line + tex_x * (tex->bpp / 8)));
                 }
+                else
+                {
+                    // 手柄部分（tex_y >= 8）或非火炬精灵，保持静止读取
+                    color = *(int *)(tex->data + (tex_y * tex->size_line + tex_x * (tex->bpp / 8)));
+                }
+
+                // 渲染非透明像素
+                if ((color & 0x00FFFFFF) != 0)
+                    put_pixel(stripe, y, color, game);
                 y++;
             }
         }
@@ -104,29 +100,22 @@ static void draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
     t_sprite_config      *conf = &game->config[s->type];
     t_tex                *tex;
 
-    // 1. 选择贴图
-    tex = (conf->is_directional) ? 
-          &conf->frames[get_sprite_dir_index(game, s)] : &conf->frames[s->cur_frame];
+    if (conf->is_directional)
+        tex = &conf->frames[get_sprite_dir_index(game, s)];
+    else
+        tex = &conf->frames[s->cur_frame];
 
-    // 2. 尺寸缩放
+    // 保持尺寸固定，不加 wave
     v.sprite_h = abs((int)(HEIGHT / t_y)) / conf->v_div;
     v.sprite_w = abs((int)(HEIGHT / t_y)) / conf->h_div;
-
-    // 3. 关键：垂直偏移补偿
-    // 增加 v_offset 的逻辑：(垂直位移系数 / 距离)
-    // 这里的 conf->v_move 建议设为 300.0 到 500.0 之间的正数
     v.v_offset = (int)(conf->v_move / t_y);
 
-    // 4. 计算 Y 轴渲染边界
-    // HEIGHT / 2 是地平线。我们把中心点向下推 v_offset。
     v.draw_start_y = -v.sprite_h / 2 + HEIGHT / 2 + v.v_offset;
     v.draw_end_y = v.sprite_h / 2 + HEIGHT / 2 + v.v_offset;
     
-    // Clamping 边界裁剪
     if (v.draw_start_y < 0) v.draw_start_y = 0;
     if (v.draw_end_y >= HEIGHT) v.draw_end_y = HEIGHT - 1;
 
-    // 5. 计算 X 轴
     v.screen_x = (int)((WIDTH / 2) * (1 + t_x / t_y));
     v.draw_start_x = -v.sprite_w / 2 + v.screen_x;
     v.draw_end_x = v.sprite_w / 2 + v.screen_x;
@@ -134,6 +123,8 @@ static void draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
     if (v.draw_start_x < 0) v.draw_start_x = 0;
     if (v.draw_end_x >= WIDTH) v.draw_end_x = WIDTH - 1;
 
+    // 记录当前精灵的类型，方便在像素处理时判断
+    v.type = s->type; 
     draw_sprite_pixels(game, v, t_y, tex);
 }
 

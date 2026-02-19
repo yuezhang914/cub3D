@@ -247,7 +247,7 @@ typedef struct s_game
 	t_sprite_manager sprs;
 	/* 这里的 config 是核心：它存储了每种精灵的贴图“模板” */
 	t_sprite_config config[SPR_COUNT];
-
+	float time;
 	/* ===== 门（BONUS）===== */
 
 	t_tex door;					/* 关闭门贴图 */
@@ -281,14 +281,15 @@ typedef struct s_render_vars
 */
 typedef struct s_sprite_render_vars
 {
-    int sprite_h;     // 精灵在屏幕上显示的高度
-    int sprite_w;     // 精灵在屏幕上显示的宽度
-    int screen_x;     // 精灵中心点在屏幕上的水平像素位置
-    int v_offset;     /* 新增：垂直偏移像素量（由 v_move / trans_y 计算得出） */
-    int draw_start_y; // 精灵在屏幕上绘制的顶部 Y 坐标（已包含 v_offset）
-    int draw_end_y;   // 精灵在屏幕上绘制的底部 Y 坐标（已包含 v_offset）
-    int draw_start_x; // 精灵在屏幕上绘制的左侧 X 坐标
-    int draw_end_x;   // 精灵在屏幕上绘制的右侧 X 坐标
+    int     sprite_h;
+    int     sprite_w;
+    int     draw_start_y;
+    int     draw_end_y;
+    int     draw_start_x;
+    int     draw_end_x;
+    int     screen_x;
+    int     v_offset;
+    int     type;       // 👈 必须添加这一行
 } t_sprite_render_vars;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
