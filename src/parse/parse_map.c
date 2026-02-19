@@ -156,7 +156,7 @@ static void scan_map(t_game *game)
 			if (ft_strchr("NESW", game->map[i][j]))
 				extract_player(game, i, j, &found);
 // ✅ 墙壁封闭性检查：所有通行区域都必须检查，防止射线穿出地图
-// 包含 0, N, E, S, W 以及所有 Bonus 字符 S, C, R, D
+// 包含 0, N, E, S, W 以及所有 Bonus 字符 T, M, B, C, D
 // 包含 0, N, E, S, W
 // Bonus 字符: T (Tree), B (Barrel), C (Torch), M (Monster), D (Door)
 #ifdef BONUS

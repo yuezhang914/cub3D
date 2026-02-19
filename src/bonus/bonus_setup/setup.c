@@ -42,21 +42,19 @@ void count_sprites(t_game *game)
  */
 void handle_bonus_setup(t_game *game)
 {
-	if (!game || !game->map)
-		return;
+    if (!game || !game->map)
+        return;
 
-	/* ** 1. 首先统计地图上所有精灵的总数
-	** 这样才能为 game->sprs.list 分配正确的内存空间
-	*/
-	count_sprites(game);
-	if (game->sprs.num > 0)
-	{
-		game->sprs.list = track_malloc(game, sizeof(t_sprite) * game->sprs.num);
-		/* 2. 收集坐标、设置 type (T/B/C/M)、并从地图上抹除字符 */
-		collect_sprites(game);
-	}
+    // 1. 统计并分配精灵列表内存
+    count_sprites(game); 
+    if (game->sprs.num > 0)
+    {
+        game->sprs.list = track_malloc(game, sizeof(t_sprite) * game->sprs.num);
+        collect_sprites(game); // 提取 T/B/C/M 的坐标并抹除字符
+    }
 
-	/* 3. 初始化门的数据结构 (记录坐标并分配 door_state 内存) */
-	/* 注意：'D' 不要从地图上抹除，DDA 渲染时需要它 */
-	init_doors(game);
+    // 2. 初始化门的数据
+    init_doors(game); 
+
+    // ❌ 删掉这里的 init_sprite_texture(game);
 }

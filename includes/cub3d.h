@@ -174,12 +174,16 @@ typedef struct s_sprite
 
 typedef struct s_sprite_config
 {
-	t_tex *frames;		 // 贴图数组
-	int frame_count;	 // 总帧数
-	bool is_animated;	 // 是否有动画
-	bool is_directional; // 是否是八方向
-	int	 v_move;
-} t_sprite_config;
+    t_tex   *frames;         // 贴图数组
+    int     frame_count;     // 帧数
+    bool    is_animated;     // 是否是动画
+    bool    is_directional;  // 是否是八方向怪物
+    
+    /* 🏆 添加下面这三个字段来修复报错 */
+    float   h_div;           // 水平缩放比例 (Horizontal Division)
+    float   v_div;           // 垂直缩放比例 (Vertical Division)
+    float   v_move;          // 垂直偏移 (Vertical Move)
+}   t_sprite_config;
 
 typedef struct s_sprite_manager
 {
@@ -277,13 +281,14 @@ typedef struct s_render_vars
 */
 typedef struct s_sprite_render_vars
 {
-	int sprite_h;	  // 精灵在屏幕上显示的高度（由 transformY 决定，越远越小）
-	int sprite_w;	  // 精灵在屏幕上显示的宽度（通常等于高度，保持正方形贴图比例）
-	int screen_x;	  // 精灵中心点在屏幕上的水平像素位置（由 transformX 投影计算得出）
-	int draw_start_y; // 精灵在屏幕上绘制的顶部 Y 坐标（如果超出屏幕顶部，则设为 0）
-	int draw_end_y;	  // 精灵在屏幕上绘制的底部 Y 坐标（如果超出屏幕底部，则设为 WINDOW_HEIGHT - 1）
-	int draw_start_x; // 精灵在屏幕上绘制的左侧 X 坐标（起始列）
-	int draw_end_x;	  // 精灵在屏幕上绘制的右侧 X 坐标（结束列）
+    int sprite_h;     // 精灵在屏幕上显示的高度
+    int sprite_w;     // 精灵在屏幕上显示的宽度
+    int screen_x;     // 精灵中心点在屏幕上的水平像素位置
+    int v_offset;     /* 新增：垂直偏移像素量（由 v_move / trans_y 计算得出） */
+    int draw_start_y; // 精灵在屏幕上绘制的顶部 Y 坐标（已包含 v_offset）
+    int draw_end_y;   // 精灵在屏幕上绘制的底部 Y 坐标（已包含 v_offset）
+    int draw_start_x; // 精灵在屏幕上绘制的左侧 X 坐标
+    int draw_end_x;   // 精灵在屏幕上绘制的右侧 X 坐标
 } t_sprite_render_vars;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
