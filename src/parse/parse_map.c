@@ -30,10 +30,10 @@
 ** 用在哪里：
 **   parse_map()：在 set_map_dimensions 之后调用，构建 game->map。
 */
-static void	build_map_array(t_game *game, char **lines, int start)
+static void build_map_array(t_game *game, char **lines, int start)
 {
-	int	i;
-	int	j;
+	int i;
+	int j;
 
 	game->map = track_malloc(game, (game->map_h + 1) * sizeof(char *));
 	i = 0;
@@ -74,7 +74,7 @@ static void	build_map_array(t_game *game, char **lines, int start)
 ** 用在哪里：
 **   scan_map() 扫描到字符属于 "NESfirst_word" 时调用。
 */
-static void	validate_open_walls(t_game *game, int i, int j)
+static void validate_open_walls(t_game *game, int i, int j)
 {
 	if (i == 0 || j == 0 || i == game->map_h - 1 || j == game->map_w - 1)
 		graceful_exit(game, 1, __func__, "Open wall found.");
@@ -103,7 +103,7 @@ static void	validate_open_walls(t_game *game, int i, int j)
 ** 用在哪里：
 **   scan_map() 扫描到字符属于 "NESW" 时调用。
 */
-static void	extract_player(t_game *game, int i, int j, bool *found)
+static void extract_player(t_game *game, int i, int j, bool *found)
 {
 	if (*found)
 		graceful_exit(game, 1, __func__, "Multiple start position.");
@@ -139,11 +139,11 @@ static void	extract_player(t_game *game, int i, int j, bool *found)
 ** 用在哪里：
 **   parse_map()：在 build_map_array 之后调用。
 */
-static void	scan_map(t_game *game)
+static void scan_map(t_game *game)
 {
-	int		i;
-	int		j;
-	bool	found;
+	int i;
+	int j;
+	bool found;
 
 	found = false;
 	i = -1;
@@ -188,10 +188,10 @@ static void	scan_map(t_game *game)
 ** 用在哪里：
 **   parse 入口 module_parse() 中，在 parse_config() 之后调用。
 */
-void	parse_map(t_game *game)
+void parse_map(t_game *game)
 {
-	int		start;
-	char	**lines;
+	int start;
+	char **lines;
 
 	lines = game->cubfile_lines;
 	start = find_map_start(game, lines);
