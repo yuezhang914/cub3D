@@ -57,7 +57,7 @@ void collect_sprites(t_game *game)
 			}
 		}
 	}
-	printf("After collect: %d sprites\n", game->sprs.num);
+	//printf("After collect: %d sprites\n", game->sprs.num);
 }
 
 /**

@@ -82,7 +82,7 @@ void render_sprites(t_game *game)
 	float inv_det;
 	float trans_x;
 	float trans_y;
-	printf("render_sprites called\n");
+	//printf("render_sprites called\n");
 
 	// 1. 根据玩家当前的 angle 计算方向向量 (dir)
 	// 注意：这里的 angle 应该是弧度制。如果是角度，请用 (angle * PI / 180)
