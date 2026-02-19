@@ -12,19 +12,56 @@
 
 #include "cub3d.h"
 
-int	main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-	t_game	game;
-	(void)	argc;
+    t_game game;
 
-	init_game(&game);
-	module_parse(&game, argc, argv);
-	setup_mlx(&game);
-	mlx_loop_hook(game.mlx, game_step, &game);
-	mlx_loop(game.mlx);
-	return (0);
+    init_game(&game);
+    module_parse(&game, argc, argv);
+
+    /* --- 关键：必须先执行 setup_mlx --- */
+    setup_mlx(&game);               // 2. 这里会执行 mlx_init()，给 game->mlx 赋值
+
+    #ifdef BONUS
+    /* --- 只有执行完 setup_mlx，game->mlx 才不是 NULL --- */
+    handle_bonus_setup(&game);      // 3. 这里再加载精灵纹理和采集精灵
+    #endif
+
+    mlx_loop_hook(game.mlx, game_step, &game);
+    mlx_loop(game.mlx);
+    return (0);
 }
+/*
+int main(int argc, char **argv)
+{
+    t_game game;
 
+    if (argc != 2)
+        return (print_error("main", "Usage: ./cub3D map.cub"), 1);
+
+    // 1. 初始化结构体（清零指针，设置默认速度）
+    init_game(&game);
+
+    // 2. 解析 .cub 文件（获取贴图路径、颜色、地图数组）
+    module_parse(&game, argc, argv);
+
+    // 3. 初始化 MLX 连接、窗口、主画布，并加载墙壁贴图
+    setup_mlx(&game); // 执行完这一步，game.mlx 才有值
+
+    #ifdef BONUS
+    // 4. 加载精灵纹理（现在 game.mlx 不是 NULL 了，不会报错）
+    init_sprite_texture(&game);
+    // 5. 从地图中提取精灵坐标
+    collect_sprites(&game);
+    #endif
+
+    // 6. 开启游戏循环
+    mlx_loop_hook(game.mlx, game_step, &game);
+    mlx_loop(game.mlx);
+
+    return (0);
+}
+*/
 // void init_game(t_game *game)
 // {
 // 	game->mlx = mlx_init();
