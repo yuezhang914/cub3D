@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 19:06:35 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 00:16:02 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,10 @@ typedef struct s_game
 
 	/* 小精灵管理 */
 	t_spr_info		sprs;
+
+	/* ===== 门（BONUS）===== */
+	t_tex door;                 /* 门贴图（关闭时用） */
+	unsigned char **door_state; /* 0=关 1=开，与 map 中 'D' 对应 */
 
 	/*存储每一列墙到玩家的距离*/
 	float			z_buffer[WIDTH];

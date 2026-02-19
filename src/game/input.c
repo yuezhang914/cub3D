@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:43:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/18 22:07:18 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/18 23:52:56 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	on_key_down(int keycode, t_game *game)
 		game->player.key_rot_r = 1;
 #ifdef BONUS
 	else if (keycode == XK_e)
-		door_try_toggle(game);
+		try_toggle_door(game);
 #endif
 	return (0);
 }
