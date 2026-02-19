@@ -32,4 +32,3 @@ void handle_bonus_setup(t_game *game)
 }
 
 
-
