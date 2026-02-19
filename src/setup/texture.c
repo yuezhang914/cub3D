@@ -56,8 +56,6 @@ void load_texture(t_game *game, t_tex *tex)
 {
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
-	printf("Current working dir: %s\n", cwd);
-
 	if (!tex->path)
 		graceful_exit(game, 1, __func__, "Texture path is missing.");
 
