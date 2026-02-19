@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <weiyang@student.42.fr>                     +#+  +:+       +#+        */
+/*   By: weiyang <weiyang@student.42.fr>               +#+  +:+ 	+#+       */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:56 by weiyang           #+#    #+#             */
 /*   Updated: 2026/02/15 15:01:00 by weiyang          ###   ########.fr       */
@@ -12,83 +12,69 @@
 
 #include "cub3d.h"
 
-/**
- * @brief 将单个像素写入图像缓冲区。
- * * @param x, y  目标像素在屏幕上的坐标。
- * @param color 16进制颜色值 (0xRRGGBB)。
- * @param game  游戏主结构体，包含图像 data 指针和 line_size 等信息。
- * * 逻辑：计算一维数组索引 index = (y * 线宽) + (x * 像素字节数)。
- * 这里的写入顺序符合小端序 (BGRA)。
- */
-void put_pixel(int x, int y, int color, t_game *game)
+#ifdef BONUS
+void	draw_door_overlay_column_bonus(t_game *game, float r_dir_x,
+			float r_dir_y, int i);
+#endif
+
+static void	draw_ceiling_part(t_game *game, t_render_vars v)
 {
-	char *dst;
+	int	y;
 
-	// 1. 边界检查：防止越界访问导致的 Segment Fault
-	if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT)
-		return;
-
-	// 2. 计算目标像素地址
-	// size_line 是图片一行的字节数
-	// bpp / 8 是每个像素占用的字节数（通常是 4）
-	dst = game->data + (y * game->size_line + x * (game->bpp / 8));
-
-	// 3. 写入颜色 (假设 32 bits 颜色)
-	*(unsigned int *)dst = color;
-}
-
-/**
- * @brief 绘制垂直线中的“墙体”部分，并应用纹理映射。
- * * @param v       存储渲染所需的变量（如 start, end, tex_x, 纹理指针等）。
- * @param game    游戏主结构体。
- * @param step    纹理坐标的步长（纹理高度 / 屏幕墙高）。
- * @param tex_pos 纹理在 Y 轴上的初始读取位置。
- */
-static void draw_wall(t_render_vars v, t_game *game, float step, float tex_pos)
-{
-	int y;
-	int color;
-	int tex_y;
-
-	y = v.start;
-	if (y < 0)
-		y = 0;
-	while (y <= v.end && y < HEIGHT)
+	y = 0;
+	while (y < v.start && y < HEIGHT)
 	{
-		tex_y = (int)tex_pos % v.tex->height;
-		color = *(int *)(v.tex->data + (tex_y * v.tex->size_line + v.tex_x * (v.tex->bpp / 8)));
-		put_pixel(v.x, y, color, game);
-		tex_pos += step;
+		put_pixel(v.x, y, game->ceiling_color, game);
 		y++;
 	}
 }
 
-/**
- * @brief 渲染屏幕的第 i 列（一整个垂直线）。
- * * @param game     游戏主结构体。
- * @param r_dir_x  当前光线的 X 方向向量。
- * @param r_dir_y  当前光线的 Y 方向向量。
- * @param i        当前处理的屏幕横坐标 (0 到 WIDTH-1)。
- */
-void render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
+static void	draw_floor_part(t_game *game, t_render_vars v)
 {
-	int y;
-	float step;
-	float tex_pos;
-	t_render_vars v;
+	int	y;
 
-	v = get_render_vars(game, r_dir_x, r_dir_y, i);
-	y = -1;
-	while (++y < v.start && y < HEIGHT)
-		put_pixel(v.x, y, game->ceiling_color, game);
-	step = 1.0f * v.tex->height / v.line_h;
-	tex_pos = 0;
-	if (v.start < 0)
-		tex_pos = (float)-v.start * step;
-	draw_wall(v, game, step, tex_pos);
 	y = v.end;
 	if (y < 0)
 		y = -1;
 	while (++y < HEIGHT)
 		put_pixel(v.x, y, game->floor_color, game);
+}
+
+static void	draw_wall_part(t_game *game, t_render_vars v)
+{
+	float	step;
+	float	tex_pos;
+
+	step = 1.0f * v.tex->height / v.line_h;
+	tex_pos = 0.0f;
+	if (v.start < 0)
+		tex_pos = (float)(-v.start) * step;
+	draw_wall(v, game, step, tex_pos);
+}
+
+/*
+** 函数：render_column
+** 作用：渲染屏幕第 i 列（天花板 → 墙 → 地板）
+** 参数：
+**   game：游戏主结构体（包含画布、颜色、贴图等）
+**   r_dir_x：当前列射线方向 x
+**   r_dir_y：当前列射线方向 y
+**   i：屏幕列下标（0..WIDTH-1）
+** 逻辑：
+**   1) 调用 get_render_vars 计算该列墙体渲染参数（并写 z_buffer）
+**   2) 画天花板、墙、地板
+**   3) BONUS：叠加门框（透明像素跳过）
+** 在哪调用：draw_walls() 中逐列调用
+*/
+void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
+{
+	t_render_vars	v;
+
+	v = get_render_vars(game, r_dir_x, r_dir_y, i);
+	draw_ceiling_part(game, v);
+	draw_wall_part(game, v);
+	draw_floor_part(game, v);
+#ifdef BONUS
+	draw_door_overlay_column_bonus(game, r_dir_x, r_dir_y, i);
+#endif
 }

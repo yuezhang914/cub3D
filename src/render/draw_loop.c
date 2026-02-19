@@ -61,6 +61,7 @@ void	draw_loop(t_game *game)
 	}
 }
 
+
 /*
 ** 函数：clear_image
 ** 作用：清空整个屏幕（把所有像素写成 0）。

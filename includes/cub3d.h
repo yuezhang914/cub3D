@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 10:16:02 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/19 12:36:58 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,8 +218,10 @@ typedef struct s_game
 	t_spr_info		sprs;
 
 	/* ===== 门（BONUS）===== */
-	t_tex door;                 /* 门贴图（关闭时用） */
-	unsigned char **door_state; /* 0=关 1=开，与 map 中 'D' 对应 */
+
+	t_tex door;                 /* 关闭门贴图 */
+	t_tex door_open;            /* 打开门贴图（新增） */
+	unsigned char **door_state; /* 0=关 1=开 */
 
 	/*存储每一列墙到玩家的距离*/
 	float			z_buffer[WIDTH];
@@ -234,6 +236,7 @@ typedef struct s_render_vars
 	int line_h; /* 墙柱高度 */
 	int tex_x;  /* 贴图 x 坐标 */
 	t_tex *tex; /* 当前使用的贴图（NO/SO/WE/EA） */
+	 float   perp_dist;   // 新增：这列命中物体的距离
 }					t_render_vars;
 
 /*
@@ -247,14 +250,14 @@ typedef struct s_render_vars
 */
 typedef struct s_sprite_render_vars
 {
-    int             sprite_h;      // 精灵在屏幕上显示的高度（由 transformY 决定，越远越小）
-    int             sprite_w;      // 精灵在屏幕上显示的宽度（通常等于高度，保持正方形贴图比例）
-    int             screen_x;      // 精灵中心点在屏幕上的水平像素位置（由 transformX 投影计算得出）
-    int             draw_start_y;  // 精灵在屏幕上绘制的顶部 Y 坐标（如果超出屏幕顶部，则设为 0）
-    int             draw_end_y;    // 精灵在屏幕上绘制的底部 Y 坐标（如果超出屏幕底部，则设为 WINDOW_HEIGHT - 1）
-    int             draw_start_x;  // 精灵在屏幕上绘制的左侧 X 坐标（起始列）
-    int             draw_end_x;    // 精灵在屏幕上绘制的右侧 X 坐标（结束列）
-}                   t_sprite_render_vars;
+	int sprite_h;     // 精灵在屏幕上显示的高度（由 transformY 决定，越远越小）
+	int sprite_w;     // 精灵在屏幕上显示的宽度（通常等于高度，保持正方形贴图比例）
+	int screen_x;     // 精灵中心点在屏幕上的水平像素位置（由 transformX 投影计算得出）
+	int draw_start_y; // 精灵在屏幕上绘制的顶部 Y 坐标（如果超出屏幕顶部，则设为 0）
+	int draw_end_y;   // 精灵在屏幕上绘制的底部 Y 坐标（如果超出屏幕底部，则设为 WINDOW_HEIGHT - 1）
+	int draw_start_x; // 精灵在屏幕上绘制的左侧 X 坐标（起始列）
+	int draw_end_x;   // 精灵在屏幕上绘制的右侧 X 坐标（结束列）
+}					t_sprite_render_vars;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
 # include "func.h"
