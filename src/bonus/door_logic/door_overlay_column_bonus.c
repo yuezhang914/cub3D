@@ -6,16 +6,14 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 13:37:09 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 13:37:36 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/19 14:08:23 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "cub3d.h"
 
-
-static void	draw_overlay_transparent(t_render_vars v, t_game *game,
-				float step, float tex_pos)
+static void	draw_overlay_transparent(t_render_vars v, t_game *game, float step,
+		float tex_pos)
 {
 	int	y;
 	int	tex_y;
@@ -27,9 +25,10 @@ static void	draw_overlay_transparent(t_render_vars v, t_game *game,
 	while (y <= v.end && y < HEIGHT)
 	{
 		tex_y = (int)tex_pos % v.tex->height;
-		color = *(int *)(v.tex->data
-				+ (tex_y * v.tex->size_line + v.tex_x * (v.tex->bpp / 8)));
-		if (color != 0)
+		color = *(int *)(v.tex->data + (tex_y * v.tex->size_line + v.tex_x
+					* (v.tex->bpp / 8)));
+		if ((unsigned int)color != 0x00000000u
+			&& (unsigned int)color != 0xFF000000u)
 			put_pixel(v.x, y, color, game);
 		tex_pos += step;
 		y++;
@@ -51,7 +50,7 @@ static void	draw_overlay_transparent(t_render_vars v, t_game *game,
 ** 在哪调用：render_column() 的 BONUS 分支（画完墙后）
 */
 void	draw_door_overlay_column_bonus(t_game *game, float r_dir_x,
-			float r_dir_y, int i)
+		float r_dir_y, int i)
 {
 	t_render_vars	door_v;
 	float			step;
