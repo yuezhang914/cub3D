@@ -6,7 +6,7 @@
 #    By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/09 20:02:16 by weiyang           #+#    #+#              #
-#    Updated: 2026/02/20 17:32:13 by yzhang2          ###   ########.fr        #
+#    Updated: 2026/02/20 19:17:40 by yzhang2          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,7 +78,7 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME) $(NAME_BONUS)
-	@$(MAKE) -s -C $(MLX_DIR) clean
+	-@$(MAKE) -s -C $(MLX_DIR) clean
 
 re: fclean all
 

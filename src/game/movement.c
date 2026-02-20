@@ -104,6 +104,36 @@ static void	try_move_axis(t_game *game, float dx, float dy)
 		game->player.y = ny;
 }
 
+static void	get_move_offset(t_game *game, float *dx, float *dy)
+{
+	float	ca;
+	float	sa;
+
+	ca = cosf(game->player.angle) * game->player.move_speed;
+	sa = sinf(game->player.angle) * game->player.move_speed;
+	if (game->player.key_up)
+	{
+		*dx += ca;
+		*dy += sa;
+	}
+	if (game->player.key_down)
+	{
+		*dx -= ca;
+		*dy -= sa;
+	}
+	if (game->player.key_left)
+	{
+		*dx -= sa;
+		*dy += ca;
+	}
+	if (game->player.key_right)
+	{
+		*dx += sa;
+		*dy -= ca;
+	}
+}
+
+
 /*
 ** 函数：update_player
 ** 作用：根据按键状态更新玩家角度与位置（必做版）
@@ -114,45 +144,18 @@ void	update_player(t_game *game)
 {
 	float	dx;
 	float	dy;
-	float	ca;
-	float	sa;
 
-	/* ===== 1) 旋转（用你结构体里真实存在的 key_rot_l/key_rot_r + rot_speed） ===== */
 	if (game->player.key_rot_l)
 		game->player.angle -= game->player.rot_speed;
 	if (game->player.key_rot_r)
 		game->player.angle += game->player.rot_speed;
-	/* 角度归一化到 [0, 2PI) */
 	while (game->player.angle >= 2.0f * PI)
 		game->player.angle -= 2.0f * PI;
 	while (game->player.angle < 0.0f)
 		game->player.angle += 2.0f * PI;
-	/* ===== 2) 位移（前后 = 朝向方向；左右 = 朝向垂直方向） ===== */
-	dx = 0.0f;
-	dy = 0.0f;
-	ca = cosf(game->player.angle);
-	sa = sinf(game->player.angle);
-	if (game->player.key_up)
-	{
-		dx += ca * game->player.move_speed;
-		dy += sa * game->player.move_speed;
-	}
-	if (game->player.key_down)
-	{
-		dx -= ca * game->player.move_speed;
-		dy -= sa * game->player.move_speed;
-	}
-	if (game->player.key_left)
-	{
-		dx += -sa * game->player.move_speed;
-		dy += ca * game->player.move_speed;
-	}
-	if (game->player.key_right)
-	{
-		dx += sa * game->player.move_speed;
-		dy += -ca * game->player.move_speed;
-	}
-	/* ===== 3) 碰撞处理（拆轴移动） ===== */
+	dx = 0;
+	dy = 0;
+	get_move_offset(game, &dx, &dy);
 	if (dx != 0.0f || dy != 0.0f)
 		try_move_axis(game, dx, dy);
 }
