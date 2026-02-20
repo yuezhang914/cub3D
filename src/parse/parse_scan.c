@@ -29,7 +29,7 @@
 ** 用在哪里：
 **   scan_map() 扫描到字符属于 "NESfirst_word" 时调用。
 */
-static void	validate_open_walls(t_game *game, int i, int j)
+void	validate_open_walls(t_game *game, int i, int j)
 {
 	if (i == 0 || j == 0 || i == game->map_h - 1 || j == game->map_w - 1)
 		graceful_exit(game, 1, __func__, "Open wall found.");
@@ -57,7 +57,7 @@ static void	validate_open_walls(t_game *game, int i, int j)
 ** 用在哪里：
 **   scan_map() 扫描到字符属于 "NESW" 时调用。
 */
-static void	extract_player(t_game *game, int i, int j, bool *found)
+void	extract_player(t_game *game, int i, int j, bool *found)
 {
 	if (*found)
 		graceful_exit(game, 1, __func__, "Multiple start position.");
@@ -93,7 +93,7 @@ static void	extract_player(t_game *game, int i, int j, bool *found)
 ** 用在哪里：
 **   parse_map()：在 build_map_array 之后调用。
 */
-static bool	is_allowed_tile(char c)
+/*static bool	is_allowed_tile(char c)
 {
 #ifdef BONUS
 	return (ft_strchr(" 01NSEWCPRDdTBCM", c) != NULL);
@@ -111,29 +111,5 @@ static bool	is_walkable_tile(char c)
 	return (ft_strchr("0NESWTBCM", c) != NULL);
 #endif
 }
+*/
 
-void	scan_map(t_game *game)
-{
-	int		i;
-	int		j;
-	bool	found;
-	char	c;
-
-	found = false;
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while ((c = game->map[i][++j]))
-		{
-			if (!is_allowed_tile(c))
-				graceful_exit(game, 1, __func__, "Invalid map character.");
-			if (ft_strchr("NESW", c))
-				extract_player(game, i, j, &found);
-			if (is_walkable_tile(c))
-				validate_open_walls(game, i, j);
-		}
-	}
-	if (!found)
-		graceful_exit(game, 1, __func__, "No start position found.");
-}
