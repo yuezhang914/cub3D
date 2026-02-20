@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 17:49:30 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 18:07:11 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/20 17:33:32 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ static bool	is_allowed_tile(char c)
 #ifdef BONUS
 	return (ft_strchr(" 01NSEWCPRDdTBCM", c) != NULL);
 #else
-	return (ft_strchr(" 01NSEWTBCM", c) != NULL);
+	return (ft_strchr(" 01NSEW", c) != NULL);
 #endif
 }
 
@@ -108,7 +108,7 @@ static bool	is_walkable_tile(char c)
 #ifdef BONUS
 	return (ft_strchr("0NESWCPRDdTBCM", c) != NULL);
 #else
-	return (ft_strchr("0NESWTBCM", c) != NULL);
+	return (ft_strchr("0NESW", c) != NULL);
 #endif
 }
 
