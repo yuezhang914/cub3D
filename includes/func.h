@@ -214,6 +214,4 @@ void								init_sprite_texture(t_game *game);
 
 void 								load_all_sprite_resources(t_game *game);
 
-void	validate_open_walls(t_game *game, int i, int j);
-void	extract_player(t_game *game, int i, int j, bool *found);
 #endif
