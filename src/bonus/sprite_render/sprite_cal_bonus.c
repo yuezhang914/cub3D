@@ -114,6 +114,10 @@ void init_sprite_texture(t_game *game)
 	game->config[SPR_MONSTER].is_animated = false;
 	game->config[SPR_MONSTER].is_directional = true;
 	game->config[SPR_MONSTER].v_move = 0.0f;
+	// 缩放系数：值越大，精灵越小
+	game->config[SPR_MONSTER].v_div = 2.0f; // 高度缩小一倍
+	game->config[SPR_MONSTER].h_div = 2.0f; // 宽度缩小一倍
+	game->config[SPR_MONSTER].v_move = 300.0f;
 
 	// 执行所有资源的分配与加载
 	load_all_sprite_resources(game);

@@ -59,56 +59,6 @@ static void	build_map_array(t_game *game, char **lines, int start)
 
 
 /*
-** 函数名：scan_map（static）
-** 作用：遍历 game->map 的每个字符，做两类检查/处理：
-**      A) 对 "0 或 N/E/S/W" 做“漏气墙检查”（validate_open_walls）
-**      B) 对 "N/E/S/W" 做“出生点抽取”（extract_player）
-**      最后必须保证至少找到一个出生点，否则报错。
-**
-** 参数：
-**   game：全局上下文（读写 player、读取 map）
-**
-** 返回：
-**   无；发现任何违规直接 graceful_exit 退出
-**
-** 用在哪里：
-**   parse_map()：在 build_map_array 之后调用。
-*/
-static void scan_map(t_game *game)
-{
-	int i;
-	int j;
-	bool found;
-
-	found = false;
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			// ✅ 只有这四个标准方向字符能决定玩家起始位置
-			if (ft_strchr("NESW", game->map[i][j]))
-				extract_player(game, i, j, &found);
-// ✅ 墙壁封闭性检查：所有通行区域都必须检查，防止射线穿出地图
-// 包含 0, N, E, S, W 以及所有 Bonus 字符 T, M, B, C, D
-// 包含 0, N, E, S, W
-// Bonus 字符: T (Tree), B (Barrel), C (Torch), M (Monster), D (Door)
-#ifdef BONUS
-			// 注意：我们将 C 改为代表火炬，T 代表树，B 代表桶，M 代表怪物
-			if (ft_strchr("0NESWTBCMD", game->map[i][j]))
-				validate_open_walls(game, i, j);
-#else
-			if (ft_strchr("0NESW", game->map[i][j]))
-				validate_open_walls(game, i, j);
-#endif
-		}
-	}
-	if (!found)
-		graceful_exit(game, 1, __func__, "No start position found.");
-}
-
-/*
 ** 函数名：parse_map
 ** 作用：地图解析总入口（只负责“调度步骤”，不写复杂逻辑）：
 **      1) 找到地图开始行（find_map_start）
