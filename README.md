@@ -198,7 +198,8 @@ For each vertical screen column:
 
 ```bash
 ./cub3d path/to/map.cub
-
+或
+./cub3d_bonus path/to/map.cub
 ```
 
 ---
