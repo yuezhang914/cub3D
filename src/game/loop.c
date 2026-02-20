@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:42:58 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 11:48:07 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/20 19:05:45 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,36 +22,31 @@
 ** 用在哪：
 **   mlx_loop_hook(game->mlx, game_step, game) 绑定主循环。
 */
-int game_step(t_game *game)
+int	game_step(t_game *game)
 {
-    // --- 关键：在这里更新全局时间 ---
-    game->time += 0.016f; 
-
-    update_player(game);
-    clear_image(game);
-
-    /* 1. 渲染 3D 墙体（这里面会填充你的 z_buffer） */
-    draw_loop(game);
-
-    /* 2. 渲染 3D 精灵 (Bonus 逻辑) */
-    #ifdef BONUS
-    if (game->sprs.num > 0)
-    {
-        // A. 计算所有精灵到玩家的当前距离
-        calculate_sprite_distance(game);
-        // B. 按距离从远到近排序
-        sort_sprites(game);
-        // C. 投影并绘制到画布上
-        render_sprites(game);
-    }
-    /* 3. 渲染 2D 叠加层 */
-    render_minimap(game);
-    #endif
-
-    /* 4. 将最终画布推送到窗口 */
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-
-    return (0);
+	// --- 关键：在这里更新全局时间 ---
+	game->time += 0.016f;
+	update_player(game);
+	clear_image(game);
+	/* 1. 渲染 3D 墙体（这里面会填充你的 z_buffer） */
+	draw_loop(game);
+/* 2. 渲染 3D 精灵 (Bonus 逻辑) */
+#ifdef BONUS
+	if (game->sprs.num > 0)
+	{
+		// A. 计算所有精灵到玩家的当前距离
+		calculate_sprite_distance(game);
+		// B. 按距离从远到近排序
+		sort_sprites(game);
+		// C. 投影并绘制到画布上
+		render_sprites(game);
+	}
+	/* 3. 渲染 2D 叠加层 */
+	render_minimap(game);
+#endif
+	/* 4. 将最终画布推送到窗口 */
+	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	return (0);
 }
 
 /*
@@ -64,9 +59,9 @@ int game_step(t_game *game)
 ** 用在哪：
 **   mlx_hook(win, 17, 0, on_window_close, game)
 */
-int on_window_close(void *param)
+int	on_window_close(void *param)
 {
-	t_game *game;
+	t_game	*game;
 
 	game = (t_game *)param;
 	graceful_exit(game, 0, NULL, NULL);
