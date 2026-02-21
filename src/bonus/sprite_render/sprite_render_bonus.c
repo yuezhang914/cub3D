@@ -26,31 +26,52 @@ static void draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
     int stripe, y;
     int tex_x, tex_y;
     int color;
+    float jump_factor;
 
-    stripe = sx; // 使用传入的裁剪起点 sx
+    // 1. 计算当前帧的总跳动偏移量
+    // sin(game->time * 15.0f) 控制速度，* 4.0f 控制最大跳动像素距离
+    float total_jump = sin(game->time * 15.0f) * 4.0f;
+
+    stripe = sx;
     while (stripe < ex)
     {
-        /* 关键：计算 tex_x 使用原始的 v.draw_start_x */
         tex_x = (int)((stripe - v.draw_start_x) * tex->width / v.sprite_w);
 
-        /* 基础检查：在屏幕内且未被墙遮挡 */
         if (stripe >= 0 && stripe < WIDTH && trans_y > 0 && trans_y < game->z_buffer[stripe])
         {
-            y = sy; // 使用传入的裁剪起点 sy
+            y = sy;
             while (y < ey)
             {
-                /* 关键：计算 tex_y 使用原始的 v.draw_start_y */
+                // 原始纹理坐标计算
                 tex_y = (int)((y - v.draw_start_y) * tex->height / v.sprite_h);
 
-                /* 安全检查，防止浮点误差导致纹理采样越界 */
-                if (tex_x >= 0 && tex_x < tex->width && tex_y >= 0 && tex_y < tex->height)
+                // --- 火焰跳动逻辑 ---
+                if (v.type == SPR_TORCH)
                 {
-                    color = *(int *)(tex->data + (tex_y * tex->size_line + tex_x * (tex->bpp / 8)));
+                    /* jump_factor: 顶部 (tex_y=0) 为 1.0, 底部 (tex_y=31) 为 0.0
+                    ** 这样火苗会跳动，而手柄（底部）会被锁定不动 */
+                    jump_factor = 1.0f - ((float)tex_y / tex->height);
                     
-                    /* 0 为透明（XPM 格式常见） */
-                    if ((color & 0x00FFFFFF) != 0)
-                        put_pixel(stripe, y, color, game);
+                    // 仅在 Y 方向应用偏移
+                    int animated_y = tex_y + (int)(total_jump * jump_factor);
+                    
+                    // 边界安全检查
+                    if (animated_y < 0) animated_y = 0;
+                    if (animated_y >= tex->height) animated_y = tex->height - 1;
+                    
+                    color = *(int *)(tex->data + (animated_y * tex->size_line + tex_x * (tex->bpp / 8)));
                 }
+                else
+                {
+                    /* 非火炬精灵正常渲染 */
+                    if (tex_x >= 0 && tex_x < tex->width && tex_y >= 0 && tex_y < tex->height)
+                        color = *(int *)(tex->data + (tex_y * tex->size_line + tex_x * (tex->bpp / 8)));
+                    else
+                        color = 0;
+                }
+
+                if ((color & 0x00FFFFFF) != 0)
+                    put_pixel(stripe, y, color, game);
                 y++;
             }
         }

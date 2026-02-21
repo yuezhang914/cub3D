@@ -94,7 +94,7 @@ void init_sprite_texture(t_game *game)
 	game->config[SPR_TORCH].frame_count = 4;
 	game->config[SPR_TORCH].is_animated = true;
 	game->config[SPR_TORCH].is_directional = false;
-	game->config[SPR_TORCH].v_move = -200.0f; // 火炬通常挂在墙上，向上偏移一点
+	game->config[SPR_TORCH].v_move = -320.0f; // 火炬通常挂在墙上，向上偏移一点
 
 	// --- [3] 桶：静态单帧 (矮胖型) ---
 	game->config[SPR_BARREL].frame_count = 1;
