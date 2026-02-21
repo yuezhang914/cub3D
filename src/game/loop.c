@@ -34,11 +34,9 @@ int	game_step(t_game *game)
 #ifdef BONUS
 	if (game->sprs.num > 0)
 	{
-		// A. 计算所有精灵到玩家的当前距离
-		calculate_sprite_distance(game);
-		// B. 按距离从远到近排序
+		// A. 按距离从远到近排序
 		sort_sprites(game);
-		// C. 投影并绘制到画布上
+		// B. 投影并绘制到画布上
 		render_sprites(game);
 	}
 	/* 3. 渲染 2D 叠加层 */
