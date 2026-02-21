@@ -31,31 +31,13 @@ static void	fill_sprite_data(t_game *game, int i, int j, int *count)
 	(*count)++;
 }
 
-static int	count_sprites(char **map)
-{
-	int	i;
-	int	j;
-	int	count;
-
-	count = 0;
-	i = -1;
-	while (map[++i])
-	{
-		j = -1;
-		while (map[i][++j])
-			if (ft_strchr("TBCM", map[i][j]))
-				count++;
-	}
-	return (count);
-}
-
 void	collect_sprites(t_game *game)
 {
 	int	i;
 	int	j;
 	int	count;
 
-	game->sprs.num = count_sprites(game->map);
+	count_sprites(game);
 	if (game->sprs.num == 0)
 		return ;
 	game->sprs.list = track_malloc(game, sizeof(t_sprite) * game->sprs.num);

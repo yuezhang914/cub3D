@@ -213,5 +213,6 @@ void								render_sprites(t_game *game);
 void								init_sprite_texture(t_game *game);
 
 void 								load_all_sprite_resources(t_game *game);
+void count_sprites(t_game *game);							
 
 #endif
