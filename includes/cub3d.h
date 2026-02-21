@@ -174,16 +174,16 @@ typedef struct s_sprite
 
 typedef struct s_sprite_config
 {
-    t_tex   *frames;         // 贴图数组
-    int     frame_count;     // 帧数
-    bool    is_animated;     // 是否是动画
-    bool    is_directional;  // 是否是八方向怪物
-    
-    /* 🏆 添加下面这三个字段来修复报错 */
-    float   h_div;           // 水平缩放比例 (Horizontal Division)
-    float   v_div;           // 垂直缩放比例 (Vertical Division)
-    float   v_move;          // 垂直偏移 (Vertical Move)
-}   t_sprite_config;
+	t_tex *frames;		 // 贴图数组
+	int frame_count;	 // 帧数
+	bool is_animated;	 // 是否是动画
+	bool is_directional; // 是否是八方向怪物
+
+	/* 🏆 添加下面这三个字段来修复报错 */
+	float h_div;  // 水平缩放比例 (Horizontal Division)
+	float v_div;  // 垂直缩放比例 (Vertical Division)
+	float v_move; // 垂直偏移 (Vertical Move)
+} t_sprite_config;
 
 typedef struct s_sprite_manager
 {
@@ -250,8 +250,8 @@ typedef struct s_game
 	float time;
 	/* ===== 门（BONUS）===== */
 
-	t_tex door;                 /* 关闭门贴图 */
-	t_tex door_open;            /* 打开门贴图（新增） */
+	t_tex door;					/* 关闭门贴图 */
+	t_tex door_open;			/* 打开门贴图（新增） */
 	unsigned char **door_state; /* 0=关 1=开 */
 
 	/*存储每一列墙到玩家的距离*/
@@ -261,14 +261,14 @@ typedef struct s_game
 
 typedef struct s_render_vars
 {
-	int x;      /* 当前屏幕列号 */
-	int start;  /* 墙柱绘制起始 y */
-	int end;    /* 墙柱绘制结束 y */
-	int line_h; /* 墙柱高度 */
-	int tex_x;  /* 贴图 x 坐标 */
-	t_tex *tex; /* 当前使用的贴图（NO/SO/WE/EA） */
-	 float   perp_dist;   // 新增：这列命中物体的距离
-}					t_render_vars;
+	int x;			 /* 当前屏幕列号 */
+	int start;		 /* 墙柱绘制起始 y */
+	int end;		 /* 墙柱绘制结束 y */
+	int line_h;		 /* 墙柱高度 */
+	int tex_x;		 /* 贴图 x 坐标 */
+	t_tex *tex;		 /* 当前使用的贴图（NO/SO/WE/EA） */
+	float perp_dist; // 新增：这列命中物体的距离
+} t_render_vars;
 
 /*
 ** 结构体：t_sprite_render_vars
@@ -281,16 +281,50 @@ typedef struct s_render_vars
 */
 typedef struct s_sprite_render_vars
 {
-    int     sprite_h;
-    int     sprite_w;
-    int     draw_start_y;
-    int     draw_end_y;
-    int     draw_start_x;
-    int     draw_end_x;
-    int     screen_x;
-    int     v_offset;
-    int     type;       // 👈 必须添加这一行
+	int sprite_h;
+	int sprite_w;
+	int draw_start_y;
+	int draw_end_y;
+	int draw_start_x;
+	int draw_end_x;
+	int screen_x;
+	int v_offset;
+	int type; // 👈 必须添加这一行
 } t_sprite_render_vars;
+
+/**
+ * @struct s_draw_ctx
+ * @brief  Sprite 渲染上下文
+ *
+ * 该结构体用于打包 sprite 渲染过程中所需的所有参数，
+ * 避免函数参数过多（超过 4 个违反 Norm）。
+ *
+ * 所有渲染相关的数据统一存放在这里，
+ * 方便维护和扩展。
+ */
+
+typedef struct s_draw_ctx
+{
+	t_game *game; /* 游戏核心结构体（包含窗口 / z_buffer / 时间等） */
+
+	t_sprite_render_vars v; /* 当前 sprite 的渲染参数：
+							 * - sprite 宽高
+							 * - 屏幕绘制起点
+							 * - sprite 类型
+							 * - 其它渲染计算中间值
+							 */
+
+	float trans_y; /* 变换后的 Y 坐标（深度变换结果） */
+
+	t_tex *tex; /* 当前 sprite 使用的纹理 */
+
+	int sx; /* 屏幕绘制起始 X 坐标（start x） */
+	int ex; /* 屏幕绘制结束 X 坐标（end x） */
+
+	int sy; /* 屏幕绘制起始 Y 坐标（start y） */
+	int ey; /* 屏幕绘制结束 Y 坐标（end y） */
+
+} t_draw_ctx;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
 #include "func.h"
