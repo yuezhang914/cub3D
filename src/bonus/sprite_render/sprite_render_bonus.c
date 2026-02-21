@@ -19,9 +19,7 @@
  * @param tex 当前选中的 XPM 贴图指针
  */
 /* 修改后的函数头，接收裁剪后的 act_ 边界参数 */
-static void draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
-                               float trans_y, t_tex *tex, 
-                               int sx, int ex, int sy, int ey)
+static void draw_sprite_pixels(t_draw_ctx *ctx)
 {
     int stripe, y;
     int tex_x, tex_y;
@@ -30,48 +28,48 @@ static void draw_sprite_pixels(t_game *game, t_sprite_render_vars v,
 
     // 1. 计算当前帧的总跳动偏移量
     // sin(game->time * 15.0f) 控制速度，* 4.0f 控制最大跳动像素距离
-    float total_jump = sin(game->time * 15.0f) * 4.0f;
+    float total_jump = sin(ctx->game->time * 15.0f) * 4.0f;
 
-    stripe = sx;
-    while (stripe < ex)
+    stripe = ctx->sx;
+    while (stripe < ctx->ex)
     {
-        tex_x = (int)((stripe - v.draw_start_x) * tex->width / v.sprite_w);
+        tex_x = (int)((stripe - ctx->v.draw_start_x) * ctx->tex->width / ctx->v.sprite_w);
 
-        if (stripe >= 0 && stripe < WIDTH && trans_y > 0 && trans_y < game->z_buffer[stripe])
+        if (stripe >= 0 && stripe < WIDTH && ctx->trans_y > 0 && ctx->trans_y < ctx->game->z_buffer[stripe])
         {
-            y = sy;
-            while (y < ey)
+            y = ctx->sy;
+            while (y < ctx->ey)
             {
                 // 原始纹理坐标计算
-                tex_y = (int)((y - v.draw_start_y) * tex->height / v.sprite_h);
+                tex_y = (int)((y - ctx->v.draw_start_y) * ctx->tex->height / ctx->v.sprite_h);
 
                 // --- 火焰跳动逻辑 ---
-                if (v.type == SPR_TORCH)
+                if (ctx->v.type == SPR_TORCH)
                 {
                     /* jump_factor: 顶部 (tex_y=0) 为 1.0, 底部 (tex_y=31) 为 0.0
                     ** 这样火苗会跳动，而手柄（底部）会被锁定不动 */
-                    jump_factor = 1.0f - ((float)tex_y / tex->height);
+                    jump_factor = 1.0f - ((float)tex_y / ctx->tex->height);
                     
                     // 仅在 Y 方向应用偏移
                     int animated_y = tex_y + (int)(total_jump * jump_factor);
                     
                     // 边界安全检查
                     if (animated_y < 0) animated_y = 0;
-                    if (animated_y >= tex->height) animated_y = tex->height - 1;
+                    if (animated_y >= ctx->tex->height) animated_y = ctx->tex->height - 1;
                     
-                    color = *(int *)(tex->data + (animated_y * tex->size_line + tex_x * (tex->bpp / 8)));
+                    color = *(int *)(ctx->tex->data + (animated_y * ctx->tex->size_line + tex_x * (ctx->tex->bpp / 8)));
                 }
                 else
                 {
                     /* 非火炬精灵正常渲染 */
-                    if (tex_x >= 0 && tex_x < tex->width && tex_y >= 0 && tex_y < tex->height)
-                        color = *(int *)(tex->data + (tex_y * tex->size_line + tex_x * (tex->bpp / 8)));
+                    if (tex_x >= 0 && tex_x < ctx->tex->width && tex_y >= 0 && tex_y < ctx->tex->height)
+                        color = *(int *)(ctx->tex->data + (tex_y * ctx->tex->size_line + tex_x * (ctx->tex->bpp / 8)));
                     else
                         color = 0;
                 }
 
                 if ((color & 0x00FFFFFF) != 0)
-                    put_pixel(stripe, y, color, game);
+                    put_pixel(stripe, y, color, ctx->game);
                 y++;
             }
         }
@@ -107,6 +105,7 @@ static void draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
     t_sprite_render_vars v;
     t_sprite_config      *conf = &game->config[s->type];
     t_tex                *tex;
+	t_draw_ctx ctx;
 
     // 1. 根据方向或帧获取纹理
     if (conf->is_directional)
@@ -150,7 +149,15 @@ static void draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
     ** 传入 act_start_x 等裁剪后的边界，
     ** 但在函数内部计算 tex_x 时，依然减去 v.draw_start_x。
     */
-    draw_sprite_pixels(game, v, t_y, tex, act_start_x, act_end_x, act_start_y, act_end_y);
+   ctx.game = game;
+   ctx.v = v;
+   ctx.trans_y = t_y;
+   ctx.tex = tex;
+   ctx.sx = act_start_x;
+   ctx.ex = act_end_x;
+   ctx.sy= act_start_y;
+   ctx.ey = act_end_y;
+    draw_sprite_pixels(&ctx);
 }
 
 void render_sprites(t_game *game)
@@ -166,7 +173,6 @@ void render_sprites(t_game *game)
     // 1. 更新所有精灵到玩家的距离并排序 (重要：Bonus 必须有排序)
     update_sprite_distances(game);
     sort_sprites(game);
-
     dir.x = cos(game->player.angle);
     dir.y = sin(game->player.angle);
     plane.x = -dir.y * 0.66f;
@@ -184,8 +190,7 @@ void render_sprites(t_game *game)
         trans_y = inv_det * (-plane.y * dx + plane.x * dy);
 
         if (trans_y <= 0.1f)
-            continue;
-        
+            continue;  
         // 传入 s 以便 draw_single_sprite 知道该画哪种精灵
         draw_single_sprite(game, s, trans_x, trans_y);
 		
