@@ -123,61 +123,6 @@ void init_sprite_texture(t_game *game)
 	load_all_sprite_resources(game);
 }
 
-void collect_sprites(t_game *game)
-{
-	int i;
-	int j;
-	int count;
-
-	count = 0;
-
-	/* 第一遍：数数 */
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			if (ft_strchr("TBCM", game->map[i][j]))
-				count++;
-		}
-	}
-
-	game->sprs.num = count;
-
-	if (count == 0)
-		return;
-
-	game->sprs.list = track_malloc(game, sizeof(t_sprite) * count);
-
-	/* 第二遍：填充数据 */
-	count = 0;
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			if (ft_strchr("TBCM", game->map[i][j]))
-			{
-				game->sprs.list[count].x = j + 0.5f;
-				game->sprs.list[count].y = i + 0.5f;
-
-				if (game->map[i][j] == 'T')
-					game->sprs.list[count].type = SPR_TREE;
-				else if (game->map[i][j] == 'B')
-					game->sprs.list[count].type = SPR_BARREL;
-				else if (game->map[i][j] == 'C')
-					game->sprs.list[count].type = SPR_TORCH;
-				else if (game->map[i][j] == 'M')
-					game->sprs.list[count].type = SPR_MONSTER;
-
-				game->map[i][j] = '0';
-				count++;
-			}
-		}
-	}
-}
 
 /**
  * @brief 计算每个精灵到玩家当前位置的距离平方
