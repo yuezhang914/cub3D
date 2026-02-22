@@ -13,19 +13,6 @@
 #ifndef FUNC_H
 # define FUNC_H
 
-/* ========== 系统库 ========== */
-# include <X11/keysym.h>
-# include <fcntl.h>
-# include <math.h>
-# include <stdarg.h>
-# include <stdbool.h>
-# include <stddef.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <sys/time.h>
-# include <unistd.h>
-
 /* ========== 结构体/类型前置声明（避免互相 include 死循环） ========== */
 typedef struct s_game				t_game;
 typedef struct s_gnode				t_gnode;
