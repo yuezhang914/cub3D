@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 20:23:56 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 22:27:30 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define CUB3D_H
 
 # include "../minilibx-linux/mlx.h"
-# include "func.h"
 # include <X11/keysym.h>
 # include <fcntl.h>
 # include <math.h>
@@ -26,6 +25,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include "func.h"
 
 # define WIDTH 1280
 # define HEIGHT 720

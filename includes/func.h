@@ -22,6 +22,8 @@ typedef struct s_int_coordinates	t_int_xy;
 typedef enum e_line_type			t_line_type;
 typedef struct s_render_vars		t_render_vars;
 typedef struct s_sprite_render_vars	t_sprite_render_vars;
+typedef struct s_dda				t_dda;
+typedef struct s_ray				t_ray;
 
 size_t								ft_strlen(const char *s);
 int									ft_strcmp(char *s1, char *s2);
