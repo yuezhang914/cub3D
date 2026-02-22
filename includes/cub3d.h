@@ -14,9 +14,21 @@
 #define CUB3D_H
 
 #include "../minilibx-linux/mlx.h"
-#include <stdbool.h>
 
-/* ========== 常量（按你项目已有的即可） ========== */
+/* ========== 系统库 ========== */
+# include <X11/keysym.h>
+# include <fcntl.h>
+# include <math.h>
+# include <stdarg.h>
+# include <stdbool.h>
+# include <stddef.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/time.h>
+# include <unistd.h>
+
+/* ========== 常量 ========== */
 #define WIDTH 1280
 #define HEIGHT 720
 #define MINI_WIDTH 200

@@ -12,16 +12,16 @@
 
 #include "cub3d.h"
 
-static int get_sprite_color(t_draw_ctx *ctx, int tx, int ty)
+static int	get_sprite_color(t_draw_ctx *ctx, int tx, int ty)
 {
-	int y;
-	int jump;
+	int	y;
+	int	jump;
 
 	y = ty;
 	if (ctx->v.type == SPR_TORCH)
 	{
-		jump = (int)(sin(ctx->game->time * 15.0f) * 4.0f *
-					 (1.0f - ((float)ty / ctx->tex->height)));
+		jump = (int)(sin(ctx->game->time * 15.0f) * 4.0f
+				* (1.0f - ((float)ty / ctx->tex->height)));
 		y = ty + jump;
 		if (y < 0)
 			y = 0;
@@ -30,30 +30,31 @@ static int get_sprite_color(t_draw_ctx *ctx, int tx, int ty)
 	}
 	if (tx < 0 || tx >= ctx->tex->width || y < 0 || y >= ctx->tex->height)
 		return (0);
-	return (*(int *)(ctx->tex->data + (y * ctx->tex->size_line +
-									   tx * (ctx->tex->bpp / 8))));
+	return (*(int *)(ctx->tex->data + (y * ctx->tex->size_line
+			+ tx * (ctx->tex->bpp / 8))));
 }
 
-static void draw_sprite_pixels(t_draw_ctx *ctx)
+static void	draw_sprite_pixels(t_draw_ctx *ctx)
 {
-	int x;
-	int y;
-	int tx;
-	int ty;
-	int col;
+	int	x;
+	int	y;
+	int	tx;
+	int	ty;
+	int	col;
 
 	x = ctx->sx - 1;
 	while (++x < ctx->ex)
 	{
-		tx = (int)((x - ctx->v.draw_start_x) * ctx->tex->width / ctx->v.sprite_w);
-		if (x < 0 || x >= WIDTH || ctx->trans_y <= 0 ||
-			ctx->trans_y >= ctx->game->z_buffer[x])
-			continue;
+		tx = (int)((x - ctx->v.draw_start_x) * ctx->tex->width
+				/ ctx->v.sprite_w);
+		if (x < 0 || x >= WIDTH || ctx->trans_y <= 0
+			|| ctx->trans_y >= ctx->game->z_buffer[x])
+			continue ;
 		y = ctx->sy - 1;
 		while (++y < ctx->ey)
 		{
-			ty = (int)((y - ctx->v.draw_start_y) * ctx->tex->height /
-					   ctx->v.sprite_h);
+			ty = (int)((y - ctx->v.draw_start_y) * ctx->tex->height
+					/ ctx->v.sprite_h);
 			col = get_sprite_color(ctx, tx, ty);
 			if ((col & 0x00FFFFFF) != 0)
 				put_pixel(x, y, col, ctx->game);
@@ -61,11 +62,11 @@ static void draw_sprite_pixels(t_draw_ctx *ctx)
 	}
 }
 
-int get_sprite_dir_index(t_game *game, t_sprite *s)
+int	get_sprite_dir_index(t_game *game, t_sprite *s)
 {
-	float view_angle;
-	float relative_angle;
-	int index;
+	float	view_angle;
+	float	relative_angle;
+	int		index;
 
 	view_angle = atan2(s->y - game->player.y, s->x - game->player.x);
 	relative_angle = view_angle - s->angle + PI;
@@ -76,11 +77,11 @@ int get_sprite_dir_index(t_game *game, t_sprite *s)
 	return (index);
 }
 
-static void draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
+static void	draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 {
-	t_sprite_render_vars v;
-	t_sprite_config *c;
-	t_draw_ctx ctx;
+	t_sprite_render_vars	v;
+	t_sprite_config			*c;
+	t_draw_ctx				ctx;
 
 	c = &game->config[s->type];
 	if (c->is_directional)
@@ -97,32 +98,33 @@ static void draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 	ctx.v = v;
 	ctx.trans_y = t_y;
 	ctx.sx = fmax(0, v.draw_start_x);
-	ctx.ex = fmin(WIDTH - 1, v.sprite_w / 2 + (v.draw_start_x + v.sprite_w / 2));
+	ctx.ex = fmin(WIDTH - 1, v.sprite_w / 2
+			+ (v.draw_start_x + v.sprite_w / 2));
 	ctx.sy = fmax(0, v.draw_start_y);
 	ctx.ey = fmin(HEIGHT - 1, v.sprite_h / 2 + HEIGHT / 2 + v.v_offset);
 	draw_sprite_pixels(&ctx);
 }
 
-void render_sprites(t_game *game)
+void	render_sprites(t_game *game)
 {
-	int i;
-	t_sprite *s;
-	float inv;
-	float tx;
-	float ty;
+	int			i;
+	t_sprite	*s;
+	float		inv;
+	float		tx;
+	float		ty;
 
 	update_sprite_distances(game);
 	sort_sprites(game);
-	inv = 1.0f / ((-sin(game->player.angle) * 0.66f) * sin(game->player.angle) - cos(game->player.angle) * (cos(game->player.angle) * 0.66f));
+	inv = 1.0f / ((-sin(game->player.angle) * 0.66f) * sin(game->player.angle)
+			- cos(game->player.angle) * (cos(game->player.angle) * 0.66f));
 	i = -1;
 	while (++i < game->sprs.num)
 	{
 		s = &game->sprs.list[i];
-		tx = inv * (sin(game->player.angle) * (s->x - game->player.x) - cos(game->player.angle) * (s->y - game->player.y));
-		ty = inv * (-(cos(game->player.angle) * 0.66f) * (s->x -
-														  game->player.x) +
-					(-sin(game->player.angle) * 0.66f) *
-						(s->y - game->player.y));
+		tx = inv * (sin(game->player.angle) * (s->x - game->player.x)
+				- cos(game->player.angle) * (s->y - game->player.y));
+		ty = inv * (-(cos(game->player.angle) * 0.66f) * (s->x - game->player.x)
+				+ (-sin(game->player.angle) * 0.66f) * (s->y - game->player.y));
 		if (ty > 0.1f)
 			draw_single_sprite(game, s, tx, ty);
 	}
