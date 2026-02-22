@@ -19,11 +19,11 @@ static void	put_mini_pixel(t_game *game, int x, int y, int color)
 	put_pixel(x + 20, y + 20, color, game);
 }
 
-static void draw_mini_player(t_game *game)
+static void	draw_mini_player(t_game *game)
 {
-    t_int_xy    p;
-    t_int_xy    c; // center
-    int         i;
+    t_int_xy	p;
+    t_int_xy	c;
+    int			i;
 
     c.x = MINI_WIDTH / 2;
     c.y = MINI_HEIGHT / 2;

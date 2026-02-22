@@ -107,7 +107,6 @@ static void	draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 
 #ifdef BONUS
 
-
 void	render_sprites(t_game *game)
 {
 	int			i;
