@@ -1,233 +1,82 @@
-# cub3D — RayCaster with miniLibX (42)
+*This project has been created as part of the 42 curriculum by yzhang2, weiyang.*
 
-A 42 School graphics project inspired by **Wolfenstein 3D**. We built a first-person engine using **ray-casting** and **miniLibX**, with strict parsing/validation of `.cub` scene files (textures, colors, and map).
+# cub3D — My first RayCaster with miniLibX (42)
 
----
+## Description
+**cub3D** is a 42 School graphics project inspired by the world-famous *Wolfenstein 3D*. The primary goal of this project is to create a realistic first-person perspective inside a maze using **ray-casting** principles.
 
-## ✅ What we implemented
+By leveraging the **miniLibX** graphical library, we developed a rendering engine that transforms a 2D grid map into a 3D navigable environment. The project emphasizes mathematical logic (trigonometry and DDA), strict file parsing, and efficient resource management in C.
 
-### Mandatory (`cub3d`)
+### Core Features
+- **Mandatory Goals**: 
+    - Smooth 3D rendering with textures applied based on wall orientation (**NO / SO / WE / EA**).
+    - Customizable **floor** and **ceiling** colors via RGB values.
+    - Responsive event handling for movement (`W/A/S/D`), rotation (`left/right arrows`), and clean exits (`ESC` or window cross).
+    - Comprehensive `.cub` scene file validation, ensuring maps are fully enclosed and spawn points are unique.
+- **Bonus Build**:
+    - Functional doors (toggle with `E`).
+    - Minimap for real-time navigation.
+    - Oriented/animated sprites for environmental depth.
+    - Mouse-controlled camera rotation (Mouse Look) and wall collisions.
 
-* **Ray-casting renderer (Wolf3D style)**
-* 3D projection from a 2D grid map.
-* **4 wall textures** depending on hit direction: `NO / SO / WE / EA`.
-* **Floor / ceiling colors**: `F` and `C` with strict RGB validation.
+## Instructions
 
+### 1) Requirements
+This project is designed for **Linux/X11**. It uses the **minilibx-linux** version included in the repository. Ensure you have X11 development libraries installed on your system.
 
-* **Window & input (subject compliant)**
-* Move: `W A S D`.
-* Rotate: `← / →`.
-* Quit: `ESC` or window close (red cross) → clean exit.
+### 2) Compilation
+The provided `Makefile` includes the following rules:
+- `make`: Compiles the mandatory executable `cub3d`.
+- `make bonus`: Compiles the bonus version with `-D BONUS` flag, creating `cub3d_bonus`.
+- `make clean` / `make fclean`: Removes object files or the entire build.
+- `make re`: Performs a full re-compilation.
 
-
-* **Robust .cub parsing**
-* Detects missing/duplicate identifiers, invalid RGB format/range, invalid map characters, etc.
-
-
-* **Map validation**
-* Exactly **one** spawn (`N/S/E/W`).
-* Map must be **closed/surrounded by walls** (no leaks/open walls).
-* Spaces are treated as real map content and handled safely during validation.
-
-
-
-### Bonus (`cub3d_bonus`)
-
-*Enabled by compiling with -D BONUS.*
-
-* **Wall collisions**: Prevent walking through walls or closed doors.
-* **Minimap**: A real-time top-down overlay.
-* **Doors**: Interactive doors (map token `D`) that can be toggled open/closed.
-* **Sprites**: Static, animated, or oriented sprites (e.g., `T/B/C/M`).
-* **Mouse look**: Rotate the camera smoothly with mouse movement.
-
----
-
-## 🧠 Methods / How it works
-
-### 1) Ray-casting with DDA
-
-For each vertical screen column:
-
-1. Cast a ray from the player position and direction.
-2. Step through grid cells using **DDA (Digital Differential Analyzer)**.
-3. Stop at the first hit (wall/door).
-4. Compute perpendicular distance to avoid **fish-eye distortion**.
-5. Choose the correct texture and draw a textured vertical stripe.
-
-### 2) Event input + per-frame update
-
-* Key press/release hooks only set **input states**.
-* Each frame updates movement/rotation, then renders the next frame.
-* Movement uses axis-splitting (X then Y) to reduce sliding glitches and wall-sticking.
-
-### 3) Clean resource lifecycle
-
-* Centralized error handling and cleanup.
-* All images, textures, and sprites are tracked and destroyed properly to ensure **0 memory leaks**.
-
----
-
-## 🕹️ Build & Run
-
-### Compile
-
-* **Mandatory**: `make`
-* **Bonus**: `make bonus`
-* **Full Clean**: `make fclean`
-
-### Run
-
+### 3) Execution
+Run the program by passing a valid `.cub` scene file as an argument:
 ```bash
-./cub3d path/to/map.cub
-# OR
-./cub3d_bonus path/to/map.cub
+# Mandatory
+./cub3d maps/mandatory.cub
+
+# Bonus
+./cub3d_bonus maps/bonus.cub
 
 ```
+### 4) Controls
 
----
+| Action | Key (Mandatory) | Key (Bonus) |
+| --- | --- | --- |
+| **Move** | `W` `A` `S` `D` | `W` `A` `S` `D` |
+| **Rotate View** | `←` / `→` | `←` / `→` or **Mouse** |
+| **Toggle Door** | - | `E` |
+| **Exit** | `ESC` / Red Cross | `ESC` / Red Cross |
 
-## 🎮 Controls
+## Technical Notes
 
-* **Move**: `W A S D`
-* **Rotate**: `← / →`
-* **Quit**: `ESC` or Red Cross
-* **Door**: `E` (Bonus)
-* **Mouse Look**: Mouse movement (Bonus)
+### Ray-casting with DDA
 
----
+The engine renders the scene column by column using the **DDA (Digital Differential Analyzer)** algorithm. For each ray, we calculate the distance to the nearest wall, determine which side was hit to apply the correct texture, and use perpendicular distance to prevent "fish-eye" distortion.
 
-## 🗂️ Repository Structure
+### Parsing & Validation
 
-* `src/parse/`: `.cub` parsing & map validation (including open-wall checks).
-* `src/raycasting/`: Ray setup, DDA stepping, hit calculations.
-* `src/render/`: Drawing pixels/columns and the render loop.
-* `src/game/`: Input state, movement, and main loop.
-* `src/setup/`: MLX initialization, texture loading, and hook bindings.
-* `src/cleanup/`: Error handling and resource freeing.
-* `src/bonus/`: Implementation of doors, sprites, and minimap.
+Our parser strictly validates the `.cub` configuration. It ensures:
 
----
+* No missing or duplicate identifiers.
+* Maps are **closed/surrounded by walls**, even when containing irregular spaces.
+* Meaningful error messages are displayed (starting with `Error\n`) followed by an immediate clean exit upon detecting invalid data.
 
-## 👥 Contributors
+## Resources
 
-* **Wei Yang**
-* **Yue Zhang**
+### Classic References
 
----
+* **Lode Vandevenne — Raycasting Tutorial**: [lodev.org/cgtutor/raycasting.html](https://lodev.org/cgtutor/raycasting.html) (The industry standard for ray-casting logic).
+* **3D Ray-casting Game with Cub3D (Medium)**: [Tutorial link](https://devabdilah.medium.com/3d-ray-casting-game-with-cub3d-7a116376056a).
+* **Cub3D detailed tutorial (HackMD)**: [Tutorial link](https://hackmd.io/@nszl/H1LXByIE2).
+* **Linear Algebra (3Blue1Brown)**: [YouTube Playlist](https://www.youtube.com/watch?v=X9XMUY6RAzo&list=PLYvOmMwPgVxPfHD82QM07gKwaQ5FhPa07).
 
----
-# cub3D  中文版说明
+### AI Usage Disclosure
 
-本项目是 42学校的图形学入门项目：使用 **miniLibX** 和 **Ray-Casting（光线投射）** 原理，从第一人称视角在迷宫里渲染出“近似 3D”的画面（Wolfenstein 3D 风格），并对 `.cub` 场景文件进行严格解析与校验。
+AI tools (ChatGPT/Gemini) were utilized as technical assistants throughout this project to enhance development efficiency:
 
----
-
-## ✅ 我们实现了什么
-
-### Mandatory（必做）
-
-* **Ray-casting 3D 渲染**
-* 从 2D 网格地图投射光线，逐列渲染墙面。
-* 根据朝向应用 4 张墙面贴图：`NO / SO / WE / EA`。
-* 支持地板与天花板纯色：`F / C`（包含严格的 RGB 解析与校验）。
-
-
-* **窗口与输入控制**
-* `W A S D`：移动视角。
-* `← / →`：左右旋转视角。
-* `ESC` 或点击窗口红叉：干净退出。
-
-
-* **文件解析（严格校验）**
-* 读取并校验贴图路径、RGB 颜色、地图内容。
-* 防止：缺字段、重复字段、RGB 越界/格式错误、非法字符等。
-
-
-* **地图合法性校验**
-* **必须被墙封闭**：通过算法确保地图没有“漏气”或开口。
-* **唯一出生点**：出生点必须且只能有一个（N/S/E/W）。
-
-
-
-### Bonus（加分项）
-
-*通过 make bonus 编译开启。*
-
-* **门 (Doors)**：地图字符 `D`，支持按键切换开/关。
-* **精灵 (Sprites)**：支持在地图中放置静态、动画或具备方向感的精灵（如 `T/B/C/M`）。
-* **小地图 (Minimap)**：实时显示玩家位置与周边地形。
-* **鼠标控制**：通过鼠标移动实现平滑的视角旋转。
-* **碰撞处理**：墙壁、空格、关闭的门均会产生物理阻挡。
-
----
-
-## 🧠 关键方法
-
-### 1) DDA（Digital Differential Analyzer）步进找墙
-
-针对屏幕每一列：
-
-1. 计算射线的发射方向。
-2. 在网格中用 **DDA** 算法逐格推进。
-3. 找到首次命中的墙壁（或门）。
-4. 计算垂直距离以消除“鱼眼畸变”。
-5. 采样纹理并绘制该列像素带。
-
-### 2) 输入事件处理
-
-* 采用“按键状态记录法”，`on_key_down` 只修改状态，不直接移动。
-* 在主循环中根据状态统一更新位置，采用“坐标拆分”移动方式，减少卡墙抖动。
-
-### 3) 资源生命周期管理
-
-* 所有图片、纹理和内存资源统一记录。
-* 程序退出时执行 `graceful_exit`，确保 **0 内存泄漏**。
-
----
-
-## 🕹️ 编译与运行
-
-### 编译
-
-* **必做部分**: `make`
-* **加分部分**: `make bonus`
-* **彻底清理**: `make fclean`
-
-### 运行
-
-```bash
-./cub3d path/to/map.cub
-或
-./cub3d_bonus path/to/map.cub
-```
-
----
-
-## 🎮 操作说明
-
-* **移动**: `W A S D`
-* **旋转视角**: `← / →`
-* **退出**: `ESC` 或窗口红叉
-* **开关门**: `E` (仅限 Bonus)
-* **鼠标移动**: 旋转视角 (仅限 Bonus)
-
----
-
-## 📁 项目结构
-
-* `src/parse/`：`.cub` 解析、地图封闭性检查、出生点抽取。
-* `src/raycasting/`：射线计算、DDA 步进、命中与距离计算。
-* `src/render/`：像素绘制、贴图采样、渲染循环。
-* `src/game/`：输入状态维护、移动逻辑。
-* `src/setup/`：MLX 初始化、纹理加载、Hook 绑定。
-* `src/cleanup/`：错误处理与统一清理。
-* `src/bonus/`：门、精灵、小地图等功能的具体实现。
-
----
-
-## 👥 贡献者
-
-* **Wei Yang**
-* **Yue Zhang**
-
+* **Task Specifics**: AI helped clarify the mathematical projection of the camera plane, refined the logic for detecting map leaks (flood-fill variants), and assisted in debugging complex X11/miniLibX memory leaks.
+* **Documentation**: AI was used to polish the README for clarity and professional tone.
+* **Verification**: All AI-generated suggestions were manually reviewed, tested, and integrated only after we fully understood the underlying logic to ensure compliance with the 42 evaluation standards.

@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 17:50:46 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 15:21:44 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@ static void	build_map_array(t_game *game, char **lines, int start)
 		j = 0;
 		while (lines[start + i][j])
 		{
-			game->map[i][j] = lines[start + i][j];
+			if (lines[start + i][j] == '\t')
+				game->map[i][j] = ' ';
+			else
+				game->map[i][j] = lines[start + i][j];
 			j++;
 		}
 		while (j < game->map_w)
@@ -56,7 +59,6 @@ static void	build_map_array(t_game *game, char **lines, int start)
 	}
 	game->map[i] = NULL;
 }
-
 
 /*
 ** 函数名：parse_map
