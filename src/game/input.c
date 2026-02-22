@@ -12,15 +12,22 @@
 
 #include "cub3d.h"
 
-/*
-** 函数：on_key_down
-** 作用：按键按下事件：只记录“按键状态”，不要在这里直接移动玩家。
-** 参数：
-**   keycode：按键码（X11）
-**   game：总结构体（修改 game->player.key_*）
-** 返回：
-**   0（mlx_hook 回调一般返回 0）
-*/
+#ifdef BONUS
+
+static void	handle_interact_key(t_game *game)
+{
+	try_toggle_door(game);
+}
+
+#else
+
+static void	handle_interact_key(t_game *game)
+{
+	(void)game;
+}
+
+#endif
+
 int	on_key_down(int keycode, t_game *game)
 {
 	if (keycode == XK_Escape)
@@ -37,22 +44,11 @@ int	on_key_down(int keycode, t_game *game)
 		game->player.key_rot_l = 1;
 	else if (keycode == XK_Right)
 		game->player.key_rot_r = 1;
-#ifdef BONUS
 	else if (keycode == XK_e)
-		try_toggle_door(game);
-#endif
+		handle_interact_key(game);
 	return (0);
 }
 
-/*
-** 函数：on_key_up
-** 作用：按键松开事件：把对应按键状态清零。
-** 参数：
-**   keycode：按键码（X11）
-**   game：总结构体（修改 game->player.key_*）
-** 返回：
-**   0
-*/
 int	on_key_up(int keycode, t_game *game)
 {
 	if (keycode == XK_w)

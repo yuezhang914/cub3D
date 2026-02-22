@@ -12,37 +12,34 @@
 
 #include "cub3d.h"
 
-/*
-** 函数：game_step
-** 作用：每一帧调用一次，更新玩家 → 处理复活 → 清屏 → 画3D墙 → 画小地图 → 显示到窗口。
-** 参数：
-**   game：总结构体（包含地图、玩家、mlx、img 等）
-** 返回：
-**   0（mlx_loop_hook 需要 int 返回值）
-** 用在哪：
-**   mlx_loop_hook(game->mlx, game_step, game) 绑定主循环。
-*/
-int	game_step(t_game *game)
+#ifdef BONUS
+
+static void handle_bonus_rendering(t_game *game)
 {
-	// --- 关键：在这里更新全局时间 ---
+	if (game->sprs.num > 0)
+	{
+		sort_sprites(game);
+		render_sprites(game);
+	}
+	render_minimap(game);
+}
+
+#else
+
+static void handle_bonus_rendering(t_game *game)
+{
+	(void)game;
+}
+#endif
+
+int game_step(t_game *game)
+{
 	game->time += 0.016f;
 	update_player(game);
 	clear_image(game);
-	/* 1. 渲染 3D 墙体（这里面会填充你的 z_buffer） */
 	draw_loop(game);
-/* 2. 渲染 3D 精灵 (Bonus 逻辑) */
-#ifdef BONUS
-	if (game->sprs.num > 0)
-	{
-		// A. 按距离从远到近排序
-		sort_sprites(game);
-		// B. 投影并绘制到画布上
-		render_sprites(game);
-	}
-	/* 3. 渲染 2D 叠加层 */
-	render_minimap(game);
-#endif
-	/* 4. 将最终画布推送到窗口 */
+	/* 这里的调用在不同模式下会有不同的行为 */
+	handle_bonus_rendering(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return (0);
 }
@@ -57,9 +54,9 @@ int	game_step(t_game *game)
 ** 用在哪：
 **   mlx_hook(win, 17, 0, on_window_close, game)
 */
-int	on_window_close(void *param)
+int on_window_close(void *param)
 {
-	t_game	*game;
+	t_game *game;
 
 	game = (t_game *)param;
 	graceful_exit(game, 0, NULL, NULL);
