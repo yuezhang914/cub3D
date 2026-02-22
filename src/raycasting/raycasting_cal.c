@@ -12,7 +12,8 @@
 
 #include "cub3d.h"
 
-t_render_vars	get_render_vars(t_game *game, float r_dir_x, float r_dir_y, int i)
+t_render_vars	get_render_vars(t_game *game, float r_dir_x,
+		float r_dir_y, int i)
 {
 	t_dda			d;
 	t_render_vars	v;

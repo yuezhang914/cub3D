@@ -36,7 +36,7 @@
 #define FOV 66.0
 #define WALL_BUFFER 0.20f
 #define MOUSE_SENS 0.0025f
-
+#define INF 1e30
 #ifndef PI
 #define PI 3.14159265358979323846
 #endif
@@ -337,6 +337,13 @@ typedef struct s_draw_ctx
 	int ey; /* 屏幕绘制结束 Y 坐标（end y） */
 
 } t_draw_ctx;
+
+typedef struct s_ray
+{
+    float   dir_x;
+    float   dir_y;
+    float   perp_dist;
+}   t_ray;
 
 /* ========== 结构体都定义完了，再引入函数声明 ========== */
 #include "func.h"

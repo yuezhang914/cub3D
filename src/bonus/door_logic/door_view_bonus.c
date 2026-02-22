@@ -50,6 +50,7 @@ void	load_door_texture(t_game *game)
 ** 调用：
 **   perform_dda()（BONUS 分支）
 */
+
 int	door_ray_blocks(t_game *game, t_dda *d, float rdx, float rdy)
 {
 	float	open;
@@ -76,3 +77,4 @@ if (open >= 1.0f)   // 开门
 		return (0);
 	return (1);
 }
+
