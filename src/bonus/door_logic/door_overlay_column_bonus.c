@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 13:37:09 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 20:38:07 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 20:54:04 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,6 @@ void	draw_door_overlay_column_bonus(t_game *game, float r_dir_x,
 	step = 1.0f * door_v.tex->height / door_v.line_h;
 	tex_pos = 0.0f;
 	if (door_v.start < 0)
-		tex_pos = (float)(-door_v.start) * step;
+		tex_pos = (float)(-door_v.start)*step;
 	draw_overlay_transparent(door_v, game, step, tex_pos);
 }
