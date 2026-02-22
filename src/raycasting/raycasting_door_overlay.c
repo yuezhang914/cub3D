@@ -57,16 +57,20 @@ static t_render_vars	door_make_overlay_vars(t_game *game, t_dda *d,
 						float r_dir_x, float r_dir_y)
 {
 	t_render_vars	v;
+	t_ray			ray;
 
 	ft_bzero(&v, sizeof(t_render_vars));
 	v.tex = &game->door_open;
 	v.perp_dist = d->perp_dist;
 	if (v.perp_dist < 0.1f)
 		v.perp_dist = 0.1f;
+	ray.perp_dist = v.perp_dist;
+	ray.dir_x = r_dir_x;
+	ray.dir_y = r_dir_y;
 	v.line_h = (int)(HEIGHT / v.perp_dist);
 	v.start = (HEIGHT / 2) - (v.line_h / 2);
 	v.end = (HEIGHT / 2) + (v.line_h / 2);
-	v.tex_x = ray_calc_tex_x(game, d, v.tex, v.perp_dist, r_dir_x, r_dir_y);
+	v.tex_x = ray_calc_tex_x(game, d, v.tex, ray);
 	return (v);
 }
 

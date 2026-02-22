@@ -150,9 +150,7 @@ int									ray_outside_map(t_game *game, t_dda *d);
 t_tex								*ray_pick_texture(t_game *game, t_dda *d,
 										float r_dx, float r_dy);
 float								ray_get_perp_dist(t_dda *d);
-int									ray_calc_tex_x(t_game *game, t_dda *d,
-										t_tex *tex, float perp, float r_dx,
-										float r_dy);
+int 								ray_calc_tex_x(t_game *game, t_dda *d, t_tex *tex, t_ray ray);
 
 void								draw_wall(t_render_vars v, t_game *game,
 										float step, float tex_pos);

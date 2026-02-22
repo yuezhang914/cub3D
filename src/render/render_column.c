@@ -13,8 +13,17 @@
 #include "cub3d.h"
 
 #ifdef BONUS
-void	draw_door_overlay_column_bonus(t_game *game, float r_dir_x,
-			float r_dir_y, int i);
+
+void	draw_door_overlay_column_bonus(t_game *game, float rx, float ry, int i);
+#else
+
+void	draw_door_overlay_column_bonus(t_game *game, float rx, float ry, int i)
+{
+	(void)game;
+	(void)rx;
+	(void)ry;
+	(void)i;
+}
 #endif
 
 static void	draw_ceiling_part(t_game *game, t_render_vars v)
@@ -48,24 +57,10 @@ static void	draw_wall_part(t_game *game, t_render_vars v)
 	step = 1.0f * v.tex->height / v.line_h;
 	tex_pos = 0.0f;
 	if (v.start < 0)
-		tex_pos = (float)(-v.start) * step;
+		tex_pos = (float)(-v.start)*step;
 	draw_wall(v, game, step, tex_pos);
 }
 
-/*
-** 函数：render_column
-** 作用：渲染屏幕第 i 列（天花板 → 墙 → 地板）
-** 参数：
-**   game：游戏主结构体（包含画布、颜色、贴图等）
-**   r_dir_x：当前列射线方向 x
-**   r_dir_y：当前列射线方向 y
-**   i：屏幕列下标（0..WIDTH-1）
-** 逻辑：
-**   1) 调用 get_render_vars 计算该列墙体渲染参数（并写 z_buffer）
-**   2) 画天花板、墙、地板
-**   3) BONUS：叠加门框（透明像素跳过）
-** 在哪调用：draw_walls() 中逐列调用
-*/
 void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 {
 	t_render_vars	v;
@@ -74,7 +69,5 @@ void	render_column(t_game *game, float r_dir_x, float r_dir_y, int i)
 	draw_ceiling_part(game, v);
 	draw_wall_part(game, v);
 	draw_floor_part(game, v);
-#ifdef BONUS
 	draw_door_overlay_column_bonus(game, r_dir_x, r_dir_y, i);
-#endif
 }
