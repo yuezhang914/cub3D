@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/19 17:49:30 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 14:38:10 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 15:52:36 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,9 @@ static bool is_allowed_tile(char c)
 {
 #ifdef BONUS
     // 加入了 \t
-    return (ft_strchr(" \t01NSEWCPRDdTBCM", c) != NULL);
+    return (ft_strchr(" 01NSEWCPRDdTBCM", c) != NULL);
 #else
-    return (ft_strchr(" \t01NSEW", c) != NULL);
+    return (ft_strchr(" 01NSEW", c) != NULL);
 #endif
 }
 
