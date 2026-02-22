@@ -93,12 +93,13 @@ static void	extract_player(t_game *game, int i, int j, bool *found)
 ** 用在哪里：
 **   parse_map()：在 build_map_array 之后调用。
 */
-static bool	is_allowed_tile(char c)
+static bool is_allowed_tile(char c)
 {
 #ifdef BONUS
-	return (ft_strchr(" 01NSEWCPRDdTBCM", c) != NULL);
+    // 加入了 \t
+    return (ft_strchr(" \t01NSEWCPRDdTBCM", c) != NULL);
 #else
-	return (ft_strchr(" 01NSEW", c) != NULL);
+    return (ft_strchr(" \t01NSEW", c) != NULL);
 #endif
 }
 
