@@ -13,13 +13,6 @@
 
 #include "cub3d.h"
 
-/*
-** 函数：ray_step_once
-** 作用：执行一次 DDA 步进（更新 map_x/map_y 与 side）
-** 参数：d：DDA 状态
-** 逻辑：比较 side_x/side_y，走更近的那一格
-** 在哪调用：ray_run_dda_until_hit(), door_find_open_door()
-*/
 void	ray_step_once(t_dda *d)
 {
 	if (d->side_x < d->side_y)
@@ -34,13 +27,6 @@ void	ray_step_once(t_dda *d)
 	d->side = 1;
 }
 
-/*
-** 函数：ray_outside_map
-** 作用：判断 DDA 是否跑出地图
-** 参数：game/d
-** 返回：1=越界 0=未越界
-** 在哪调用：ray_run_dda_until_hit(), door_find_open_door()
-*/
 int	ray_outside_map(t_game *game, t_dda *d)
 {
 	if (d->map_x < 0 || d->map_x >= game->map_w)
@@ -50,13 +36,6 @@ int	ray_outside_map(t_game *game, t_dda *d)
 	return (0);
 }
 
-/*
-** 函数：ray_pick_texture
-** 作用：根据命中格子和方向选择纹理
-** 参数：game/d/r_dx/r_dy
-** 返回：纹理指针
-** 在哪调用：ray_make_render_vars()
-*/
 t_tex	*ray_pick_texture(t_game *game, t_dda *d, float r_dx, float r_dy)
 {
 #ifdef BONUS
