@@ -6,29 +6,20 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:08 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/20 19:02:19 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 20:30:54 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-
-/*
-**  检查game 的配置是否完备， 包括是否有四面墙的贴图路径，天花板和地板是否分配了颜色。
-*/
 static bool	is_config_complete(t_game *game)
 {
 	if (game->north.path && game->south.path && game->west.path
-		&& game->east.path && game->floor_color != -1 && game->ceiling_color !=
-		-1)
+		&& game->east.path && game->floor_color != -1
+		&& game->ceiling_color != -1)
 		return (true);
 	return (false);
 }
-
-/*
-** 作用：从line的内容解析四面墙的贴图路径
-** 规则：必须两段：标识 + 路径；路径必须以 .xpm 结尾
-*/
 
 static void	set_texture_path(t_game *game, t_line_type type, char *line)
 {
@@ -47,22 +38,14 @@ static void	set_texture_path(t_game *game, t_line_type type, char *line)
 	if (*target != NULL)
 		graceful_exit(game, 1, __func__, "Redefinition of texture path.");
 	words = ft_split(game, line, ' ');
-	// 	它在检查：这一行的参数数量必须刚好是 2 段（标识符 + 路径）。
-	// 情况 A：缺路径（只有 1 段）情况 B：多了多余参数（超过 2 段）
 	if (words[1] == NULL || words[2] != NULL)
 		graceful_exit(game, 1, __func__, "Texture line arg number error.");
 	len = ft_strlen(words[1]);
-	// .xpm 本身就 4 个字符，还得至少有 1 个字符在前面
-	// words[1] + len - 4 是取“最后 4 个字符”
 	if (len < 5 || ft_strcmp(".xpm", words[1] + len - 4) != 0)
 		graceful_exit(game, 1, __func__, "Texture not ending with .xpm.");
 	*target = words[1];
 }
 
-/*
-** 作用：读取一个 0~255 的整数（给颜色解析用）， 相当于对于颜色的atoi
-** 返回：true 表示失败，false 表示成功
-*/
 static bool	read_rgb_value(char *s, int *i, int *out)
 {
 	int	val;
@@ -85,11 +68,6 @@ static bool	read_rgb_value(char *s, int *i, int *out)
 	return (false);
 }
 
-/*
-** 作用：解析 F/C 颜色行：F 220,100,0（逗号两侧允许空格）
-** 参数：game(总结构体), type(FLOOR/CEILING), line(当前行)
-** 用在哪：parse_config 处理 F/C 配置项
-*/
 static void	set_color_config(t_game *game, t_line_type type, char *line)
 {
 	int	*i_target;
@@ -117,9 +95,6 @@ static void	set_color_config(t_game *game, t_line_type type, char *line)
 	*i_target = (r << 16) | (g << 8) | b;
 }
 
-/*
-** 作用：解析配置区：直到遇到地图行（地图必须最后）
-*/
 void	parse_config(t_game *game)
 {
 	int			i;
@@ -132,7 +107,7 @@ void	parse_config(t_game *game)
 	{
 		type = set_input_line_type(game, lines[i]);
 		if (type == EMPTY)
-			; /* 空行允许出现 */
+			;
 		else if (type == FLOOR || type == CEILING)
 			set_color_config(game, type, lines[i]);
 		else if (type == NORTH || type == SOUTH || type == WEST || type == EAST)

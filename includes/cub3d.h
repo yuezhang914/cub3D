@@ -6,16 +6,15 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 14:36:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/19 12:36:58 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 20:23:56 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
-#define CUB3D_H
+# define CUB3D_H
 
-#include "../minilibx-linux/mlx.h"
-
-/* ========== 系统库 ========== */
+# include "../minilibx-linux/mlx.h"
+# include "func.h"
 # include <X11/keysym.h>
 # include <fcntl.h>
 # include <math.h>
@@ -28,127 +27,95 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-/* ========== 常量 ========== */
-#define WIDTH 1280
-#define HEIGHT 720
-#define MINI_WIDTH 200
-#define MINI_HEIGHT 200
-#define FOV 66.0
-#define WALL_BUFFER 0.20f
-#define MOUSE_SENS 0.0025f
-#define INF 1e30
-#ifndef PI
-#define PI 3.14159265358979323846
-#endif
+# define WIDTH 1280
+# define HEIGHT 720
+# define MINI_WIDTH 200
+# define MINI_HEIGHT 200
+# define FOV 66.0
+# define WALL_BUFFER 0.20f
+# define MOUSE_SENS 0.0025f
+# define INF 1e30
+# ifndef PI
+#  define PI 3.14159265358979323846
+# endif
 
-#ifndef BUFFER_SIZE
-#define BUFFER_SIZE 4096
-#endif
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 4096
+# endif
 
-/* ===================== 基础类型 ===================== */
-/*
-** 结构体：t_img
-** 作用：记录“需要 mlx_destroy_image 的图片指针”链表节点
-** 字段：
-**   ptr ：mlx image 指针（void*）
-**   next：下一节点
-*/
 typedef struct s_img
 {
-	void *ptr;
-	struct s_img *next;
-} t_img;
+	void					*ptr;
+	struct s_img			*next;
+}							t_img;
 
-/*
-** 结构体：t_coords
-** 作用：浮点坐标（玩家位置、射线命中点等）
-*/
 typedef struct s_coordinates
 {
-	float x;
-	float y;
-} t_coords;
+	float					x;
+	float					y;
+}							t_coords;
 
-/*
-** 结构体：t_int_xy
-** 作用：整数坐标（地图格子索引、像素坐标等）
-*/
 typedef struct s_int_coordinates
 {
-	int x;
-	int y;
-} t_int_xy;
+	int						x;
+	int						y;
+}							t_int_xy;
 
-/* ===================== 纹理 ===================== */
 typedef struct s_texture
 {
-	void *img_ptr;
-	char *path;
-	char *data;
-	int width;
-	int height;
-	int bpp;
-	int size_line;
-	int endian;
-} t_tex;
-/*
-** 结构体：t_dda
-** 作用：DDA（Digital Differential Analyzer）射线步进算法用的临时状态包
-** 字段含义：
-**   map_x/map_y : 当前射线所在的地图格子坐标
-**   step_x/step_y : 射线在 x/y 方向每次步进是 +1 还是 -1
-**   side : 0=撞到x方向的格子边（竖墙），1=撞到y方向的格子边（横墙）
-**   delta_x/delta_y : 射线从一条x/y网格线走到下一条网格线需要走的“距离增量”
-**   side_x/side_y : 从玩家当前位置到下一条x/y网格线的初始距离（会在循环里不断累加）
-**   perp_dist : 命中墙后的“垂直距离”（用于计算墙高，避免鱼眼）
-*/
+	void					*img_ptr;
+	char					*path;
+	char					*data;
+	int						width;
+	int						height;
+	int						bpp;
+	int						size_line;
+	int						endian;
+}							t_tex;
+
 typedef struct s_dda
 {
-	int map_x;
-	int map_y;
-	int step_x;
-	int step_y;
-	int side;
-	float delta_x;
-	float delta_y;
-	float side_x;
-	float side_y;
-	float perp_dist;
-} t_dda;
+	int						map_x;
+	int						map_y;
+	int						step_x;
+	int						step_y;
+	int						side;
+	float					delta_x;
+	float					delta_y;
+	float					side_x;
+	float					side_y;
+	float					perp_dist;
+}							t_dda;
 
-/* ===================== 玩家 ===================== */
 typedef struct s_player
 {
-	float x;
-	float y;
-	float angle;
+	float					x;
+	float					y;
+	float					angle;
 
-	int map_x;
-	int map_y;
+	int						map_x;
+	int						map_y;
 
-	/* 按键状态（必做只需要这些） */
-	int key_up;
-	int key_down;
-	int key_left;
-	int key_right;
-	int key_rot_l;
-	int key_rot_r;
+	int						key_up;
+	int						key_down;
+	int						key_left;
+	int						key_right;
+	int						key_rot_l;
+	int						key_rot_r;
 
-	float move_speed;
-	float rot_speed;
-	/* 鼠标 */
-	int mouse_enabled;
-	float mouse_sens;
-} t_player;
+	float					move_speed;
+	float					rot_speed;
 
-/* ===================== 内存追踪节点（如果你项目有） ===================== */
+	int						mouse_enabled;
+	float					mouse_sens;
+}							t_player;
+
 typedef struct s_gnode
 {
-	void *ptr;
-	struct s_gnode *next;
-} t_gnode;
+	void					*ptr;
+	struct s_gnode			*next;
+}							t_gnode;
 
-/* ===================== 配置行类型（parse 用） ===================== */
 typedef enum e_line_type
 {
 	EMPTY,
@@ -160,192 +127,140 @@ typedef enum e_line_type
 	CEILING,
 	MAP,
 	WRONG
-} t_line_type;
-
-/* ===================== Sprite ===================== */
+}							t_line_type;
 
 typedef enum e_sprite_type
 {
-	SPR_TREE,	 // 静态
-	SPR_TORCH,	 // 动画
-	SPR_MONSTER, // 立体/八方向
-	SPR_BARREL,	 // 静态 - 矮胖（需特殊缩放）
-	SPR_COUNT	 // 总数
-} t_sprite_type;
+	SPR_TREE,
+	SPR_TORCH,
+	SPR_MONSTER,
+	SPR_BARREL,
+	SPR_COUNT
+}							t_sprite_type;
 
 typedef struct s_sprite
 {
-	float x;			   /* 地图 X 坐标 */
-	float y;			   /* 地图 Y 坐标 */
-	float dist;			   /* 到玩家的距离（用于排序） */
-	int type;			   /* 精灵类型 (使用你的 ENUM: SPR_TREE, SPR_MONSTER 等) */
-	int cur_frame;		   /* 当前播放到第几帧 (用于动画) */
-	long long last_update; /* 上次更新帧的时间（或计数器），控制动画频率 */
-	float angle;		   /* 精灵自身的面朝方向 (如果是怪物，用于计算 8 方向贴图) */
-} t_sprite;
+	float					x;
+	float					y;
+	float					dist;
+	int						type;
+	int						cur_frame;
+	long long				last_update;
+	float					angle;
+}							t_sprite;
 
 typedef struct s_sprite_config
 {
-	t_tex *frames;		 // 贴图数组
-	int frame_count;	 // 帧数
-	bool is_animated;	 // 是否是动画
-	bool is_directional; // 是否是八方向怪物
+	t_tex					*frames;
+	int						frame_count;
+	bool					is_animated;
+	bool					is_directional;
 
-	/* 🏆 添加下面这三个字段来修复报错 */
-	float h_div;  // 水平缩放比例 (Horizontal Division)
-	float v_div;  // 垂直缩放比例 (Vertical Division)
-	float v_move; // 垂直偏移 (Vertical Move)
-} t_sprite_config;
+	float					h_div;
+	float					v_div;
+	float					v_move;
+}							t_sprite_config;
 
 typedef struct s_sprite_manager
 {
-	t_sprite *list;					   /* 动态分配的精灵数组（从地图扫描到的） */
-	int num;						   /* 精灵总数 */
-	t_sprite_config config[SPR_COUNT]; /* 资源库 */
-} t_sprite_manager;
+	t_sprite				*list;
+	int						num;
+	t_sprite_config			config[SPR_COUNT];
+}							t_sprite_manager;
 
-// 在 t_game 里：
-
-/* ===================== 总结构体：t_game ===================== */
 typedef struct s_game
 {
-	/* mlx 资源 */
-	void *mlx;
-	void *win;
+	void					*mlx;
+	void					*win;
 
-	/* 主画布 */
-	void *img;
-	char *data;
-	int bpp;
-	int size_line;
-	int endian;
+	void					*img;
+	char					*data;
+	int						bpp;
+	int						size_line;
+	int						endian;
 
-	/* 贴图 */
-	t_tex north;
-	t_tex south;
-	t_tex east;
-	t_tex west;
+	t_tex					north;
+	t_tex					south;
+	t_tex					east;
+	t_tex					west;
 
-	/* 地板/天花颜色 */
-	int floor_color;
-	int ceiling_color;
+	int						floor_color;
+	int						ceiling_color;
 
-	/* 地图 */
-	char **map;
-	int map_w;
-	int map_h;
-	/*
-	** 字段：entire_cubfile / cubfile_lines
-	** 作用：
-	**   entire_cubfile：读取到的完整文件文本（用于 splitlines）
-	**   cubfile_lines：按行切开的字符串数组（parse_config/parse_map 都用它）
-	*/
-	char *entire_cubfile;
-	char **cubfile_lines;
+	char					**map;
+	int						map_w;
+	int						map_h;
 
-	/* 玩家 */
-	t_player player;
+	char					*entire_cubfile;
+	char					**cubfile_lines;
 
-	/* track_malloc 链表头 */
-	t_gnode *track_head;
+	t_player				player;
 
-	t_img *img_head;
+	t_gnode					*track_head;
 
-	/* 迷你地图比例（如果你用到） */
-	float pix_per_unit;
-	float focal_length;
+	t_img					*img_head;
 
-	/* 小精灵管理 */
-	t_sprite_manager sprs;
-	/* 这里的 config 是核心：它存储了每种精灵的贴图“模板” */
-	t_sprite_config config[SPR_COUNT];
-	float time;
-	/* ===== 门（BONUS）===== */
+	float					pix_per_unit;
+	float					focal_length;
 
-	t_tex door;					/* 关闭门贴图 */
-	t_tex door_open;			/* 打开门贴图（新增） */
-	unsigned char **door_state; /* 0=关 1=开 */
+	t_sprite_manager		sprs;
 
-	/*存储每一列墙到玩家的距离*/
-	float z_buffer[WIDTH];
+	t_sprite_config			config[SPR_COUNT];
+	float					time;
 
-} t_game;
+	t_tex					door;
+	t_tex					door_open;
+	unsigned char			**door_state;
+
+	float					z_buffer[WIDTH];
+
+}							t_game;
 
 typedef struct s_render_vars
 {
-	int x;			 /* 当前屏幕列号 */
-	int start;		 /* 墙柱绘制起始 y */
-	int end;		 /* 墙柱绘制结束 y */
-	int line_h;		 /* 墙柱高度 */
-	int tex_x;		 /* 贴图 x 坐标 */
-	t_tex *tex;		 /* 当前使用的贴图（NO/SO/WE/EA） */
-	float perp_dist; // 新增：这列命中物体的距离
-} t_render_vars;
+	int						x;
+	int						start;
+	int						end;
+	int						line_h;
+	int						tex_x;
+	t_tex					*tex;
+	float					perp_dist;
+}							t_render_vars;
 
-/*
-** 结构体：t_sprite_render_vars
-** 作用：存储精灵投影到屏幕后的临时几何参数
-** 字段含义：
-** sprite_h / sprite_w : 精灵在屏幕上的像素高度和宽度
-** screen_x           : 精灵中心点在屏幕上的 X 坐标（像素位置）
-** draw_start_y/end_y : 垂直绘制的像素范围
-** draw_start_x/end_x : 水平绘制的像素范围
-*/
 typedef struct s_sprite_render_vars
 {
-	int sprite_h;
-	int sprite_w;
-	int draw_start_y;
-	int draw_end_y;
-	int draw_start_x;
-	int draw_end_x;
-	int screen_x;
-	int v_offset;
-	int type; // 👈 必须添加这一行
-} t_sprite_render_vars;
-
-/**
- * @struct s_draw_ctx
- * @brief  Sprite 渲染上下文
- *
- * 该结构体用于打包 sprite 渲染过程中所需的所有参数，
- * 避免函数参数过多（超过 4 个违反 Norm）。
- *
- * 所有渲染相关的数据统一存放在这里，
- * 方便维护和扩展。
- */
+	int						sprite_h;
+	int						sprite_w;
+	int						draw_start_y;
+	int						draw_end_y;
+	int						draw_start_x;
+	int						draw_end_x;
+	int						screen_x;
+	int						v_offset;
+	int						type;
+}							t_sprite_render_vars;
 
 typedef struct s_draw_ctx
 {
-	t_game *game; /* 游戏核心结构体（包含窗口 / z_buffer / 时间等） */
+	t_game					*game;
+	t_sprite_render_vars	v;
 
-	t_sprite_render_vars v; /* 当前 sprite 的渲染参数：
-							 * - sprite 宽高
-							 * - 屏幕绘制起点
-							 * - sprite 类型
-							 * - 其它渲染计算中间值
-							 */
+	float					trans_y;
+	t_tex					*tex;
 
-	float trans_y; /* 变换后的 Y 坐标（深度变换结果） */
+	int						sx;
+	int						ex;
 
-	t_tex *tex; /* 当前 sprite 使用的纹理 */
+	int						sy;
+	int						ey;
 
-	int sx; /* 屏幕绘制起始 X 坐标（start x） */
-	int ex; /* 屏幕绘制结束 X 坐标（end x） */
-
-	int sy; /* 屏幕绘制起始 Y 坐标（start y） */
-	int ey; /* 屏幕绘制结束 Y 坐标（end y） */
-
-} t_draw_ctx;
+}							t_draw_ctx;
 
 typedef struct s_ray
 {
-    float   dir_x;
-    float   dir_y;
-    float   perp_dist;
-}   t_ray;
-
-/* ========== 结构体都定义完了，再引入函数声明 ========== */
-#include "func.h"
+	float					dir_x;
+	float					dir_y;
+	float					perp_dist;
+}							t_ray;
 
 #endif

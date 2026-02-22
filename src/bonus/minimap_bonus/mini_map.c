@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_map.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:37 by weiyang           #+#    #+#             */
-/*   Updated: 2026/02/19 10:01:16 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/22 20:27:03 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,25 +21,25 @@ static void	put_mini_pixel(t_game *game, int x, int y, int color)
 
 static void	draw_mini_player(t_game *game)
 {
-    t_int_xy	p;
-    t_int_xy	c;
-    int			i;
+	t_int_xy	p;
+	t_int_xy	c;
+	int			i;
 
-    c.x = MINI_WIDTH / 2;
-    c.y = MINI_HEIGHT / 2;
-    p.y = -3;
-    while (++p.y <= 2)
-    {
-        p.x = -3;
-        while (++p.x <= 2)
-            put_mini_pixel(game, c.x + p.x, c.y + p.y, 0xFF0000);
-    }
-    i = -1;
-    while (++i < 12)
-    {
-        put_mini_pixel(game, c.x + (int)(cos(game->player.angle) * i),
-            c.y + (int)(sin(game->player.angle) * i), 0x00FF00);
-    }
+	c.x = MINI_WIDTH / 2;
+	c.y = MINI_HEIGHT / 2;
+	p.y = -3;
+	while (++p.y <= 2)
+	{
+		p.x = -3;
+		while (++p.x <= 2)
+			put_mini_pixel(game, c.x + p.x, c.y + p.y, 0xFF0000);
+	}
+	i = -1;
+	while (++i < 12)
+	{
+		put_mini_pixel(game, c.x + (int)(cos(game->player.angle) * i), c.y
+			+ (int)(sin(game->player.angle) * i), 0x00FF00);
+	}
 }
 
 static int	get_mini_color(t_game *game, int x, int y)
