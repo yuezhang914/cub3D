@@ -19,33 +19,27 @@ static void	put_mini_pixel(t_game *game, int x, int y, int color)
 	put_pixel(x + 20, y + 20, color, game);
 }
 
-static void	draw_mini_player(t_game *game)
+static void draw_mini_player(t_game *game)
 {
-	t_int_xy	center;
-	t_int_xy	line;
-	int			i;
-	t_int_xy	p;
+    t_int_xy    p;
+    t_int_xy    c; // center
+    int         i;
 
-	center.x = MINI_WIDTH / 2;
-	center.y = MINI_HEIGHT / 2;
-	p.y = -2;
-	while (p.y <= 2)
-	{
-		while (p.x <= 2)
-		{
-			put_mini_pixel(game, center.x + p.x, center.y + p.y, 0xFF0000);
-			p.x++;
-		}
-		p.y++;
-	}
-	i = 0;
-	while (i < 12)
-	{
-		line.x = center.x + (int)(cos(game->player.angle) * i);
-		line.y = center.y + (int)(sin(game->player.angle) * i);
-		put_mini_pixel(game, line.x, line.y, 0x00FF00);
-		i++;
-	}
+    c.x = MINI_WIDTH / 2;
+    c.y = MINI_HEIGHT / 2;
+    p.y = -3;
+    while (++p.y <= 2)
+    {
+        p.x = -3;
+        while (++p.x <= 2)
+            put_mini_pixel(game, c.x + p.x, c.y + p.y, 0xFF0000);
+    }
+    i = -1;
+    while (++i < 12)
+    {
+        put_mini_pixel(game, c.x + (int)(cos(game->player.angle) * i),
+            c.y + (int)(sin(game->player.angle) * i), 0x00FF00);
+    }
 }
 
 static int	get_mini_color(t_game *game, int x, int y)
@@ -69,8 +63,6 @@ static int	get_mini_color(t_game *game, int x, int y)
 	}
 	return (0x333333);
 }
-
-#ifdef BONUS
 
 static void	draw_mini_sprites(t_game *game)
 {
@@ -96,7 +88,6 @@ static void	draw_mini_sprites(t_game *game)
 		i++;
 	}
 }
-#endif
 
 void	render_minimap(t_game *game)
 {

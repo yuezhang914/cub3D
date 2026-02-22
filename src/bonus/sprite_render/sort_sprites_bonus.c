@@ -28,6 +28,8 @@ void	update_sprite_distances(t_game *game)
 	}
 }
 
+#ifdef BONUS
+
 void	sort_sprites(t_game *game)
 {
 	int			i;
@@ -54,3 +56,4 @@ void	sort_sprites(t_game *game)
 		i++;
 	}
 }
+#endif
