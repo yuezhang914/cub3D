@@ -6,29 +6,29 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 21:26:56 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 15:21:44 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 21:43:08 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include "func.h"
 
 /*
 ** 函数名：build_map_array（static）
-** 作用：根据已算好的 game->map_h / game->map_w，把地图段复制成统一大小的二维数组 game->map。
-**      关键点：原文件里每行长度不同，所以这里会把短行右侧用空格 ' ' 补齐到 map_w，
-**      这样后续检查 “上下左右邻居” 时不会越界，也更容易判断“漏气墙”。
-**
+** 作用：把 .cub 里 map 区域的每一行，复制到 game->map（做成“矩形地图”）
 ** 参数：
-**   game  ：全局上下文（写入 game->map）
-**   lines ：.cub 按行数组
-**   start ：地图开始行下标
-**
-** 返回：
-**   无；失败时 track_malloc 内部返回 NULL 会导致后续崩溃，所以一般配合 graceful_exit 或确保 track_malloc 不返回 NULL
-**
-** 用在哪里：
-**   parse_map()：在 set_map_dimensions 之后调用，构建 game->map。
+**   game：写入 game->map（char**），并使用 game->map_h / game->map_w
+**   lines：整个 .cub 行数组
+**   start：map 第一行 index
+** 主要逻辑：
+**   1) 为 map 指针数组分配 (map_h + 1) 个 char*，最后一项放 NULL
+**   2) 每一行分配 (map_w + 1) 个 char（最后 '\0'）
+**   3) 把原始行复制进来：
+**        - 遇到 '\t'（tab）强行转换成 ' '（空格）
+**   4) 如果该行长度 < map_w，用空格补齐到统一宽度（形成规则矩形）
+** 这样做的目的：
+**   后面 scan_map 访问上下左右时不容易越界，并且空出来的部分都用 ' ' 表示“外部/无效”
+** 调用者：
+**   parse_map()
 */
 static void	build_map_array(t_game *game, char **lines, int start)
 {
@@ -36,47 +36,43 @@ static void	build_map_array(t_game *game, char **lines, int start)
 	int	j;
 
 	game->map = track_malloc(game, (game->map_h + 1) * sizeof(char *));
-	i = 0;
-	while (i < game->map_h)
+	i = -1;
+	while (++i < game->map_h)
 	{
 		game->map[i] = track_malloc(game, (game->map_w + 1) * sizeof(char));
 		j = 0;
 		while (lines[start + i][j])
 		{
+			game->map[i][j] = lines[start + i][j];
+			/* tab 统一当作空格处理 */
 			if (lines[start + i][j] == '\t')
 				game->map[i][j] = ' ';
-			else
-				game->map[i][j] = lines[start + i][j];
 			j++;
 		}
+		/* 不足宽度的部分，用空格补齐 */
 		while (j < game->map_w)
-		{
-			game->map[i][j] = ' ';
-			j++;
-		}
+			game->map[i][j++] = ' ';
 		game->map[i][j] = '\0';
-		i++;
 	}
 	game->map[i] = NULL;
 }
 
+#ifdef BONUS
+
 /*
-** 函数名：parse_map
-** 作用：地图解析总入口（只负责“调度步骤”，不写复杂逻辑）：
-**      1) 找到地图开始行（find_map_start）
-**      2) 检查地图必须是最后一段（check_map_is_last）
-**      3) 统计地图尺寸 map_h/map_w（set_map_dimensions）
-**      4) 构建统一宽度的二维 map 数组（build_map_array）
-**      5) 扫描地图做封闭检查 + 抽取玩家出生点（scan_map）
-**
+** 函数名：parse_map（BONUS 版本）
+** 作用：解析地图区并做 bonus 的额外初始化
 ** 参数：
-**   game：全局上下文（最终会写入 game->map、game->map_h/map_w、game->player 初始状态）
-**
-** 返回：
-**   无；任何错误直接 graceful_exit 退出
-**
-** 用在哪里：
-**   parse 入口 module_parse() 中，在 parse_config() 之后调用。
+**   game：最终得到 game->map / 玩家出生点等
+** 主要逻辑：
+**   1) find_map_start：找地图起点
+**   2) check_map_is_last：保证地图后面没乱七八糟内容
+**   3) set_map_dimensions：计算 map_h/map_w
+**   4) build_map_array：复制成矩形二维数组
+**   5) scan_map：扫描校验合法字符、封闭性、提取玩家出生点等
+**   6) handle_bonus_setup：bonus 专用初始化（例如门/道具/敌人等）
+** 调用者：
+**   module_parse()
 */
 void	parse_map(t_game *game)
 {
@@ -88,9 +84,29 @@ void	parse_map(t_game *game)
 	check_map_is_last(game, lines, start);
 	set_map_dimensions(game, lines, start);
 	build_map_array(game, lines, start);
-	scan_map(game); // 必做的合法性检查：玩家点、墙封闭
-/* --- [Bonus 逻辑插入点] --- */
-#ifdef BONUS
+	scan_map(game);
 	handle_bonus_setup(game);
-#endif
 }
+
+#else
+
+/*
+** 函数名：parse_map（非 BONUS 版本）
+** 作用：只做基础地图解析与校验
+** 参数/逻辑与 BONUS 基本一致，只是没有 handle_bonus_setup
+** 调用者：
+**   module_parse()
+*/
+void	parse_map(t_game *game)
+{
+	int		start;
+	char	**lines;
+
+	lines = game->cubfile_lines;
+	start = find_map_start(game, lines);
+	check_map_is_last(game, lines, start);
+	set_map_dimensions(game, lines, start);
+	build_map_array(game, lines, start);
+	scan_map(game);
+}
+#endif

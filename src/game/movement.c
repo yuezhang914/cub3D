@@ -13,15 +13,26 @@
 #include "cub3d.h"
 
 /*
-** 函数：tile_blocks（static）
-** 作用：判断某一个地图格字符是否阻挡玩家（墙/空格/关门）
+** 函数名：tile_blocks（static）
+** 作用：判断地图某一个“格子 (x,y)”是否会阻挡玩家（走不进去）
+**
 ** 参数：
-**   game：总结构体
-**   x, y：地图格坐标
+**   game：提供地图 game->map、尺寸 map_w/map_h、以及 door_state
+**   x,y：格子坐标（整数格）
+**
 ** 返回：
-**   true  = 阻挡
-**   false = 不阻挡
-** 调用：
+**   true：这个格子会挡住（墙/地图外/关闭的门/空格）
+**   false：不阻挡（可走地面，或打开的门）
+**
+** 主要逻辑：
+**   1) 越界：当作阻挡（防止走到地图外）
+**   2) 字符是 '1' 或 ' '：阻挡
+**      - ' ' 在你们地图里通常代表“无效区域/地图外”，也必须挡
+**   3) 字符是 'D'（门）：
+**      - door_state[y][x]==0：门关着 → 阻挡
+**      - door_state[y][x]==1：门开着 → 不阻挡
+**
+** 调用者：
 **   blocked_with_buffer()
 */
 static bool	tile_blocks(t_game *game, int x, int y)
@@ -33,27 +44,42 @@ static bool	tile_blocks(t_game *game, int x, int y)
 	c = game->map[y][x];
 	if (c == '1' || c == ' ')
 		return (true);
-#ifdef BONUS
 	if (c == 'D')
 	{
-		/* door_state = 0 关门挡路；=1 开门不挡 */
 		if (game->door_state && game->door_state[y][x] == 0)
 			return (true);
 	}
-#endif
 	return (false);
 }
 
 /*
-** 函数：blocked_with_buffer（static）
-** 作用：判断坐标 (nx, ny) 是否“碰墙”（考虑缓冲距离 WALL_BUFFER）
+** 函数名：blocked_with_buffer（static）
+** 作用：判断玩家如果移动到 (nx,ny) 是否会“撞墙”
+**      这里不是把玩家当点，而是给玩家一个“身体半径”缓冲 WALL_BUFFER
+**
 ** 参数：
-**   game：总结构体
-**   nx, ny：玩家尝试移动到的新坐标
+**   game：提供地图与 tile_blocks
+**   nx,ny：玩家尝试移动到的新坐标（浮点数）
+**
 ** 返回：
-**   true  = 会撞墙/越界/走到空白/撞到关门
-**   false = 可以通过
-** 调用：
+**   true：会撞（不能移动）
+**   false：不撞（可以移动）
+**
+** 主要逻辑（核心：检查四个角）：
+**   1) 先检查 nx,ny 是否在地图范围内（浮点范围）
+**   2) 计算四个角落点所在的格子：
+**      x0 = (int)(nx - WALL_BUFFER)
+**      x1 = (int)(nx + WALL_BUFFER)
+**      y0 = (int)(ny - WALL_BUFFER)
+**      y1 = (int)(ny + WALL_BUFFER)
+**   3) 只要四个角中任意一个落在阻挡格子里，就算会撞
+**
+** 为什么这样做（初中版）：
+**   玩家不是“一个像素点”，而是有体积的人。
+**   如果只检查中心点，中心能过但身体会穿进墙里。
+**   所以用 buffer 检查“身体四角”更真实。
+**
+** 调用者：
 **   try_move_axis()
 */
 static bool	blocked_with_buffer(t_game *game, float nx, float ny)
@@ -83,11 +109,25 @@ static bool	blocked_with_buffer(t_game *game, float nx, float ny)
 }
 
 /*
-** 函数：try_move_axis（static）
-** 作用：把移动拆成“先走 x 再走 y”，减少卡墙/斜角抖动
+** 函数名：try_move_axis（static）
+** 作用：按“分轴移动”策略尝试移动玩家：先只动 x，再只动 y
+**
 ** 参数：
-**   game：总结构体
-**   dx, dy：本帧期望移动的位移量
+**   game：读写 game->player.x/y，并调用 blocked_with_buffer
+**   dx,dy：本帧计算出的位移（可能同时非 0，代表斜着走）
+**
+** 主要逻辑：
+**   1) 先尝试 x 方向移动：nx=x+dx, ny=y
+**      - 不撞墙则更新 x
+**   2) 再尝试 y 方向移动：nx=更新后的 x, ny=y+dy
+**      - 不撞墙则更新 y
+**
+** 为什么要分轴（初中版）：
+**   斜着走时容易被墙角卡住。
+**   分开走能让你“贴着墙滑过去”，手感更好。
+**
+** 调用者：
+**   update_player()
 */
 static void	try_move_axis(t_game *game, float dx, float dy)
 {
@@ -105,16 +145,28 @@ static void	try_move_axis(t_game *game, float dx, float dy)
 }
 
 /*
-** 函数：get_move_offset
-** 作用：计算玩家在当前按键状态下，相对于当前角度的 $x$ 和 $y$ 轴位移增量。
+** 函数名：get_move_offset（static）
+** 作用：根据当前按键状态（W/S/A/D）计算本帧位移 (dx,dy)
+**
 ** 参数：
-** game：总结构体，用于获取角度、移动速度和按键状态。
-** dx：指向 float 的指针，用于写回计算出的 $x$ 轴总位移。
-** dy：指向 float 的指针，用于写回计算出的 $y$ 轴总位移。
-** 调用：被 update_player 调用。
-** 主要逻辑：
-** 1. 将当前的移动向量分解为 $ca$ ($cos$ 分量) 和 $sa$ ($sin$ 分量)。
-** 2. 根据 WASD 按键状态，利用垂直向量原理叠加“前后”和“左右”的位移。
+**   game：提供 player.angle（朝向角）与 move_speed（速度），以及 key 状态
+**   dx,dy：输出参数，会在原值基础上累加（所以调用前应置 0）
+**
+** 主要逻辑（角度→方向向量）：
+**   ca = cos(angle) * speed
+**   sa = sin(angle) * speed
+**
+**   - 前进(W)：dx += ca, dy += sa
+**   - 后退(S)：dx -= ca, dy -= sa
+**   - 左移(A)：dx -= sa, dy += ca   （相当于朝向向量左转 90°）
+**   - 右移(D)：dx += sa, dy -= ca   （相当于朝向向量右转 90°）
+**
+** 抽象概念解释（初中版）：
+**   cos/sin 就是把“朝向角度”拆成 x 方向分量和 y 方向分量，
+**   所以你面朝哪边，就能算出往那边走每一步在 x/y 上各走多少。
+**
+** 调用者：
+**   update_player()
 */
 static void	get_move_offset(t_game *game, float *dx, float *dy)
 {
@@ -146,15 +198,27 @@ static void	get_move_offset(t_game *game, float *dx, float *dy)
 }
 
 /*
-** 函数：update_player
-** 作用：每一帧更新玩家的状态，包括旋转角度的计算和最终位置的位移执行。
+** 函数名：update_player
+** 作用：每帧更新玩家状态：先处理旋转，再处理移动（含碰撞）
+**
 ** 参数：
-** game：总结构体指针。
-** 调用：主循环 Hook 函数调用；内部调用 get_move_offset 和 try_move_axis。
+**   game：读写 game->player 的 angle/x/y，并读取 key 状态
+**
 ** 主要逻辑：
-** 1. 检测旋转按键并更新 angle，确保角度始终落在 $[0, 2\pi)$ 范围内。
-** 2. 重置并调用辅助函数计算本帧期望的位移量 $dx$ 和 $dy$。
-** 3. 若位移不为零，则调用轴拆分移动函数（处理碰撞检测）。
+**   1) 旋转：
+**      - key_rot_l：angle -= rot_speed
+**      - key_rot_r：angle += rot_speed
+**   2) 角度归一化到 [0, 2PI)：
+**      - angle >= 2PI 就减 2PI
+**      - angle < 0 就加 2PI
+**      这样 angle 不会无限增大，减少浮点误差
+**   3) 位移：
+**      - dx=0, dy=0
+**      - get_move_offset 计算 dx,dy
+**      - 如果 dx/dy 非 0，用 try_move_axis 做分轴移动与碰撞检测
+**
+** 调用者：
+**   game_step()（loop.c）
 */
 void	update_player(t_game *game)
 {

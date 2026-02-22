@@ -77,8 +77,6 @@ void								*track_malloc(t_game *game, size_t size);
 */
 void								graceful_exit(t_game *game, int exit_code,
 										const char *func, const char *msg);
-void								print_error(const char *func,
-										const char *msg);
 void								destroy_images(t_game *game);
 
 /* ===================== parse ===================== */

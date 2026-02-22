@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:11:52 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 22:41:48 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,26 @@
 
 /*
 ** 函数名：sfill_array（static）
-** 作用：把 text 里的每一行复制到 result[i] 里（真正干活的填充函数）。
+** 作用：把 text 按 '\n' 切开，逐行复制到 result 数组里
 **
 ** 参数：
 **   game：用于 track_malloc
-**   pos：当前扫描的位置（一般一开始就是 text）
-**   line_count：总行数（提前算好的）
-**   result：splitlines 分配好的 char**，要被填满
+**   pos：当前扫描位置（一开始通常是 text）
+**   line_count：总行数（= '\n' 数量 + 1）
+**   result：输出的 char**（外部已分配好指针数组）
 **
 ** 返回：
-**   目前实现永远返回 0（成功），如果你以后想增强，可以在分配失败时返回 1。
+**   0：成功（这份代码里始终返回 0）
 **
-** 用在哪里：
-**   只在本文件 splitlines 内部使用（static 表示外部看不到它）。
+** 主要逻辑：
+**   - 前 line_count-1 行：每次找下一个 '\n'
+**     len = strchr(pos,'\n') - pos
+**     分配 len+1，memcpy，补 '\0'
+**     pos 跳到 '\n'+1 继续
+**   - 最后一行：找 '\0' 作为结尾
+**
+** 调用者：
+**   splitlines()
 */
 static int	sfill_array(t_game *game, char *pos, int line_count, char **result)
 {
@@ -53,28 +60,24 @@ static int	sfill_array(t_game *game, char *pos, int line_count, char **result)
 
 /*
 ** 函数名：splitlines
-** 作用：把一个大字符串 text 按 '\n' 切成二维数组（每个元素是一行）。
-**      和 ft_split(text, '\n') 类似，但它的特点是：会保留空行。
+** 作用：把一整段文本 text 按行拆成 char**（每个元素一行，不含 '\n'）
 **
 ** 参数：
-**   game：用于 track_malloc 分配二维数组和每一行字符串
-**   text：要切分的原始大字符串（例如整个 .cub 文件）
+**   game：用于 track_malloc
+**   text：完整文本（必须是 '\0' 结尾的 C 字符串）
 **
 ** 返回：
-**   成功：char**，形如：
-**       result[0] = 第1行字符串
-**       result[1] = 第2行字符串
-**       ...
-**       result[last] = NULL（结束标记）
+**   成功：char**，最后一个元素为 NULL
 **   失败：NULL
 **
-** 用在哪里：
-**   解析 .cub 时：
-**     entire_cubfile = ft_readfile(...)
-**     cubfile_lines = splitlines(game, entire_cubfile)
+** 主要逻辑：
+**   1) line_count = char_count(text, '\n') + 1
+**      - 如果 text 里有 N 个 '\n'，就有 N+1 行
+**   2) 分配 result 指针数组：line_count + 1（最后 NULL）
+**   3) 调 sfill_array 把每行复制进去
 **
-** 为什么要“保留空行”：
-**   subject 允许配置区出现空行，用 splitlines 能让 parser 更容易处理这些空行。
+** 调用者：
+**   parse_entry.c import_cub：把整个 .cub 文件按行变成 cubfile_lines
 */
 char	**splitlines(t_game *game, char *text)
 {

@@ -6,13 +6,24 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 17:12:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/17 18:55:01 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/22 22:41:17 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-// 把一段内存全部置 0（清空缓冲区）
+/*
+** 函数名：ft_bzero
+** 作用：把一段内存清 0（等价于 memset(s, 0, n)）
+** 参数：
+**   s：内存起始地址
+**   n：要清零的字节数（size_t）
+** 主要逻辑：
+**   - 把 s 转成 unsigned char*，逐字节置 0
+** 调用者：
+**   ft_readfile()：每次读之前清空 buf
+**   也可能被别的模块当通用工具使用
+*/
 void	ft_bzero(void *s, size_t n)
 {
 	size_t			i;
@@ -29,24 +40,29 @@ void	ft_bzero(void *s, size_t n)
 
 /*
 ** 函数名：ft_readfile
-** 作用：把 fd 指向的文件内容全部读出来，拼成一个大字符串返回。
+** 作用：把 fd 指向的文件“全部读完”，拼成一个字符串返回
 **
 ** 参数：
-**   game：用于 track_malloc + ft_strjoin（你这套工具函数都依赖 game）
-**   fd  ：已经 open 并可 read 的文件描述符
+**   game：用于 track_malloc / ft_strjoin（所有内存都挂到 track_head，方便统一释放）
+**   fd：已打开的文件描述符
 **
 ** 返回：
-**   成功：返回 “整个文件内容”的字符串（以 '\0' 结尾）
-**   失败：NULL（read 出错 / 内存分配失败）
+**   成功：指向完整文件内容的字符串（以 '\0' 结尾）
+**   失败：NULL（比如 read 返回 -1 或内存分配失败）
 **
-** 用在哪里（典型调用链）：
-**   parse入口：
-**     open(.cub) -> ft_readfile(game, fd) 得到 entire_cubfile
-**     -> splitlines(game, entire_cubfile) 得到按行数组
-**     -> 解析 NO/SO/WE/EA/F/C + map
+** 主要逻辑（循环 read + 拼接）：
+**   1) 先分配一个长度 1 的空串 str，并置 '\0'
+**   2) while(1):
+**      - 清空 buf
+**      - read(fd, buf, BUFFER_SIZE-1)（留 1 字节给 '\0'）
+**      - read==-1：失败返回 NULL
+**      - read==0：EOF，break
+**      - 用 ft_strjoin(game, str, buf) 拼接到新串
+**        注意：这里 old str 是 track_malloc 分配的，不手动 free，
+**              最终由 track_clean 统一释放
 **
-** 说明（初中生版）：
-**   read 每次只能读一小块，所以这里用循环一直读，读到 0 表示文件结束。
+** 调用者：
+**   parse_entry.c 里 import_cub()（读整个 .cub 文件）
 */
 char	*ft_readfile(t_game *game, int fd)
 {
