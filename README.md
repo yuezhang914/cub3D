@@ -73,7 +73,7 @@ Our parser strictly validates the `.cub` configuration. It ensures:
 
 ### Video Materials
 * **Linear Algebra & Mathematics**:
-    * [Essence of Linear Algebra (YouTube)](https://www.youtube.com/watch?v=X9XMUY6RAzo&list=PLYvOmMwPgVxPfHD82QM07gKwaQ5FhPa07) / [Bilibili Version](https://www.bilibili.com/video/BV1ys411472E/) – Essential math for camera planes and vector rotations.
+    * [Essence of Linear Algebra (YouTube)](https://www.youtube.com/watch?v=X9XMUY6RAzo&list=PLYvOmMwPgVxPfHD82QM07gKwaQ5FhPa07) 
 * **Ray-casting Visualized**:
     * [Super Fast Ray Casting (YouTube)](https://www.youtube.com/watch?v=NbSee-XM7WA)
     * [Make Your Own Raycaster (YouTube)](https://www.youtube.com/watch?v=G9i78WoBBIU&t=292s)
