@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:07:47 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 19:52:10 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/23 22:14:09 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	load_texture(t_game *game, t_tex *tex)
 {
-	char	cwd[1024];
-
-	getcwd(cwd, sizeof(cwd));
 	if (!tex->path)
 		graceful_exit(game, 1, __func__, "Texture path is missing.");
 	tex->img_ptr = mlx_xpm_file_to_image(game->mlx, tex->path, &tex->width,
