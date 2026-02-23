@@ -6,9 +6,43 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/22 22:33:09 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 22:33:12 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/23 23:35:57 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+#ifndef CUB3D_H
+# define CUB3D_H
+
+# include "../minilibx-linux/mlx.h"
+# include <X11/keysym.h>
+# include <fcntl.h>
+# include <math.h>
+# include <stdarg.h>
+# include <stdbool.h>
+# include <stddef.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/time.h>
+# include <unistd.h>
+# include "func.h"
+
+# define WIDTH 1280
+# define HEIGHT 720
+# define MINI_WIDTH 200
+# define MINI_HEIGHT 200
+# define FOV 66.0
+# define WALL_BUFFER 0.20f
+# define MOUSE_SENS 0.0025f
+# define INF 1e30
+# ifndef PI
+#  define PI 3.14159265358979323846
+# endif
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 4096
+# endif
 
 /* =========================
  * 结构体：t_img
@@ -391,3 +425,5 @@ typedef struct s_ray
 	float					dir_y;      // 射线方向 y 分量
 	float					perp_dist;  // 命中距离（用于计算 hit 点与墙高）
 }							t_ray;
+
+#endif
