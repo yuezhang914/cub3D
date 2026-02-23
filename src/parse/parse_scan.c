@@ -14,12 +14,12 @@
 
 #ifdef BONUS
 
-# define ALLOWED_TILES " 01NSEWCPRDdTBCM"
+# define ALLOWED_TILES " \t01NSEWCPRDdTBCM"
 # define WALKABLE_TILES "0NESWCPRDdTBCM"
 
 #else
 
-# define ALLOWED_TILES " 01NSEW"
+# define ALLOWED_TILES " \t01NSEW"
 # define WALKABLE_TILES "0NESW"
 
 #endif

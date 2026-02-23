@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   pixel_draw.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
+/*   By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:14 by weiyang           #+#    #+#             */
 /*   Updated: 2026/02/19 13:45:23 by yzhang2          ###   ########.fr       */
