@@ -116,6 +116,11 @@ void								render_column(t_game *game, float r_dir_x,
 void								draw_loop(t_game *game);
 
 void								render_minimap(t_game *game);
+void								draw_mini_vision_line(t_game *game);
+void								draw_mini_fov(t_game *game);
+void								put_mini_pixel(t_game *game, int x, int y,
+										int color);
+int									get_mini_color(t_game *game, int x, int y);
 
 int									on_mouse_move(int x, int y, t_game *game);
 void								enable_mouse(t_game *game);
@@ -131,8 +136,6 @@ t_render_vars						get_open_door_overlay_vars(t_game *game,
 										float r_dir_x, float r_dir_y, int i);
 void								draw_door_overlay_column_bonus(t_game *game,
 										float r_dir_x, float r_dir_y, int i);
-
-bool								check_bonus_elements(t_game *game);
 void								collect_sprites(t_game *game);
 void								handle_bonus_setup(t_game *game);
 
