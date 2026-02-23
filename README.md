@@ -1,11 +1,23 @@
+# Cub3D
 *This project has been created as part of the 42 curriculum by yzhang2, weiyang.*
+<p align="left">
+  <img src="logo.jpeg" width="600" alt="Cub3D Logo">
+</p>
 
-# cub3D
 
 ## Description
 **cub3D** is a 42 School graphics project inspired by the world-famous *Wolfenstein 3D*. The primary goal of this project is to create a realistic first-person perspective inside a maze using **ray-casting** principles.
 
-By leveraging the **miniLibX** graphical library, we developed a rendering engine that transforms a 2D grid map into a 3D navigable environment. The project emphasizes mathematical logic (trigonometry and DDA), strict file parsing, and efficient resource management in C.
+By leveraging the **miniLibX** graphical library, we developed a rendering engine that transforms a 2D grid map into a 3D navigable environment.
+
+The project focuses on:
+
+- Mathematical computation (trigonometry, vector math, geometry)
+- Real-time rendering using ray-casting + DDA
+- Strict `.cub` file parsing & validation
+- Memory management in C
+- Event-driven programming
+- Graphics pipeline implementation
 
 ### Core Features
 - **Mandatory Goals**: 
@@ -38,7 +50,7 @@ Run the program by passing a valid `.cub` scene file as an argument:
 ./cub3d maps/mandatory.cub
 
 # Bonus
-./cub3d_bonus maps/bonus.cub
+./cub3d_bonus maps/bonus.cub./cub3d_bonus testmaps/bonus_map_3.cub 
 
 ```
 ### 4) Controls
@@ -52,9 +64,30 @@ Run the program by passing a valid `.cub` scene file as an argument:
 
 ## Technical Notes
 
-### Ray-casting with DDA
+### Ray-casting Pipeline
 
-The engine renders the scene column by column using the **DDA (Digital Differential Analyzer)** algorithm. For each ray, we calculate the distance to the nearest wall, determine which side was hit to apply the correct texture, and use perpendicular distance to prevent "fish-eye" distortion.
+The engine renders the scene column by column:
+
+Cast a ray from the player position for each vertical screen column
+
+Compute intersection with the map grid using DDA (Digital Differential Analyzer)
+
+Detect the nearest wall hit
+
+Calculate perpendicular wall distance
+
+Apply texture mapping
+
+Render vertical stripe with correct texture sampling
+
+### Fish-Eye Distortion Fix
+We use perpendicular wall distance instead of direct ray distance to:
+
+Prevent distortion
+
+Ensure realistic projection
+
+Maintain consistent wall height calculation
 
 ### Parsing & Validation
 
