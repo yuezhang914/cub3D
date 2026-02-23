@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   mini_map.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 15:00:37 by weiyang           #+#    #+#             */
 /*   Updated: 2026/02/22 20:27:03 by yzhang2          ###   ########.fr       */
@@ -12,7 +12,7 @@
 
 #include "cub3d.h"
 
-static void	put_mini_pixel(t_game *game, int x, int y, int color)
+void	put_mini_pixel(t_game *game, int x, int y, int color)
 {
 	if (x < 0 || x >= MINI_WIDTH || y < 0 || y >= MINI_HEIGHT)
 		return ;
@@ -42,7 +42,7 @@ static void	draw_mini_player(t_game *game)
 	}
 }
 
-static int	get_mini_color(t_game *game, int x, int y)
+int	get_mini_color(t_game *game, int x, int y)
 {
 	float	map_x;
 	float	map_y;
@@ -106,4 +106,6 @@ void	render_minimap(t_game *game)
 	}
 	draw_mini_player(game);
 	draw_mini_sprites(game);
+	draw_mini_vision_line(game);
+	draw_mini_fov(game);
 }
