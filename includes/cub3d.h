@@ -218,14 +218,14 @@ typedef struct s_game
 
 typedef struct s_render_vars
 {
-	int						x;
-	int						start;
-	int						end;
-	int						line_h;
-	int						tex_x;
-	t_tex					*tex;
-	float					perp_dist;
-}							t_render_vars;
+	int				x;			/* 屏幕横坐标：当前正在渲染的像素列索引 (0 到 WIN_WIDTH - 1) */
+	int				start;		/* 绘制起点：墙体线在屏幕 Y 轴上的起始像素位置（防止超出屏幕顶部）*/
+	int				end;		/* 绘制终点：墙体线在屏幕 Y 轴上的结束像素位置（防止超出屏幕底部）*/
+	int				line_h;		/* 墙体高度：根据 perp_dist 计算出的该列墙体在屏幕上占据的像素总高度 */
+	int				tex_x;		/* 纹理采样 X：撞击点在纹理图像上的横向坐标（决定取哪一列纹理像素）*/
+	t_tex			*tex;		/* 纹理指针：指向当前墙面对应的纹理数据（NO/SO/WE/EA 之一）*/
+	float			perp_dist;	/* 垂直距离：射线撞击点到玩家摄像机平面的垂直距离，用于修正鱼眼畸变 */
+}					t_render_vars;
 
 typedef struct s_sprite_render_vars
 {
