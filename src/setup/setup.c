@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 00:03:31 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 20:51:27 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/24 22:42:22 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	setup_hooks(t_game *game)
 	mlx_hook(game->win, 3, 1L << 1, on_key_up, game);
 	mlx_hook(game->win, 17, 0, on_window_close, game);
 	mlx_hook(game->win, 6, 1L << 6, on_mouse_move, game);
+	
 }
 #else
 

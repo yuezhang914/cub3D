@@ -6,11 +6,13 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/07 22:43:15 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/24 17:41:15 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/24 22:41:23 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+
 
 #ifdef BONUS
 
@@ -36,9 +38,9 @@ int	on_key_down(int keycode, t_game *game)
 		game->player.key_up = 1;
 	else if (keycode == XK_s)
 		game->player.key_down = 1;
-	else if (keycode == XK_d)
-		game->player.key_left = 1;
 	else if (keycode == XK_a)
+		game->player.key_left = 1;
+	else if (keycode == XK_d)
 		game->player.key_right = 1;
 	else if (keycode == XK_Left)
 		game->player.key_rot_l = 1;
