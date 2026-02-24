@@ -12,9 +12,9 @@
 
 #include "cub3d.h"
 
-static void	fill_sprite_data(t_game *game, int i, int j, int *count)
+static void fill_sprite_data(t_game *game, int i, int j, int *count)
 {
-	char	c;
+	char c;
 
 	/* 1. 获取当前网格坐标 (i, j) 处的字符类型 */
 	c = game->map[i][j];
@@ -45,11 +45,11 @@ static void	fill_sprite_data(t_game *game, int i, int j, int *count)
 	(*count)++;
 }
 
-void	collect_sprites(t_game *game)
+void collect_sprites(t_game *game)
 {
-	int	i;
-	int	j;
-	int	count;
+	int i;
+	int j;
+	int count;
 
 	/* 1. 预扫描：统计地图中精灵的总数 */
 	/* 这一步通常会遍历地图统计 'T','B','C','M' 出现的次数，存入 game->sprs.num */
@@ -57,12 +57,14 @@ void	collect_sprites(t_game *game)
 
 	/* 2. 空校验：如果地图上没有精灵，直接返回 */
 	if (game->sprs.num == 0)
-		return ;
+		return;
 
 	/* 3. 内存分配：根据精灵数量动态分配列表空间 */
 	/* track_malloc 是一个带垃圾回收或错误检查的封装函数，确保分配 sizeof(t_sprite) * num 字节 */
 	game->sprs.list = track_malloc(game, sizeof(t_sprite) * game->sprs.num);
-
+	if (!game->sprs.list)
+		return;
+	ft_bzero(game->sprs.list, sizeof(t_sprite) * game->sprs.num);
 	/* 4. 二次扫描：提取数据 */
 	count = 0;
 	i = -1;
