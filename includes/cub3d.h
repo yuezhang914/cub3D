@@ -75,17 +75,17 @@ typedef struct s_texture
 
 typedef struct s_dda
 {
-	int						map_x;
-	int						map_y;
-	int						step_x;
-	int						step_y;
-	int						side;
-	float					delta_x;
-	float					delta_y;
-	float					side_x;
-	float					side_y;
-	float					perp_dist;
-}							t_dda;
+	int		map_x;		/* 当前射线所在的网格 X 坐标 (整数地图索引) */
+	int		map_y;		/* 当前射线所在的网格 Y 坐标 (整数地图索引) */
+	int		step_x;		/* X 轴步进方向：1 (向右/东) 或 -1 (向左/西) */
+	int		step_y;		/* Y 轴步进方向：1 (向下/南) 或 -1 (向上/北) */
+	int		side;		/* 撞击性质：0 = 撞击了垂直墙面 (左右)，1 = 撞击了水平墙面 (上下) */
+	float	delta_x;	/* 单位步长：射线在 X 轴方向跨越 1 个完整格子所需的总路程长度 */
+	float	delta_y;	/* 单位步长：射线在 Y 轴方向跨越 1 个完整格子所需的总路程长度 */
+	float	side_x;		/* 初始/累加距离：射线从当前位置到下一个 X 轴网格线的路程长度 */
+	float	side_y;		/* 初始/累加距离：射线从当前位置到下一个 Y 轴网格线的路程长度 */
+	float	perp_dist;	/* 垂直投影距离：撞击点到玩家视平面的距离 (用于消除鱼眼畸变) */
+}					t_dda;
 
 typedef struct s_player
 {

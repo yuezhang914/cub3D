@@ -99,19 +99,35 @@ int	ray_calc_tex_x(t_game *game, t_dda *d, t_tex *tex, t_ray ray)
 	float	hit;
 	int		tex_x;
 
+	/* 1. 计算精确的撞击点位置 (hit) */
+	/* 如果撞击的是垂直墙面 (side == 0)，我们需要看它在 Y 轴上的落点 */
 	if (d->side == 0)
 		hit = game->player.y + ray.perp_dist * ray.dir_y;
+	/* 如果撞击的是水平墙面 (side == 1)，我们需要看它在 X 轴上的落点 */
 	else
 		hit = game->player.x + ray.perp_dist * ray.dir_x;
+	
+	/* 2. 只保留小数部分，得到在该格墙面上的相对位置 (0.0 到 1.0) */
+	/* floor 函数用于向下取整，hit 减去整数部分即为墙面的百分比位置 */
 	hit -= floor((double)hit);
 	if (hit < 0)
 		hit += 1.0;
+
+	/* 3. 将相对位置转换为纹理像素坐标 */
+	/* 比如 hit 是 0.5（撞在墙正中），tex->width 是 64，则 tex_x 为 32 */
 	tex_x = (int)(hit * (float)tex->width);
+
+	/* 4. 边界保护，防止索引溢出（尤其是在浮点精度误差时） */
 	if (tex_x >= tex->width)
 		tex_x = tex->width - 1;
 	if (tex_x < 0)
 		tex_x = 0;
+
+	/* 5. 镜像处理：根据观察方向翻转纹理 */
+	/* 这一步是为了保证纹理不会在某些墙面上反向显示 */
+	/* 比如：当你向左看垂直墙，或者向下看水平墙时，纹理需要左右翻转 */
 	if ((d->side == 0 && ray.dir_x < 0.0) || (d->side == 1 && ray.dir_y > 0.0))
 		tex_x = tex->width - tex_x - 1;
+
 	return (tex_x);
 }
