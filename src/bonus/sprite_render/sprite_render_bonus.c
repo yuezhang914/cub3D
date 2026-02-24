@@ -127,6 +127,7 @@ static void	draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 	t_sprite_config			*c;   /* 对应精灵类型的配置（缩放、偏移等） */
 	t_draw_ctx				ctx; /* 传递给像素绘制函数的上下文 */
 
+	ft_bzero(&ctx, sizeof(t_draw_ctx));
 	/* 1. 获取精灵配置并选择正确的纹理帧 */
 	c = &game->config[s->type];
 	if (c->is_directional)
