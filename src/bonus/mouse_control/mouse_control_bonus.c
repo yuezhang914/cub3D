@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:31:54 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 19:43:58 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/24 14:27:27 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,31 +21,31 @@ static float	normalize_angle(float a)
 	return (a);
 }
 
-void	enable_mouse(t_game *game)
-{
-	if (game == NULL || game->mlx == NULL || game->win == NULL)
-		return ;
-	if (game->player.mouse_enabled == 0)
-		return ;
-	mlx_mouse_hide(game->mlx, game->win);
-	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
-}
-
 int	on_mouse_move(int x, int y, t_game *game)
 {
-	int		dx;
-	float	delta;
+	static int	last_x = -1;
+	int			dx;
+	float		delta;
 
 	(void)y;
 	if (game == NULL)
 		return (0);
 	if (game->player.mouse_enabled == 0)
 		return (0);
-	if (x == WIDTH / 2)
+	if (last_x == -1)
+	{
+		last_x = x;
 		return (0);
-	dx = x - (WIDTH / 2);
+	}
+	dx = x - last_x;
+	last_x = x;
+	if (dx > -1 && dx < 1)
+		return (0);
+	if (dx > 60)
+		dx = 60;
+	if (dx < -60)
+		dx = -60;
 	delta = (float)dx * game->player.mouse_sens;
 	game->player.angle = normalize_angle(game->player.angle + delta);
-	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sprite_render_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: weiyang <weiyang@student.42.fr>            +#+  +:+       +#+        */
+/*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 18:11:37 by weiyang           #+#    #+#             */
-/*   Updated: 2026/02/21 18:12:30 by weiyang          ###   ########.fr       */
+/*   Updated: 2026/02/24 13:31:42 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ static int	get_sprite_color(t_draw_ctx *ctx, int tx, int ty)
 	y = ty;
 	if (ctx->v.type == SPR_TORCH)
 	{
-		jump = (int)(sin(ctx->game->time * 15.0f) * 4.0f
-				* (1.0f - ((float)ty / ctx->tex->height)));
+		jump = (int)(sin(ctx->game->time * 15.0f) * 4.0f * (1.0f - ((float)ty
+						/ ctx->tex->height)));
 		y = ty + jump;
 		if (y < 0)
 			y = 0;
@@ -30,8 +30,8 @@ static int	get_sprite_color(t_draw_ctx *ctx, int tx, int ty)
 	}
 	if (tx < 0 || tx >= ctx->tex->width || y < 0 || y >= ctx->tex->height)
 		return (0);
-	return (*(int *)(ctx->tex->data + (y * ctx->tex->size_line
-			+ tx * (ctx->tex->bpp / 8))));
+	return (*(int *)(ctx->tex->data + (y * ctx->tex->size_line + tx
+			* (ctx->tex->bpp / 8))));
 }
 
 static void	draw_sprite_pixels(t_draw_ctx *ctx)
@@ -89,8 +89,8 @@ static void	draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 		ctx.tex = &c->frames[get_sprite_dir_index(game, s)];
 	else
 		ctx.tex = &c->frames[s->cur_frame];
-	v.sprite_h = abs((int)(HEIGHT / t_y)) / c->v_div;
-	v.sprite_w = abs((int)(HEIGHT / t_y)) / c->h_div;
+	v.sprite_h = (int)fabsf((float)HEIGHT / t_y) / c->v_div;
+	v.sprite_w = (int)fabsf((float)HEIGHT / t_y) / c->h_div;
 	v.v_offset = (int)(c->v_move / t_y);
 	v.draw_start_y = -v.sprite_h / 2 + HEIGHT / 2 + v.v_offset;
 	v.draw_start_x = -v.sprite_w / 2 + (int)((WIDTH / 2) * (1 + t_x / t_y));
@@ -99,8 +99,8 @@ static void	draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 	ctx.v = v;
 	ctx.trans_y = t_y;
 	ctx.sx = fmax(0, v.draw_start_x);
-	ctx.ex = fmin(WIDTH - 1, v.sprite_w / 2
-			+ (v.draw_start_x + v.sprite_w / 2));
+	ctx.ex = fmin(WIDTH - 1, v.sprite_w / 2 + (v.draw_start_x + v.sprite_w
+				/ 2));
 	ctx.sy = fmax(0, v.draw_start_y);
 	ctx.ey = fmin(HEIGHT - 1, v.sprite_h / 2 + HEIGHT / 2 + v.v_offset);
 	draw_sprite_pixels(&ctx);
