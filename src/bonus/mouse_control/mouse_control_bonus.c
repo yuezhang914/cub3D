@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:31:54 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/24 14:03:33 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/24 14:24:03 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,78 +44,72 @@ static float	normalize_angle(float a)
 		a += 2.0f * PI;
 	return (a);
 }
-
-// /*
-// ** 函数名：enable_mouse
-// ** 作用：当你要启用鼠标控制时：
-// **   1) 隐藏鼠标指针
-// **   2) 把鼠标移动到窗口中心
-// **
-// ** 参数：
-// **   game：需要 game->mlx / game->win 来调用 mlx 函数；
-// **         并读取 game->player.mouse_enabled 判断是否启用
-// **
-// ** 主要逻辑：
-// **   - 如果 game/mlx/win 为空：直接 return（避免崩溃）
-// **   - 如果 mouse_enabled==0：说明不想启用鼠标，也 return
-// **   - mlx_mouse_hide：隐藏鼠标（更像 FPS）
-// **   - mlx_mouse_move：把鼠标强制放到屏幕中心
-// **
-// ** 调用者：
-// **   一般在开始游戏/切换鼠标模式时调用（例如 setup 完或按键切换后）
-// */
-// void	enable_mouse(t_game *game)
-// {
-// 	if (game == NULL || game->mlx == NULL || game->win == NULL)
-// 		return ;
-// 	if (game->player.mouse_enabled == 0)
-// 		return ;
-// 	mlx_mouse_hide(game->mlx, game->win);
-// 	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
-// }
-
 /*
-** 函数名：on_mouse_move
-** 作用：鼠标移动事件回调：根据鼠标左右移动来改变玩家视角 angle
+** 函数：on_mouse_move
+** 作用：
+**   BONUS：根据鼠标左右移动来旋转玩家视角（第一人称“转头”）。
+**   这版实现“不把鼠标强制拉回窗口中心”，所以鼠标可以移到窗口外点击红叉关闭。
 **
 ** 参数：
-**   x, y：鼠标在窗口内的坐标（像素）
-**   game：游戏状态（读 mouse_enabled / mouse_sens，写 player.angle）
+**   x, y  ：当前鼠标在窗口内的坐标（像素）。
+**           本函数只使用 x（左右方向），y 不参与视角旋转。
+**   game  ：全局游戏结构体，读取 player.mouse_enabled / player.mouse_sens，
+**           并更新 player.angle。
 **
-** 返回：
-**   0：给 mlx 的回调返回值（表示事件处理完成）
+** 常量/关键字段：
+**   last_x（static）：
+**     - 保存“上一次回调时的鼠标 x 坐标”，用于计算增量 dx。
+**     - 这样旋转速度只由“鼠标移动了多少”决定，而不是“离中心多远”。
+**   dx dead-zone（微小移动死区）：
+**     - 如果 dx 很小（例如 -1~1），直接忽略，减少抖动与噪声。
+**   dx clamp（最大旋转上限）：
+**     - 限制单次 dx 的最大值（例如 ±60），防止窗口外/系统跳变导致瞬间巨转。
+**   game->player.mouse_sens：
+**     - 灵敏度系数：delta = dx * mouse_sens。
+**     - 建议范围：0.002f ~ 0.006f（按手感微调）。
+**   normalize_angle：
+**     - 把角度规范到 [-PI, PI] 范围，避免数值无限变大。
 **
-** 主要逻辑（核心：只看水平偏移 dx）：
-**   1) 忽略 y：因为本项目只做“左右转头”，不做“上下抬头低头”
-**   2) 如果 game==NULL 或 mouse_enabled==0：不处理
-**   3) 如果 x 正好是中心 WIDTH/2：说明没有水平偏移，不处理（避免死循环抖动）
-**   4) dx = x - WIDTH/2
-**   5) delta = dx * mouse_sens
-**      - mouse_sens 是灵敏度，越大转得越快
-**   6) angle = normalize_angle(angle + delta)
-**   7) 把鼠标重新移回中心：
-**      mlx_mouse_move(..., WIDTH/2, HEIGHT/2)
-**      这样鼠标不会跑到屏幕边缘，玩家可以一直转
+** 主要逻辑：
+**   1) 若 game 为空或 mouse 未开启，直接返回 0。
+**   2) 第一次收到鼠标事件时，只初始化 last_x 并返回（避免第一次 dx 乱跳）。
+**   3) dx = x - last_x；更新 last_x。
+**   4) 若 dx 落在死区范围内，忽略。
+**   5) 将 dx 限幅到 [-MAX_DX, MAX_DX]（例如 ±60）。
+**   6) delta = dx * mouse_sens；更新 player.angle，并 normalize。
 **
-** 调用者：
-**   setup_hooks() 中用 mlx_hook(event=6 MotionNotify) 绑定
+** 返回值：
+**   0（按 MLX hook 约定返回 0 即可）
+**
+** 在哪调用：
+**   通过 mlx_hook 绑定到鼠标移动事件（MotionNotify）：
+**     mlx_hook(game->win, 6, 1L << 6, on_mouse_move, game);
 */
 int	on_mouse_move(int x, int y, t_game *game)
 {
-	int		dx;
-	float	delta;
+	static int	last_x = -1;
+	int			dx;
+	float		delta;
 
 	(void)y;
 	if (game == NULL)
 		return (0);
 	if (game->player.mouse_enabled == 0)
 		return (0);
-	if (x == WIDTH / 2)
+	if (last_x == -1)
+	{
+		last_x = x;
 		return (0);
-
-	dx = x - (WIDTH / 2);
+	}
+	dx = x - last_x;
+	last_x = x;
+	if (dx > -1 && dx < 1)
+		return (0);
+	if (dx > 60)
+		dx = 60;
+	if (dx < -60)
+		dx = -60;
 	delta = (float)dx * game->player.mouse_sens;
 	game->player.angle = normalize_angle(game->player.angle + delta);
-	// mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);删掉鼠标回中 否则无法用鼠标关窗口
 	return (0);
 }

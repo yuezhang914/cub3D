@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/22 22:33:09 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/23 23:35:57 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/24 14:22:42 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 # define MINI_HEIGHT 200
 # define FOV 66.0
 # define WALL_BUFFER 0.20f
-# define MOUSE_SENS 0.0025f
+# define MOUSE_SENS 0.0045f
 # define INF 1e30
 # ifndef PI
 #  define PI 3.14159265358979323846
