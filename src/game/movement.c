@@ -187,13 +187,13 @@ static void	get_move_offset(t_game *game, float *dx, float *dy)
 	}
 	if (game->player.key_left)
 	{
-		*dx -= sa;
-		*dy += ca;
+		*dx += sa;
+		*dy -= ca;
 	}
 	if (game->player.key_right)
 	{
-		*dx += sa;
-		*dy -= ca;
+		*dx -= sa;
+		*dy += ca;
 	}
 }
 
