@@ -83,6 +83,7 @@ static void	draw_single_sprite(t_game *game, t_sprite *s, float t_x, float t_y)
 	t_sprite_config			*c;
 	t_draw_ctx				ctx;
 
+	ft_bzero(&ctx, sizeof(t_draw_ctx));
 	c = &game->config[s->type];
 	if (c->is_directional)
 		ctx.tex = &c->frames[get_sprite_dir_index(game, s)];
