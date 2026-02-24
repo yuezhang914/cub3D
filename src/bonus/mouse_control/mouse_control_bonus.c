@@ -6,7 +6,7 @@
 /*   By: yzhang2 <yzhang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 15:31:54 by yzhang2           #+#    #+#             */
-/*   Updated: 2026/02/22 22:50:10 by yzhang2          ###   ########.fr       */
+/*   Updated: 2026/02/24 14:03:33 by yzhang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,34 +45,34 @@ static float	normalize_angle(float a)
 	return (a);
 }
 
-/*
-** 函数名：enable_mouse
-** 作用：当你要启用鼠标控制时：
-**   1) 隐藏鼠标指针
-**   2) 把鼠标移动到窗口中心
-**
-** 参数：
-**   game：需要 game->mlx / game->win 来调用 mlx 函数；
-**         并读取 game->player.mouse_enabled 判断是否启用
-**
-** 主要逻辑：
-**   - 如果 game/mlx/win 为空：直接 return（避免崩溃）
-**   - 如果 mouse_enabled==0：说明不想启用鼠标，也 return
-**   - mlx_mouse_hide：隐藏鼠标（更像 FPS）
-**   - mlx_mouse_move：把鼠标强制放到屏幕中心
-**
-** 调用者：
-**   一般在开始游戏/切换鼠标模式时调用（例如 setup 完或按键切换后）
-*/
-void	enable_mouse(t_game *game)
-{
-	if (game == NULL || game->mlx == NULL || game->win == NULL)
-		return ;
-	if (game->player.mouse_enabled == 0)
-		return ;
-	mlx_mouse_hide(game->mlx, game->win);
-	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
-}
+// /*
+// ** 函数名：enable_mouse
+// ** 作用：当你要启用鼠标控制时：
+// **   1) 隐藏鼠标指针
+// **   2) 把鼠标移动到窗口中心
+// **
+// ** 参数：
+// **   game：需要 game->mlx / game->win 来调用 mlx 函数；
+// **         并读取 game->player.mouse_enabled 判断是否启用
+// **
+// ** 主要逻辑：
+// **   - 如果 game/mlx/win 为空：直接 return（避免崩溃）
+// **   - 如果 mouse_enabled==0：说明不想启用鼠标，也 return
+// **   - mlx_mouse_hide：隐藏鼠标（更像 FPS）
+// **   - mlx_mouse_move：把鼠标强制放到屏幕中心
+// **
+// ** 调用者：
+// **   一般在开始游戏/切换鼠标模式时调用（例如 setup 完或按键切换后）
+// */
+// void	enable_mouse(t_game *game)
+// {
+// 	if (game == NULL || game->mlx == NULL || game->win == NULL)
+// 		return ;
+// 	if (game->player.mouse_enabled == 0)
+// 		return ;
+// 	mlx_mouse_hide(game->mlx, game->win);
+// 	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
+// }
 
 /*
 ** 函数名：on_mouse_move
@@ -116,7 +116,6 @@ int	on_mouse_move(int x, int y, t_game *game)
 	dx = x - (WIDTH / 2);
 	delta = (float)dx * game->player.mouse_sens;
 	game->player.angle = normalize_angle(game->player.angle + delta);
-
-	mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);
+	// mlx_mouse_move(game->mlx, game->win, WIDTH / 2, HEIGHT / 2);删掉鼠标回中 否则无法用鼠标关窗口
 	return (0);
 }
