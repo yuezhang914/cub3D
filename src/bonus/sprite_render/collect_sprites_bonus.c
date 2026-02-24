@@ -41,6 +41,9 @@ void	collect_sprites(t_game *game)
 	if (game->sprs.num == 0)
 		return ;
 	game->sprs.list = track_malloc(game, sizeof(t_sprite) * game->sprs.num);
+	if (!game->sprs.list)
+		return ;
+	ft_bzero(game->sprs.list, sizeof(t_sprite) * game->sprs.num);
 	count = 0;
 	i = -1;
 	while (game->map[++i])
